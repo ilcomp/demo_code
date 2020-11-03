@@ -1,0 +1,65 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="module">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          {% if error_name %}<div class="invalid-tooltip">{{ error_name }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="status" id="input-status" class="form-control">
+            <option value="1"{{ status ? ' selected' }}>{{ text_enabled }}</option>
+            <option value="0"{{ not status ? ' selected' }}>{{ text_disabled }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="tab-pane">
+        <ul class="nav nav-tabs" id="language">
+          {% for language in languages %}
+            <li class="nav-item"><a href="#language{{ language.language_id }}" data-toggle="tab" class="nav-link"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/> {{ language.name }}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="tab-content">
+          {% for language in languages %}
+            <div class="tab-pane" id="language{{ language.language_id }}">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="input-title{{ language.language_id }}">{{ entry_title }}</label>
+                <div class="col-sm-10">
+                  <input type="text" name="module_description[{{ language.language_id }}][title]" placeholder="{{ entry_title }}" id="input-heading{{ language.language_id }}" value="{{ module_description[language.language_id] ? module_description[language.language_id].title }}" class="form-control"/>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="input-description{{ language.language_id }}">{{ entry_description }}</label>
+                <div class="col-sm-10">
+                  <switcheditor-wrap editor="{{editor }}" lang="{{ language.language }}" class="form-group">
+                    <div>
+                    {% for item in dialogs %}
+                      <switcheditor-dialog-{{ item.code }} slot="dialog" class="btn btn-primary mb-2{{ loop.last ? ' mr-2'}}" {% for code,value in item.setting %} {{ code }}="{{ value }}"{% endfor %}><i class="{{ item.icon }}"></i></switcheditor-dialog-{{ item.code }}>
+                    {% endfor %}
+                    {% for item in editors %}
+                      <switcheditor-editor-{{ item.code }} slot="editor" class="btn btn-primary mb-2" {% for code,value in item.setting %} {{ code }}="{{ value }}"{% endfor %}><i class="{{ item.icon }}"></i></switcheditor-editor-{{ item.code }}>
+                    {% endfor %}
+                    </div>
+                    <textarea name="module_description[{{ language.language_id }}][description]" data-toggle="editor" placeholder="{{ entry_description }}" class="form-control">{{ module_description[language.language_id] ? module_description[language.language_id].description }}</textarea>
+                  </switcheditor-wrap>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+$('#language li:first-child a').tab('show');
+//--></script>
+<style>
+.ck-editor__editable_inline {min-height: 400px;}
+</style>

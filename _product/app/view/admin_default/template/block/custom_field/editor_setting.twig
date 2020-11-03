@@ -1,0 +1,20 @@
+<div class="form-group row custom-field">
+  <label class="col-sm-2 col-form-label" for="display-setting-listing">{{ entry_dialog }}</label>
+  <div class="col-sm-10">
+  {% for code in dialogs %}
+    <label class="form-check">
+      <input type="checkbox" name="setting[dialogs][]" value="{{ code }}" class="form-check-input"{{ code in values.dialogs ? ' checked'}}> {{ code }}
+    </label>
+  {% endfor %}
+  </div>
+</div>
+<div class="form-group row custom-field">
+  <label class="col-sm-2 col-form-label" for="display-setting-listing">{{ entry_editor }}</label>
+  <div class="col-sm-10">
+  {% for code in editors %}
+    <label class="form-check">
+      <input type="checkbox" name="setting[editors][]" value="{{ code }}" class="form-check-input"{{ code in values.editors ? ' checked'}}> {{ code }}
+    </label>
+  {% endfor %}
+  </div>
+</div>

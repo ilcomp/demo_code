@@ -1,0 +1,39 @@
+<section class="content equip_detail">
+  <div class="container">
+      <h1>{{ heading_title }}</h1>
+      {% if informations %}
+      <h2>{{ text_information }}</h2>
+      {% for information in informations %}
+      <a href="{{ information.href }}" class="life_item">
+        {% if information.thumb %}<img src="{{ information.thumb }}" class="img-responsive" alt="{{ information.name }}" title="{{ information.name }}">{% endif %}
+        <div class="life_item_text">
+          <h3>{{ information.name }}</h3>
+          {{ information.preview }}
+        </div>
+        <div class="clearfix"></div>
+      </a>
+      {% endfor %}
+      {% endif %}
+      {% if products %}
+      <h2>{{ text_product }}</h2>
+      {% for product in products %}
+      <a href="{{ product.href }}" class="life_item">
+        {% if product.thumb %}<img src="{{ product.thumb }}" class="img-responsive" alt="{{ product.name }}" title="{{ product.name }}">{% endif %}
+        <div class="life_item_text">
+          <h3>{{ product.name }}</h3>
+          {{ product.preview }}
+        </div>
+        <div class="clearfix"></div>
+      </a>
+      {% endfor %}
+      {% endif %}
+      {% if informations or products %}
+      <div class="row">
+        <div class="col-sm-6 text-left">{{ pagination }}</div>
+        <div class="col-sm-6 text-right">{{ results }}</div>
+      </div>
+      {% else %}
+      <p>{{ text_empty }}</p>
+      {% endif %}
+	</div>
+</section>

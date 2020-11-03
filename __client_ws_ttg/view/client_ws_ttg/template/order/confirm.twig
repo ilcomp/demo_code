@@ -1,0 +1,100 @@
+<div class="main-bg">
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <section class="basket-block">
+    <div class="container">
+      <h1>{{ heading_title }}</h1>
+      <form method="post" enctype="multipart/form-data" id="form_order_confirm">
+        <input type="hidden" name="form_method" value="order/confirm/form">
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a href="{{ actions.cart }}" class="nav-link">Состав заказа</a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ actions.checkout }}" class="nav-link">Контактные данные</a>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link active">Выбор способов доставки и оплаты</button>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active">
+            <div class="step-wrap">
+              <div class="row">
+                <div class="col-12 col-lg-8">
+                {% for code, item in block %}
+                  {% if code != 'confirm' and code != 'total' and code != 'total_product' %}
+                    {{ item }}
+                  {% endif %}
+                {% endfor %}
+                </div>
+                <div class="col-12 col-lg-4 d-block">
+                  <div class="step-wrap__short">
+                    <div class="h3">Состав заказа</div>
+                    {{ block.total_product }}
+                  </div>
+                </div>
+              </div>
+            {% if error_warning %}
+              <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+              </div>
+            {% endif %}
+              <div class="basket-end-step">
+{% if agreement and confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a> и согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a> сайта</p>
+{% elseif agreement %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a></p>
+{% elseif confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a></p>
+{% endif %}
+                {{ block.confirm }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var form = $('#form_order_confirm');
+
+  form.submit(function(e){
+    e.preventDefault();
+
+    form.append('<div class="preload-full"><div class="preload"><span class="preload-b1"></span><span class="preload-b2"></span></div></div>');
+
+    fetch(location, {
+      credentials: 'include',
+      headers: {'Accept': 'text/html'},
+      method: 'post',
+      body: new FormData(this)
+    })
+    .then(function(r){
+      return r.text();
+    })
+    .then(function(html){
+      if (!html)
+        location.reload();
+
+      var data = $(html).find('#form_order_confirm');
+
+      form.html(data.html());
+
+      if (form.find('[data-order_total="shipping"]').length > 0)
+        form.find('[data-confirm_shipping] h2').append(' <span data-view_order_total="shipping" style="display: inline;">(' + form.find('[data-order_total="shipping"]').html() + ')</span>');
+    })
+    .catch(function(e){
+      console.error(e);
+    });
+  });
+
+  form.on('change', '[name="shipping_method"], [name="payment_method"], [name^=custom_field]:not([data-address="city"])', function(){$(this).parents('form').submit()});
+
+  if (form.find('[data-order_total="shipping"]').length > 0)
+    form.find('[data-confirm_shipping] h2').append(' <span data-view_order_total="shipping" style="display: inline;">(' + form.find('[data-order_total="shipping"]').html() + ')</span>');
+})();
+</script>

@@ -1,0 +1,47 @@
+<form action="{{ action }}" method="post" enctype="multipart/form-data">
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  {% if location %}
+  <script type="text/javascript">location = '{{ location }}';</script>
+  {% endif %}
+  {% if refresh %}
+  <script type="text/javascript">location.reload();</script>
+  {% endif %}
+  {% if sms_action %}
+  <script type="text/javascript">
+    $('.code_phone').load('{{ sms_action }} .code_phone > *');
+    $('.code_phone:not(.in)').modal('show');
+  </script>
+  {% endif %}
+  <input type="hidden" name="method" value="{{ method }}">
+  <input type="hidden" name="redirect" value="{{ redirect }}">
+
+  <div class="small-t">Ваше имя<span></span></div>
+  <input type="text" name="firstname" value="{{ firstname }}">
+  {% if error_firstname %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_firstname }}</div>
+  {% endif %}
+  <div class="small-t">Введите ваш e-mail<span></span></div>
+  <input type="email" name="email" value="{{ email }}">
+  {% if error_email %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_email }}</div>
+  {% endif %}
+  <div class="small-t">Придумайте пароль<span></span></div>
+  <input type="password" name="password" value="{{ password }}">
+  {% if error_password %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_password }}</div>
+  {% endif %}
+  <div class="small-t">Повторите пароль<span></span></div>
+  <input type="password" name="password_confirm" value="{{ password_confirm }}">
+  {% if error_password_confirm %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_password_confirm }}</div>
+  {% endif %}
+
+  {{ captcha }}
+  <button class="main-btn">{{ button_continue }}</button>
+  <label>
+    <input type="checkbox" checked="checked" name="polit">
+    <p class="polit_confid">Согласен на обработку личных данных</p>
+  </label>
+</form>

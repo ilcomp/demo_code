@@ -1,0 +1,25 @@
+{#
+{% for option in options %}
+<select name="option[{{ option.option_id }}]" class="item-input">
+  <option value="">{{ option.name }}</option>
+  {% for value in option.values %}
+  <option value="{{ value.listing_item_id }}">{{ value.name }}</option>
+  {% endfor %}
+</select>
+{% endfor %}
+<script>console.log({{options|json_encode()}});</script>
+<script>console.log({{option_variants|json_encode()}});</script>
+#}
+{% if option_variants %}
+<button type="button" class="btn btn-light dropdown-toggle item-input" data-toggle="dropdown" data-btn="option_variant">{{ options|column('name')|join(text_and) }}</button>
+<div class="dropdown-menu" data-list="option_variant">
+{% for option_variant in option_variants %}
+  {% if option_variant.stock %}
+  <label class="dropdown-item{{ option_variant.quantity == 0 ? ' text-secondary' }}">
+    <input type="radio" name="variant_id" value="{{ option_variant.variant_id }}">
+    {% for option in options %}{% for value in option_variant.value %}{{ value.option_id == option.option_id ? value.name ~ ' ' : '' }}{% endfor %}{% endfor %}{{ option_variant.quantity == 0 ? ' (' ~ text_empty ~ ')' : '' }}
+  </label>
+  {% endif %}
+{% endfor %}
+</div>
+{% endif %}

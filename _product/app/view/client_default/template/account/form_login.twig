@@ -1,0 +1,35 @@
+<form action="{{ action }}" method="post" enctype="multipart/form-data">
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  {% if location %}
+  <script type="text/javascript">location = '{{ location }}';</script>
+  {% endif %}
+  {% if refresh %}
+  <script type="text/javascript">location.reload();</script>
+  {% endif %}
+  {% if sms_action %}
+  <script type="text/javascript">
+    $('.code_phone').load('{{ sms_action }} .code_phone > *');
+    $('.code_phone:not(.in)').modal('show');
+  </script>
+  {% endif %}
+  <input type="hidden" name="method" value="{{ method }}">
+  <input type="hidden" name="redirect" value="{{ redirect }}">
+
+  <div class="small-t">e-mail<span></span></div>
+  <input type="text" name="login" value="{{ login }}">
+  <div class="small-t">пароль<span></span></div>
+  <div class="password-block">
+    <input type="password" name="password" value="{{ password }}">
+    <div class="password-block__change"></div>
+  </div>
+  <div class="soc-block soc-block-square" id="block_social">
+  {% for social in socials %}
+    <a href="{{ social.link }}" class="{{ social.code }}" target="_blank"><img src="{{ social.image }}" alt="" class="img-fluid"></a>
+  {% endfor %}
+  </div>
+
+  {{ captcha }}
+  <button class="main-btn">{{ button_continue }}</button>
+</form>

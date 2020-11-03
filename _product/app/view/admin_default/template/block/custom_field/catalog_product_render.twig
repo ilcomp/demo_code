@@ -1,0 +1,60 @@
+<div class="form-group row custom-field" data-sort="{{ custom_field.sort_order }}">
+  <label class="col-sm-2 col-form-label" for="input-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}</label>
+  <div class="col-sm-10">
+    <input type="text"  id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control">
+    <div id="block-custom-field{{ custom_field.custom_field_id }}" class="form-control" style="height: 150px; overflow: auto;">
+    {% for product in custom_field.value[-1] %}
+      <div id="block-custom-field{{ custom_field.custom_field_id }}_{{ product.product_id }}"><i class="fas fa-minus-circle"></i> {{ product.name }}
+        <input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1][]" value="{{ product.product_id }}"/>
+      </div>
+    {% endfor %}
+    </div>
+  {% if error_custom_field[custom_field.custom_field_id] %}
+    <div class="invalid-tooltip">{{ error_custom_field[custom_field.custom_field_id] }}</div>
+  {% endif %}
+  {% if custom_field.help %}
+    <small class="form-text text-muted">{{ custom_field.help }}</small>
+  {% endif %}
+    <small class="form-text text-muted">{{ help_autocomplete }}</small>
+  </div>
+</div>
+
+<script>
+$('#input-custom-field{{ custom_field.custom_field_id }}').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      response($.map(json, function(item) {
+        return {
+          label: (item['model'] ? item['model'] + ' ' : '') + item['name'],
+          value: item['product_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('#input-custom-field{{ custom_field.custom_field_id }}').val('');
+
+    $('#block-custom-field{{ custom_field.custom_field_id }}_' + item['value']).remove();
+
+    $('#block-custom-field{{ custom_field.custom_field_id }}').append('<div id="block-custom-field{{ custom_field.custom_field_id }}_' + item['value'] + '"><i class="fas fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1][]" value="' + item['value'] + '" /></div>');
+  }
+});
+
+$('#block-custom-field{{ custom_field.custom_field_id }}').on('click', '.fa-minus-circle', function() {
+  $(this).parent().remove();
+});
+</script>

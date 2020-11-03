@@ -1,0 +1,135 @@
+<div class="main-bg">
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <section class="basket-block">
+    <div class="container">
+      <h1>{{ heading_title }}</h1>
+{% if has_products %}
+      <form method="post" enctype="multipart/form-data" id="form_order_cart">
+        <input type="hidden" name="form_method" value="order/cart/form">
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <button type="button" class="nav-link active">Состав заказа</button>
+          </li>
+          <li class="nav-item">
+            <button type="submit" class="nav-link">Контактные данные</button>
+          </li>
+          <li class="nav-item">
+            <button type="submit" name="next" value="1" class="nav-link">Выбор способов доставки и оплаты</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active">
+
+          {% for code, item in block %}
+            {% if code != 'cart_total' %}
+              {{ item }}
+            {% endif %}
+          {% endfor %}
+          {% if attention %}
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ attention }}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+          {% endif %}
+          {% if success %}
+            <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+          {% endif %}
+          {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+              <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+          {% endif %}
+
+          {{ block.cart_total }}
+          </div>
+        </div>
+      </form>
+<script>
+(function(){
+  var form = $('#form_order_cart');
+
+  form.submit(function(e){
+    e.preventDefault();
+
+    $(document).trigger('cart_load');
+
+    fetch(location, {
+      method: 'post',
+      body: new FormData(this),
+      credentials: 'include',
+      headers: {'Accept': 'application/json'}
+    })
+    .then(function(r){
+      $(document).trigger('cart_loaded');
+
+      return r.json();
+    })
+    .then(function(json){
+      $(document).trigger('cart_update', json);
+    })
+    .catch(function(e){
+      console.error(e);
+    });
+  });
+
+  form.on('click', 'button[type="submit"]:not([name="delete"])', function(e){
+    form.off('submit');
+  });
+})();
+</script>
+{% else %}
+      <p>{{ text_empty }}</p>
+{% endif %}
+    </div>
+  </section>
+</div>
+
+<script>
+var form_order_cart = $('#form_order_cart');
+
+var order_cart_refresh = function(){
+    fetch(location, {
+      credentials: 'include',
+      headers: {'Accept': 'text/html'},
+      cache: 'no-store'
+    })
+    .then(function(r){
+      return r.text();
+    })
+    .then(function(html){
+      if (!html)
+        location.reload();
+
+      var data = $(html).find('#form_order_cart');
+
+      if ((form_order_cart.length > 0 && data.length == 0) || (form_order_cart.length == 0 && data.length > 0))
+        location.reload();
+
+      form_order_cart.html(data.html());
+      form_order_cart.attr('class', data.attr('class'));
+
+      form_order_cart.find('[name^=quantity]').each(function() {
+        quantity_update(this);
+      });
+
+      form_order_cart.find('[data-toggle="tooltip"]').tooltip();
+    })
+    .catch(function(e){
+      console.error(e);
+    });
+  };
+
+$(document).on('cart_add cart_update cart_remove', function(e, json) {
+  json = json || [];
+
+  if (json['success']) {
+    order_cart_refresh();
+  }
+});
+
+$(document).on('visibilitychange', function(e) {
+  if (!this.hidden) order_cart_refresh();
+});
+</script>

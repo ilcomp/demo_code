@@ -1,0 +1,47 @@
+<nav id="column-left">
+  <div id="navigation"><span class="fas fa-bars"></span> {{ text_navigation }}</div>
+  <ul id="menu">
+    {% set i = 0 %}
+    {% for menu in menus %}
+      <li id="{{ menu.id }}"{{ menu.active ? ' class="active"'}}>
+        {% if not menu.children %}
+        <a href="{{ menu.href ? menu.href : 'javascript:void(0)' }}"><i class="fas {{ menu.icon }} fw"></i> {{ menu.name }}</a>
+        {% else %}
+        <a href="{{ menu.href ? menu.href : '#collapse' ~ i }}" data-toggle="collapse" data-target="#collapse{{ i }}" class="parent collapsed"><i class="fas {{ menu.icon }} fw"></i> {{ menu.name }}</a>
+          <ul id="collapse{{ i }}" class="collapse{{ menu.active ? ' show'}}">
+            {% set j = 0 %}
+            {% for children_1 in menu.children %}
+              <li{{ children_1.active ? ' class="active"'}}>
+                {% if not children_1.children %}
+                  <a href="{{ children_1.href ? children_1.href : 'javascript:void(0)' }}">{{ children_1.name }}</a>
+                {% else %}
+                  <a href="{{ children_1.href ? children_1.href : '#collapse' ~ i ~ '-' ~ j }}" data-toggle="collapse" data-target="#collapse{{ i }}-{{ j }}" class="parent collapsed">{{ children_1.name }}</a>
+                  <ul id="collapse{{ i }}-{{ j }}" class="collapse{{ children_1.active ? ' show'}}">
+                    {% set k = 0 %}
+                    {% for children_2 in children_1.children %}
+                      <li{{ children_2.active ? ' class="active"'}}>
+                        {% if not children_2.children %}
+                          <a href="{{ children_2.href ? children_2.href : 'javascript:void(0)' }}">{{ children_2.name }}</a>
+                        {% else %}
+                          <a href="{{ children_2.href ? children_2.href : '#collapse' ~ i ~ '-' ~ j ~ '-' ~ k }}" data-toggle="collapse" data-target="#collapse{{ i }}-{{ j }}-{{ k }}" class="parent collapsed">{{ children_2.name }}</a>
+                          <ul id="collapse-{{ i }}-{{ j }}-{{ k }}" class="collapse{{ children_2.active ? ' show'}}">
+                            {% for children_3 in children_2.children %}
+                              <li{{ children_3.active ? ' class="active"'}}><a href="{{ children_3.href }}">{{ children_3.name }}</a></li>
+                            {% endfor %}
+                          </ul>
+                        {% endif %}
+                      </li>
+                      {% set k = k + 1 %}
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </li>
+              {% set j = j + 1 %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+      {% set i = i + 1 %}
+    {% endfor %}
+  </ul>
+</nav>

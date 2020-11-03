@@ -1,0 +1,270 @@
+<div class="main-bg padding-wrap">
+  <div class="container">
+    <h1>{{ heading_title }}</h1>
+{% if success %}
+    <div class="questionnaire-success-form text-center">
+      <img src="theme/client_ws_ttg/images/illustration-send.svg">
+      <div class="h1">{{ success }}</div>
+      <a href="{{ actions.home }}" class="main-btn">{{ button_home }}</a>
+    </div>
+{% else %}
+
+    <div class="wrap-questionnaire-block">
+      <div class="row">
+        <div class="col-12 col-md-6 offset-md-3">
+          <div class="questionnaire-block">
+            <form method="post" id="form-info_anketa" enctype="multipart/form-data">
+              <input type="hidden" name="form_method" value="info/anketa/send">
+
+              <div class="owl-carousel">
+                <div class="questionnaire-item">
+                  <div class="questionnaire-block__title">{{ text_step_1 }}</div>
+                  <div class="callback-input">
+                    <div class="">{{ entry_name }} *</div>
+                    <input type="text" name="name" value="{{ name }}" required>
+                    {% if error.name %}<div class="error-input">{{ error.name }}</div>{% endif %}
+                  </div>
+                  <div class="callback-input">
+                    <div class="">{{ entry_telephone }}</div>
+                    <input type="tel" name="telephone" value="{{ telephone }}">
+                    {% if error.telephone %}<div class="error-input">{{ error.telephone }}</div>{% endif %}
+                  </div>
+                  <div class="callback-input">
+                    <div class="">{{ entry_email }} *</div>
+                    <input type="email" name="email" value="{{ email }}" required>
+                    {% if error.email %}<div class="error-input">{{ error.email }}</div>{% endif %}
+                  </div>
+                  <div class="callback-input">
+                    <div class="">{{ entry_age_field }}</div>
+                    <input type="number" name="age" value="{{ age }}">
+                    {% if error.age %}<div class="error-input">{{ error.age }}</div>{% endif %}
+                  </div>
+                  <div class="questionnaire-item__bottom">
+                    <div></div>
+                    <a href="#" class="main-btn main-btn__right">{{ button_continue }}</a>
+                  </div>
+                  <div class="questionnaire-item__circle">
+                    <svg id="arc-svg0" width="56" height="56" viewBox="0 0 45 45"><path stroke-width="2" stroke="rgba(110, 195, 198, 0.18)" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"></path><path class="arc-path" stroke-width="2" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40" stroke="#6EC3C6"></path></svg>
+                    <div class="d-flex questionnaire-number-wrap">
+                      <span class="questionnaire-current"></span>/<span class="questionnaire-total"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="questionnaire-item">
+                  <div class="questionnaire-block__title">{{ text_step_2 }}</div>
+                  <div class="callback-input">
+                    <div class="">Опишите, как можно подробнее...</div>
+                    <textarea name="problem" cols="30" rows="10">{{ problem }}</textarea>
+                    {% if error.problem %}<div class="error-input">{{ error.problem }}</div>{% endif %}
+                  </div>
+                  <div class="questionnaire-comment">Обращаем  внимание: выпадение волос и поредение волос - разные ситуации, которые  могут сочетаться или же быть по отдельности. Выпадение: у вас постоянно  выпадает больше волос, чем раньше, вы их видите на  расческе, подушке,  сливе ванной и пр. Поредение: волосы выпадают не больше обычного, но  волос на  голове стало меньше чем раньше, волосы поредели. Укажите, что  именно беспокоит: поредение, выпадение, или то и другое.</div>
+                  <div class="questionnaire-item__bottom">
+                    <a href="#" class="main-btn reverse-btn main-btn__left">{{ button_back }}</a>
+                    <a href="#" class="main-btn main-btn__right">{{ button_continue }}</a>
+                  </div>
+                  <div class="questionnaire-item__circle">
+                    <svg id="arc-svg0" width="56" height="56" viewBox="0 0 45 45"><path stroke-width="2" stroke="rgba(110, 195, 198, 0.18)" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"></path><path class="arc-path"  stroke-width="2" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40" stroke="#6EC3C6"></path></svg>
+                    <div class="d-flex questionnaire-number-wrap">
+                      <span class="questionnaire-current"></span>/<span class="questionnaire-total"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="questionnaire-item">
+                  <div class="questionnaire-block__title">{{ text_step_3 }}</div>
+                  <div class="callback-input">
+                    <div class="">Опишите</div>
+                    <textarea name="how_long" cols="30" rows="10">{{ how_long }}</textarea>
+                    {% if error.how_long %}<div class="error-input">{{ error.how_long }}</div>{% endif %}
+                  </div>
+                  <div class="questionnaire-item__bottom">
+                    <a href="#" class="main-btn reverse-btn main-btn__left">{{ button_back }}</a>
+                    <a href="#" class="main-btn main-btn__right">{{ button_continue }}</a>
+                  </div>
+                  <div class="questionnaire-item__circle">
+                    <svg id="arc-svg0" width="56" height="56" viewBox="0 0 45 45"><path stroke-width="2" stroke="rgba(110, 195, 198, 0.18)" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"></path><path class="arc-path"  stroke-width="2" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40" stroke="#6EC3C6"></path></svg>
+                    <div class="d-flex questionnaire-number-wrap">
+                      <span class="questionnaire-current"></span>/<span class="questionnaire-total"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="questionnaire-item">
+                  <div class="questionnaire-block__title">{{ text_step_4 }}</div>
+                  <div class="callback-input">
+                    <div class="">Опишите</div>
+                    <textarea name="tried" cols="30" rows="10">{{ tried }}</textarea>
+                    {% if error.tried %}<div class="error-input">{{ error.tried }}</div>{% endif %}
+                  </div>
+                  <div class="questionnaire-item__bottom">
+                    <a href="#" class="main-btn reverse-btn main-btn__left">{{ button_back }}</a>
+                    <a href="#" class="main-btn main-btn__right">{{ button_continue }}</a>
+                  </div>
+                  <div class="questionnaire-item__circle">
+                    <svg id="arc-svg0" width="56" height="56" viewBox="0 0 45 45"><path stroke-width="2" stroke="rgba(110, 195, 198, 0.18)" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"></path><path class="arc-path"  stroke-width="2" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40" stroke="#6EC3C6"></path></svg>
+                    <div class="d-flex questionnaire-number-wrap">
+                      <span class="questionnaire-current"></span>/<span class="questionnaire-total"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="questionnaire-item">
+                  <div class="questionnaire-block__title">{{ text_step_5 }}</div>
+                  <div class="callback-input">
+                    <div class="">Опишите</div>
+                    <textarea name="medication" cols="30" rows="10">{{ medication }}</textarea>
+                    {% if error.medication %}<div class="error-input">{{ error.medication }}</div>{% endif %}
+                  </div>
+                  <div class="questionnaire-item__bottom">
+                    <a href="#" class="main-btn reverse-btn main-btn__left">{{ button_back }}</a>
+                    <a href="#" class="main-btn main-btn__right">{{ button_continue }}</a>
+                  </div>
+                  <div class="questionnaire-item__circle">
+                    <svg id="arc-svg0" width="56" height="56" viewBox="0 0 45 45"><path stroke-width="2" stroke="rgba(110, 195, 198, 0.18)" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"></path><path class="arc-path"  stroke-width="2" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40" stroke="#6EC3C6"></path></svg>
+                    <div class="d-flex questionnaire-number-wrap">
+                      <span class="questionnaire-current"></span>/<span class="questionnaire-total"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="questionnaire-item">
+                  <div class="questionnaire-block__title">{{ text_step_6 }}</div>
+                  <div class="wrap-file-block">
+                    <label class="file-upload">
+                      <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/past-img.svg#svg"></use></svg></i>
+                      <input required id="imgInp" type="file" name="photos[]" multiple="" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.ppt,.pptx,.odt,.avi,.ogg,.m4a,.mov,.mp3,.mp4,.mpg,.wav,.wmv" aria-invalid="false">
+                      <span class="file-label">{{ entry_image }}</span><div class="small-cart__point"><span data-placement="bottom" data-toggle="tooltip" data-html="true" title="" data-original-title="<p>Выберите сразу все прикрепляемые файлы.</p>">i</span></div>
+                    </label>
+                    {% if error.photos %}<div class="error-input">{{ error.photos }}</div>{% endif %}
+                    <div class="d-flex flex-wrap wrap-img-preview">
+                      
+                    </div>
+                  </div>
+                  <div class="questionnaire-comment">По возможности, приложите фото Вашей головы сразу после мытья и без  укладочных средств. Чтобы был виден срединный пробор, передний край  роста волос, виски.</div>
+                  <div class="d-flex align-items-center wrap-questionnaire-img">
+                    <div class="questionnaire-img-ex">
+                      <img src="theme/client_ws_ttg/images/wrap-questionnaire-img.png">
+                    </div>
+                    <div class="flex-grow-1 text-center">
+                      <div class="questionnaire-comment">Пример</div>
+                    </div>
+                  </div>
+                  <div class="questionnaire-item__bottom">
+                    <a href="#" class="main-btn reverse-btn main-btn__left">{{ button_back }}</a>
+                    <button type="submit" class="main-btn igor-lol">{{ button_submit }}</button>
+                  </div>
+                  <div class="questionnaire-item__circle">
+                    <svg id="arc-svg0" width="56" height="56" viewBox="0 0 45 45"><path stroke-width="2" stroke="rgba(110, 195, 198, 0.18)" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40"></path><path class="arc-path"  stroke-width="2" fill="none" d="M21 1 a 20 20 0 0 1 0 40 a 20 20 0 0 1 0 -40" stroke="#6EC3C6"></path></svg>
+                    <div class="d-flex questionnaire-number-wrap">
+                      <span class="questionnaire-current"></span>/<span class="questionnaire-total"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endif %}
+
+  </div>
+</div>
+{% if not success %}
+<script>
+$(function() { 
+    function carousInit(){
+      var countItems = $('.questionnaire-item').length;
+      $('.questionnaire-item .questionnaire-total').text(countItems);
+      // длина окружности
+      var lCircle = 2 * Math.PI * 20;
+      $('.questionnaire-item').each(function(){
+        var ind = $(this).index() + 1;
+        $(this).find('.questionnaire-current').text(ind);
+        //вычисляем соотношение дней к длине окружности
+        var l = ind * lCircle / countItems;
+        $(this).find('.questionnaire-item__circle .arc-path').attr('stroke-dasharray', l+',100');
+      });
+    }
+    carousInit();
+
+    var owl6 = $('.questionnaire-block .owl-carousel').owlCarousel({
+      nav:false,
+      items: 1,
+      dots: false,
+      center:true,
+      mouseDrag: false,
+      touchDrag: false,
+      margin: 30,
+    });
+    
+    $(".questionnaire-item .main-btn__left").click(function(e) {
+      e.preventDefault();
+      owl6.trigger('prev.owl.carousel');
+    });
+    $(".questionnaire-item .main-btn__right").click(function(e) {
+      e.preventDefault();
+      owl6.trigger('next.owl.carousel');
+    });
+    //отслеживаем изменение полей формы
+    function changeInput(el){
+      var parent = el,
+        flag = 1;
+      // разрешаем пройти на следущий шаг если обязательные поля заполнены
+      parent.find('.callback-input input, .wrap-file-block input, textarea').each(function(){
+        var attr = $(this).attr('required');
+        if(typeof attr !== typeof undefined && attr !== false){
+          if($(this).val() == ''){
+            flag = 0;
+          }
+        }
+      });
+
+      if(flag == 1){
+        parent.find('.main-btn__right').addClass('active');
+      } else{
+        parent.find('.main-btn__right').removeClass('active');
+      }
+    }
+    $(".questionnaire-item .callback-input input, .questionnaire-item .wrap-file-block input,.questionnaire-item textarea").change(function(e) {
+      var el = $(this).parents('.questionnaire-item');
+      changeInput(el);
+    });
+    owl6.on('changed.owl.carousel', function(event) {
+      var el = $(event.target).find('.owl-item:eq('+event.item.index+') .questionnaire-item');
+      changeInput(el);
+    });
+
+    $('#form-info_anketa input[name=email]').change();
+
+    function readURL(input) {
+      $(input.files).each(function(i, el) {
+        var reader = new FileReader();        
+        reader.onload = function(e) {
+          //console.log(input.files[i]);
+          $('.wrap-img-preview').append(`<div class="img-preview" style="background: url('${e.target.result}')"><a href="#" class="reset-img-preview"></a></div>`);
+        };
+        reader.readAsDataURL(input.files[i]);
+      });
+    }
+    var tempNewFileList = [];
+    $('body').on('click', '.reset-img-preview',function(evt) {
+      evt.preventDefault();
+      //console.log($(this).parents('.img-preview').index());
+      var imgInp = document.querySelector("#imgInp");
+      
+      if(tempNewFileList.length > 0){
+        var newFileList = Array.from(tempNewFileList);
+      } else{
+        var newFileList = Array.from(imgInp.files);
+      }
+      newFileList.splice($(this).parents('.img-preview').index(),1);
+      //console.log(newFileList);
+      tempNewFileList = newFileList;
+
+      //console.log(tempNewFileList);
+      $(this).parents('.img-preview').remove();
+    });
+    $("#imgInp").change(function() {
+      readURL(this);
+    });
+
+});
+</script>
+{% endif %}

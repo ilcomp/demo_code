@@ -1,0 +1,50 @@
+// Color system
+$gray-400: #ced4da;
+
+$white: #fff;
+$blue: #1e91cf;
+$red: #e3503e;
+$yellow: #f3a638;
+$green: #4cb64c;
+$cyan: #54b7d3;
+
+$light: $white;
+
+$yiq-contrasted-threshold: 200;
+
+// Options
+$enable-caret: false;
+
+$border-radius: .2308rem;
+$border-radius-lg: .3846rem;
+$border-radius-sm: .1538rem;
+
+// Typography
+$font-size-base: .8125rem;
+$line-height-base: 1.4;
+
+// Tables
+$table-cell-padding: .6154rem;
+$table-cell-padding-sm: .3846rem;
+
+// Buttons + Forms
+$input-btn-padding-y: .5385rem;
+$input-btn-padding-x: .7692rem;
+$input-btn-padding-y-lg: .6923rem;
+$input-btn-padding-x-lg: 1.385rem;
+$btn-font-size: .8125rem;
+
+// Navbar
+$navbar-padding-y: 0;
+$navbar-padding-x: 0;
+$navbar-nav-link-padding-x: 1.5rem;
+$navbar-brand-padding-y: 0;
+$navbar-light-color: #6D6D6D;
+
+// Breadcrumbs
+$breadcrumb-padding-y: 0;
+$breadcrumb-padding-x: .65rem;
+$breadcrumb-item-padding: .3rem;
+$breadcrumb-bg: none;
+$breadcrumb-divider-color: $gray-400;
+$breadcrumb-divider: "\f105";

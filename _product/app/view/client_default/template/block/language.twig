@@ -1,0 +1,13 @@
+{% if languages|length > 1 %}
+  <div class="dropdown">
+    <div class="dropdown-toggle" data-toggle="dropdown">
+      <img src="{{ languages[code].image }}" alt="{{ languages[code].name }}" title="{{ languages[code].name }}">
+      <span class="d-none d-md-inline">{{ languages[code].name }}</span> <i class="fa fa-caret-down"></i>
+    </div>
+    <div class="dropdown-menu">
+      {% for language in languages %}
+        <a href="{{ language.href }}" class="dropdown-item">{% if language.image %}<img src="{{ language.image }}" alt="{{ language.name }}" title="{{ language.name }}"/> {% endif %}{{ language.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

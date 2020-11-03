@@ -1,0 +1,32 @@
+{% import "admin_default/template/macro/form_group.twig" as macros %}
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="list">
+      <div class="form-group row required">
+        <label class="col-sm-2 col-form-label">{{ entry_name }}</label>
+        <div class="col-sm-10">
+        {% for language in languages %}
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+            <input type="text" name="name[{{ language.language_id }}]" value="{{ name[language.language_id] ? name[language.language_id] }}" placeholder="{{ entry_name }}" class="form-control"/>
+          </div>
+          {% if error_name[language.language_id] %}
+            <div class="invalid-tooltip">{{ error_name[language.language_id] }}</div>
+          {% endif %}
+        {% endfor %}
+        </div>
+      </div>
+      {{ macros.select(
+        {'id': 'type', 'name' : 'type', 'value' : type},
+        {'label' : entry_type},
+        {'options' : types, 'key' : 'value', 'title' : 'name', 'default' : text_none}
+      ) }}
+      {{ macros.enable(
+        {'id': 'readonly', 'name' : 'readonly', 'value' : readonly},
+        {'label' : entry_readonly},
+        {'enabled' : text_enabled, 'disabled' : text_disabled}
+      ) }}
+    </form>
+  </div>
+</div>

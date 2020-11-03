@@ -1,0 +1,68 @@
+<div class="table_cart">
+{% set filter_style = '' %}
+{% for product in products %}
+  {% set option_datas = [] %}
+  {% for option_data in product.option_data %}
+    {% set option_datas = option_datas|merge([option_data.value]) %}
+  {% endfor %}
+  {% if product.filter_style and product.filter_style.filter_style_id != filter_style %}
+    {% set filter_style = product.filter_style.filter_style_id %}
+    </div>
+    <h2>{{ product.filter_style.name }}</h2>
+    <div class="table_cart">
+  {% endif %}
+  <div class="table_cart_item" data-cart_id="{{ product.cart_id }}">
+    <a href="{{ product.href }}" class="left_info_cart">
+      {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}">{% endif %}
+      <p>{{ product.title }}{{ not (option_datas is empty) ? ' (' ~ option_datas|join(', ') ~ ')'}}</p>
+    </a>
+    <div class="right_info_cart">
+      <span class="d-none d-md-flex">{{ product.price_format }}</span>
+      <div class="quantity count_item">
+        <a href="javascript:void(0);" class="quantity-minus">-</a>
+        <span class="quantity-value number">{{ product.quantity }}</span>
+        <a href="javascript:void(0);" class="quantity-plus">+</a>
+        <input type="hidden" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="2" class="form-control" data-unit="" data-point="" data-price="{{ product.price }}">
+      </div>
+      <span>{{ product.total }}</span>
+      <a href="javascript:void(0);" class="del_product" title="{{ button_remove }}"><i class="recycle" data-cart_delete="product"></i></a>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+{% if success %}
+<script type="text/javascript">
+    $(document).trigger('cart_update', {success: '{{ success }}'});
+</script>
+{% endif %}
+
+<script>
+var timeout;
+
+$('#cart_form').on('change', 'input', function(){
+  clearTimeout(timeout);
+
+  timeout = setTimeout(function(){
+    $('#cart_form').submit();
+  }, 1000);
+});
+
+$('#cart_form').on('click', '[data-cart_delete="product"]', function(){
+  var el = $(this).parents('[data-cart_id]');
+  cart.remove(el.data('cart_id'));
+
+  el.remove();
+});
+
+if ('quantity' in $.fn) {
+  $('#cart_form').find('[name^=quantity]').each(function() {
+    var el = $(this);
+    el.quantity({
+      minus: el.parent().find('.quantity-minus'),
+      plus: el.parent().find('.quantity-plus'),
+      block: el.parent().find('.quantity-value'),
+    });
+  });
+}
+</script>

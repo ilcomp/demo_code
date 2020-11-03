@@ -1,0 +1,51 @@
+<fieldset class="custom-field" data-sort="{{ custom_field.sort_order }}">
+  <legend>{{ custom_field.name }}</legend>
+  <table id="files_row{{ custom_field.custom_field_id }}" class="table table-striped table-bordered table-hover">
+    <tbody>
+      {% set files_row = 0 %}
+      {% for row in custom_field.value[-1] %}
+        <tr data-row="files{{ files_row }}">
+          <td class="text-center">
+            <div class="input-group">
+              <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1][{{ files_row }}]" value="{{ row }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" id="custom_field-input{{ custom_field.custom_field_id }}_{{ files_row }}"/>
+              <div class="input-group-append">
+                <button type="button" data-toggle="file" data-target="#custom_field-input{{ custom_field.custom_field_id }}_{{ files_row }}" data-loading-text="{{ text_loading }}" class="btn btn-primary" title="{{ button_upload }}"><i class="fas fa-upload"></i></button>
+              </div>
+            </div>
+          </td>
+          <td class="text-right"><button type="button" onclick="$(this).parents('[data-row^=files]').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>
+        </tr>
+        {% set files_row = files_row + 1 %}
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td></td>
+        <td class="text-right"><button type="button" data-add_template="files" data-row="{{ files_row }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i></button></td>
+      </tr>
+    </tfoot>
+  </table>
+
+<script>
+$('#files_row{{ custom_field.custom_field_id }} [data-add_template=files]').on('click', function() {
+  var row = $(this).data('row');
+
+  html = '<tr data-row="files' + row + '">';
+  html += '  <td class="text-center">';
+  html += '    <div class="input-group">';
+  html += '    <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1][' + row + ']" value="" class="form-control" id="custom_field-input{{ custom_field.custom_field_id }}_' + row + '"/>';
+  html += '    <div class="input-group-append">';
+  html += '    <button type="button" data-toggle="file" data-target="#custom_field-input{{ custom_field.custom_field_id }}_' + row + '" data-loading-text="{{ text_loading }}" class="btn btn-primary" title="{{ button_upload }}"><i class="fas fa-upload"></i></button>';
+  html += '    </div>';
+  html += '    </div>';
+  html += '  </td>';
+  html += '  <td class="text-right"><button type="button" onclick="$(this).parents(\'[data-row^=files]\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#files_row{{ custom_field.custom_field_id }} tbody').append(html);
+
+  $(this).data('row', row + 1);
+});
+</script>
+<hr>
+</fieldset>

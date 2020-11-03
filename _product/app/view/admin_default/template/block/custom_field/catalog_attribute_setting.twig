@@ -1,0 +1,15 @@
+<div class="form-group row custom-field">
+  <label class="col-sm-2 col-form-label" for="display-setting-listing">{{ entry_listing }}</label>
+  <div class="col-sm-10">
+    <select name="setting[listing_id]" id="display-setting-listing" class="form-control">
+      <option value="">{{ text_none }}</option>
+      {% for listing in listings %}
+        {% if values.list_id == listing.listing_id  %}
+          <option value="{{ listing.listing_id }}" selected="selected">{{ listing.name }}</option>
+        {% else %}
+          <option value="{{ listing.lisingt_id }}">{{ listing.name }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+</div>

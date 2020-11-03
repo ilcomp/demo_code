@@ -1,0 +1,120 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="mail">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="sxgeo_status" id="input-status" class="form-control">
+            {% if sxgeo_status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-default">{{ entry_default }}</label>
+        <div class="col-sm-10">
+          <input type="text" value="{{ sxgeo_default_name }}" placeholder="{{ entry_default }}" id="input-default" class="form-control"/>
+          <input type="hidden" name="sxgeo_default" value="{{ sxgeo_default }}" id="autocomplete-default"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-update_ip">{{ entry_update_ip }}</label>
+        <div class="col-sm-10">
+          <select name="cron[update_ip]" id="input-update_ip" class="form-control">
+            {% for key, name in cycles %}
+              <option value="{{ key }}" {{ key == cron.update_db ? 'selected'}}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-update_db">{{ entry_update_db }}</label>
+        <div class="col-sm-10">
+          <select name="cron[update_db]" id="input-update_db" class="form-control">
+            {% for key, name in cycles %}
+              <option value="{{ key }}" {{ key == cron.update_db ? 'selected'}}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-5 offset-sm-2">
+          <a href="{{ update_ip }}" id="update_ip" class="btn btn-primary">{{ button_update_ip }}</a>
+        </div>
+        <div class="col-sm-5">
+          <a href="{{ update_db }}" id="update_db" class="btn btn-primary">{{ button_update_db }}</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+$('#update_ip, #update_db').click(function(e) {
+  e.preventDefault();
+  var el = $(this);
+
+  el.button('loading');
+
+  fetch(this.href, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache'
+  })
+  .then(function(r){
+    el.button('reset');
+
+    return r.json();
+  })
+  .then(function(json) {
+    $('.alert-dismissible').remove();
+
+    if (json['error']) {
+      $('#content > .container-fluid').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+
+    if (json['success']) {
+      $('#content > .container-fluid').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+
+    console.log(json['result']);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script>
+$('#input-default').autocomplete({
+    'source': function(request, response) {
+      fetch('{{ actions.autocomplete|replace({"&amp;": "&"}) }}&filter_name=' + encodeURIComponent(request), {
+        credentials: 'include',
+        cache: 'no-cache',
+        headers: {'Accept': 'application/json'},
+      })
+      .then(function(r){
+        return r.json();
+      })
+      .then(function(json){
+        response($.map(json, function(item) {
+          return {
+            label: item['fullname'] ? item['fullname'] : item['name'],
+            value: item['sxgeo_id']
+          }
+        }));
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+    },
+    'select': function(item) {
+      $('#input-default').val(item['label']);
+      $('#autocomplete-default').val(item['value']);
+    }
+});
+</script>

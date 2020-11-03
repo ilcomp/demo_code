@@ -1,0 +1,17 @@
+<div class="price-wrap d-flex align-items-center">
+  {{ text_total }}:
+  <div class="price-wrap d-flex">
+  {% for total in totals %}
+    {% if total.code == 'total' %}
+    <div class="product-price">{{ total.text }}</div>
+    {% elseif total.code == 'special' %}
+    <div class="product-price__old">{{ total.text }}</div>
+    {% endif %}
+  {% endfor %}
+  </div>
+</div>
+{% for total in totals %}
+  {% if total.code == 'shipping' %}
+    <div data-order_total="shipping" style="display:none">{{ total.text|replace({'₽': '<span>₽</span>'}) }}</div>
+  {% endif %}
+{% endfor %}

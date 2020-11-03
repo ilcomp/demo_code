@@ -1,0 +1,47 @@
+{% if class == 'partners' %}
+<section class="partners-slider">
+  <div class="slider owl-carousel">
+  {% for slide in slides %}
+    {% if slide.link %}
+    <a href="{{ slide.link }}" class="partner__slide">
+    {% else %}
+    <div class="partner__slide">
+    {% endif %}
+      <picture>
+      {% if slide.image_desktop %}
+         <source srcset="{{ slide.thumb_desktop }}" media="(min-width: 676px)">
+      {% endif %}
+         <img src="{{ slide.thumb }}">
+      </picture>
+    {% if slide.link %}
+    </a>
+    {% else %}
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+</section>
+{% else %}
+<section class="main-slider">
+  <div class="slider owl-carousel">
+  {% for slide in slides %}
+    {% if slide.link %}
+    <a href="{{ slide.link }}" class="main-slider__slide">
+    {% else %}
+    <div class="main-slider__slide">
+    {% endif %}
+      <picture>
+      {% if slide.image_desktop %}
+         <source srcset="{{ slide.thumb_desktop }}" media="(min-width: 676px)">
+      {% endif %}
+         <img src="{{ slide.thumb }}">
+      </picture>
+    {% if slide.link %}
+    </a>
+    {% else %}
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+</section>
+{% endif %}

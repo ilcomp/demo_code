@@ -1,0 +1,105 @@
+@media (max-width: 767px){
+  .owl-prev{
+    left: calc(50% - 63.5px);
+  }
+  .owl-next{
+    right: calc(50% - 63.5px);
+  }
+}
+@media (min-width: 768px){
+  .owl-prev{
+    left: calc(100% - 127px);
+  }
+  .owl-next{
+    right: 0;
+  }
+}
+.owl-prev, .owl-next{
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(85, 99, 143) !important;
+  box-shadow: 0px 7px 24px 0px rgba(0, 0, 0, 0.01);
+  border-radius: 50px;
+  position: absolute;  
+  bottom: 0;
+  top: 0;
+  cursor: pointer;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  @include transition(0.3s);
+  &:hover{
+    //background-color: #40c4c6 !important;
+    background-color: rgb(97, 113, 161);
+    box-shadow: none;
+    .slider-arrow{
+      svg{
+        *{
+          fill: #fff;
+        }
+      }
+    }
+  }
+}
+.owl-next{
+  .slider-arrow{
+    -webkit-transform: rotate(-180deg); /* Для Safari, Chrome, iOS */
+    transform: rotate(-180deg); 
+  }
+}
+.wrap-arrows{
+  position: relative;
+  z-index: 99;
+}
+/* dots */
+.owl-dots{
+  position: relative;
+  bottom: 45px;
+  display: flex;
+  justify-content: center;
+ .owl-dot{
+    border-radius: 50%;
+    width: 12px !important;
+    height: 12px !important;
+    // background-color: rgb(85, 99, 143) !important;
+    position: relative;
+    margin-right: 5px;
+    @include transition(0.3s);
+    span{
+      background-color: rgb(85, 99, 143);
+      width: 4px;
+      height: 4px;
+      margin: 0 auto;
+      border-radius: 50%;
+      display: block;
+      @include transition(0.3s);
+    }
+    &:after{
+      content: "";
+      @include transition(0.3s);
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      border: 1px solid transparent;
+      border-radius: 50%;
+    }
+    &.active{
+        // background-color: rgb(82, 198, 200) !important;
+        &:after{
+          content: "";
+          border-color: rgb(82, 198, 200);
+        }
+        span{
+          background-color: rgb(82, 198, 200);
+        }
+    }
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+}

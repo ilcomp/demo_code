@@ -1,0 +1,127 @@
+<div class="info-lk">
+{% if custom_fields_contact or custom_fields_address %}
+  <div class="h4">{{ heading_title }}</div>
+  <form method="post" enctype="multipart/form-data">
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+    {% endif %}
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+    {% endif %}
+
+    <div class="row">
+    {% for custom_field in custom_fields_contact %}
+      <div class="col-12 col-md-6">
+        <div class="callback-input">
+          <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user.svg#form_svg"></use></svg></i>
+          <div>{{ custom_field.name }}</div>
+          <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+          {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    {% for custom_field in custom_fields_address %}
+      <div class="col-12 col-md-6">
+        <div class="callback-input">
+          <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user.svg#form_svg"></use></svg></i>
+          <div>{{ custom_field.name }}</div>
+          <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+          {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    {% for custom_field in custom_fields_account_group %}
+      <div class="col-12 col-md-6">
+        <div class="callback-input">
+          <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user.svg#form_svg"></use></svg></i>
+          <div>{{ custom_field.name }}</div>
+          <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+          {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+    <button type="submit" class="main-btn">{{ button_submit }}</button>
+  </form>
+  {% endif %}
+  <div class="h4">{{ text_contact }}</div>
+  <div class="personal-info-wrap">
+    <div class="d-flex mb-2">
+      <div class="personal-info-wrap__text">{{ entry_telephone }}: {{ telephone }}</div>
+      <button type="button" data-account_login="{{ actions.edit_telephone }}"><i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/pencil.svg#form_svg"></use></svg></i></button>
+    </div>
+    <div class="d-flex mb-2">
+      <div class="personal-info-wrap__text">{{ entry_email }}: {{ email }}</div>
+      <button type="button" data-account_login="{{ actions.edit_email }}"><i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/pencil.svg#form_svg"></use></svg></i></button>
+    </div>
+  </div>
+  <div class="h4">{{ text_password }}</div>
+  {{ account_password }}
+
+{% if account_secret %}
+  <div class="registration-page__line"></div>
+  <div class="confirm-specialty">
+    <form method="post" enctype="multipart/form-data">
+      <input type="hidden" name="form_method" value="extension/system/secret">
+      {% if form_secret.success %}
+      <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ form_secret.success }}</div>
+      {% endif %}
+      {% if form_secret.error %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ form_secret.error }}</div>
+      {% endif %}
+
+      <div class="d-md-flex align-items-center">
+        <div class="wrap-file-block">
+          <label class="file-upload">
+            <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/clip.svg#form_svg"></use></svg></i>
+            <input type="file" name="secret_file[]" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.ppt,.pptx,.odt,.avi,.ogg,.m4a,.mov,.mp3,.mp4,.mpg,.wav,.wmv" aria-invalid="false">
+            <span class="file-label">Прикрепить резюме</span>
+          </label>
+        </div>
+        <button type="submit" class="main-btn">Запросить проверку</button>
+      </div>
+    </form>
+    <div class="confirm-qualification">Доступ к закрытому разделу для специалистов будет открыт после проверки документов, подтверждающих квалификацию. Для специалистов-стилистов\парикмахеров закрытый раздел будет доступен после прохождения обучения (ссылка на курс <a href="https://iat-education.ru/" target="_blank">https://iat-education.ru/esteticheskay...ikmaherov/</a>)</div>
+  </div>
+{% endif %}
+</div>
+
+<script>
+$('[data-account_login]').click(function(e) {
+  e.preventDefault();
+
+  $('#modal-account_login').remove();
+
+  fetch(this.dataset.account_login, {
+    credentials: 'include',
+    headers: {'Accept': 'text/html'},
+    cache: 'no-cache'
+  })
+  .then(function(r){
+    if (r.status == 401) {
+      $('#modal_account').modal('show');
+
+      return '';
+    } else
+      return r.text();
+  })
+  .then(function(html) {console.log(html);
+    $('body').append(html);
+
+    $('#modal-account_login').modal('show');
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script>
+$('input[type="file"]').change(function(){
+  var block = $(this).parent();
+
+  block.nextAll('.file-name').remove();
+
+  for (var i = this.files.length - 1; i >= 0; i--)
+    block.after('<div class="file-name">' + this.files[i].name + '</div>');
+});
+</script>

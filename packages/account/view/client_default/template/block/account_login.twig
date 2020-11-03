@@ -1,0 +1,46 @@
+<script>
+(function(){
+  var timeout;
+
+  function is_login() {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(function(){
+      fetch('{{ action_block }}', {
+        credentials: 'include',
+        cache: 'no-cache',
+        headers: {'Accept': 'application/json'}
+      })
+      .then(function(r){
+        if (xhr.status < 200 || xhr.status > 300)
+          location.reload();
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+    }, 100);
+  }
+
+  var param_name = false, event_name;
+  if (typeof document.hidden!='undefined') {
+      param_name='hidden';
+      event_name='visibilitychange';
+  } else if (typeof document.mozHidden!='undefined') {
+      param_name='mozHidden';
+      event_name='mozvisibilitychange';
+  } else if (typeof document.msHidden!='undefined') {
+      param_name='msHidden';
+      event_name='msvisibilitychange';
+  } else if (typeof document.webkitHidden!='undefined') {
+      param_name='webkitHidden';
+      event_name='webkitvisibilitychange';
+  }
+
+  window.addEventListener('focus', is_login, false);
+  if (param_name) {
+      document.addEventListener(event_name, function() {
+          if (!document[param_name]) is_login();
+      }, false);
+  }
+});
+</script>

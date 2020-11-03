@@ -1,0 +1,207 @@
+ @media (max-width: 767px){
+  h1, .h1{
+    font-size: 29px !important;
+  }
+  h2, .h2{
+    font-size: 25px !important;
+  }
+}
+*{
+  &:focus {
+    outline:0 none !important;
+  }
+}
+body {
+  font-family: "proximanova", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 100;
+  font-style: normal;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  margin: 0;
+}
+// для модальных окон на мобильнике start
+.body-hide {
+    overflow: hidden;
+    position: relative;
+}
+// для модальных окон на мобильнике end
+
+// main{
+//   overflow-x: hidden;
+// }
+html{
+  &.active{
+    height: auto;
+    overflow: auto;
+  }
+}
+// заполняет экран сайта, если контента мало
+.voidBlock{
+  flex: 1 0 auto;
+}
+input::-webkit-contacts-auto-fill-button {
+    opacity: 0;
+}
+strong{
+  font-weight: bold;
+}
+a{
+  color: #000000;
+  &:hover, &:focus{
+    color: #000;
+  }
+  &:focus{
+   text-decoration: none !important;
+   -webkit-box-shadow: none !important;
+   box-shadow: none !important;   
+  }
+}
+p{
+  color: rgb(143, 143, 143);
+  line-height: 1.5;
+  margin-bottom: 20px;
+  font-size: 16px;
+  img{
+    margin-bottom: 20px;
+  }
+}
+hr{
+  margin-top: 0px !important;
+  margin-bottom: 0 !important;
+  border-top: 1px solid rgba(200, 200, 200,0.271);
+  position: relative;
+}
+ul{
+  margin-bottom: 0;
+  margin-left: 0 !important;
+}
+li{
+  font-size: 16px;
+  line-height: 1.2;
+}
+h1,.h1{
+  font-size: 40px;
+  line-height: 1.2;
+  color: rgb(51, 51, 51);
+  margin-bottom: 40px;
+}
+h2,.h2{
+  font-size: 31px;
+  color: #000;
+}
+h3,.h3{
+  font-size: 25px;
+  color: rgb(0, 0, 0);
+  line-height: 1.2;
+}
+h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6{
+  font-weight: 100;
+}
+/* для WP start*/
+img.alignleft {
+  float: left;
+  margin-right: 1.5em;
+  max-width: 100%;
+}
+img.alignright {
+  float: right;
+  margin-left: 1.5em;
+  max-width: 100%;
+}
+img.aligncenter {
+  margin: 0 auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+img.alignnone{
+  max-width: 100%;
+}
+p{
+  img:nth-child(n+2):nth-last-child(1){
+    float: none;
+  }
+}
+/* для WP end*/
+input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]), textarea, select{
+  border: 1px solid rgb(233, 233, 233);
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  background-color: rgba(255,255,255,0);
+  font-size: 16px;
+  padding: 15px 15px !important;
+  width: 100%;
+  font-weight: normal;
+  &::placeholder{
+    font-size: 14px;
+    color: rgb(154, 154, 154);
+  }
+  &:focus{
+    color: #5ecacc;
+    border-color: #5ecacc;
+  }
+}
+
+// из-за отступа текст не по центру
+// input[type="text"], input[type="tel"]{
+//   padding-right: 35px !important;
+// }
+
+/* Прозрачность формы автозаполнения start*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus
+input:-webkit-autofill, 
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-animation-name: autofill;
+    -webkit-animation-fill-mode: both;
+}
+
+@-webkit-keyframes autofill {
+    to {
+        color: #000;
+        background: transparent;
+    }
+}
+/* Прозрачность формы автозаполнения end*/
+select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: url(../images/select_arrow.svg) #fff no-repeat calc(100% - 14.5px);
+    background-size: 12px;
+    cursor: pointer;
+    max-height: 50px;
+    border-radius: 3px;
+    overflow: hidden;
+    padding: 12px 30px 12px 16px;
+}
+button{
+  border: none;
+  background-color: transparent;
+}
+table{
+  width: 100%;
+  margin-bottom: 20px;
+}
+td{
+  border: none !important;
+  font-size: 16px;
+  color: rgb(0, 0, 0);
+  line-height: 1.625;
+  padding: 10px 5px;
+}
+.clear {
+    clear: both;
+}

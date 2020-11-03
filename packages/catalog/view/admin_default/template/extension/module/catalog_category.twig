@@ -1,0 +1,113 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="module">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          {% if error_name %}
+            <div class="invalid-tooltip">{{ error_name }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-filter">{{ entry_filter }}</label>
+        <div class="col-sm-10">
+          <select name="filter" id="input-filter" class="form-control">
+          {% for code, name in filters %}
+            <option value="{{ code }}"{{ code == filter ? ' selected' }}>{{ name }}</option>
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-category">{{ entry_category }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="category_name" value="" placeholder="{{ entry_category }}" id="input-category" class="form-control"/>
+          <div id="module_category" class="form-control" style="height: 150px; overflow: auto;">
+            {% for category in categories %}
+              <div id="module_category{{ category.category_id }}"><i class="fas fa-minus-circle"></i> {{ category.path_name }}
+                <input type="hidden" name="category[]" value="{{ category.category_id }}"/>
+              </div>
+            {% endfor %}
+          </div>
+          <small class="form-text text-muted">{{ help_category }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-limit">{{ entry_limit }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="limit" value="{{ limit }}" placeholder="{{ entry_limit }}" id="input-limit" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-image_custom_field">{{ entry_image_custom_field }}</label>
+        <div class="col-sm-10">
+          <select name="image_custom_field" id="input-image_custom_field" class="form-control">
+            <option>{{ text_none }}</option>
+          {% for custom_field in custom_fields %}
+            <option value="{{ custom_field.custom_field_id }}"{{ custom_field.custom_field_id == image_custom_field ? ' selected' }}>{{ custom_field.name }}</option>
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-image_width">{{ entry_image_width }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="image_width" value="{{ image_width }}" placeholder="{{ entry_image_width }}" id="input-image_width" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-image_height">{{ entry_image_height }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="image_height" value="{{ image_height }}" placeholder="{{ entry_image_height }}" id="input-image_height" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="status" id="input-status" class="form-control">
+            {% if status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div><
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+$('input[name=\'category_name\']').autocomplete({
+  source: function(request, response) {
+    $.ajax({
+      url: getURLPath() + '?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['category_id']
+          }
+        }));
+      }
+    });
+  },
+  select: function(item) {
+    $('input[name=\'category_name\']').val('');
+
+    $('#module_category' + item['value']).remove();
+
+    $('#module_category').append('<div id="module_category' + item['value'] + '"><i class="fas fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="category[]" value="' + item['value'] + '" /></div>');
+  }
+});
+
+$('#module_category').on('click', '.fa-minus-circle', function() {
+  $(this).parent().remove();
+});
+//--></script>

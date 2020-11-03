@@ -1,0 +1,377 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="theme">
+      <fieldset>
+        <legend>{{ text_general }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+          <div class="col-sm-10">
+            <select name="theme_client_ws_ttg_status" id="input-status" class="form-control">
+              {% if theme_client_ws_ttg_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+              {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-confidentiality">{{ entry_confidentiality }}</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{ confidentiality ? confidentiality.name }}" placeholder="{{ entry_confidentiality }}" id="input-confidentiality" class="form-control"/>
+            <input type="hidden" name="theme_client_ws_ttg_confidentiality" value="{{ theme_client_ws_ttg_confidentiality }}" id="autocomplete-confidentiality"/>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-agreement">{{ entry_agreement }}</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{ agreement ? agreement.name }}" placeholder="{{ entry_agreement }}" id="input-agreement" class="form-control"/>
+            <input type="hidden" name="theme_client_ws_ttg_agreement" value="{{ theme_client_ws_ttg_agreement }}" id="autocomplete-agreement"/>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-header_link">{{ entry_header_link }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="theme_client_ws_ttg_header_link" value="{{ theme_client_ws_ttg_header_link }}" placeholder="{{ entry_header_link }}" id="input-header_link" class="form-control"/>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_menu }}</label>
+          <div class="col-sm-10">
+            <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for menu in menus %}
+              <label class="form-check">
+                <input type="checkbox" name="theme_client_ws_ttg_menus[]" value="{{ menu.menu_id }}" class="form-check-input"{{ menu.menu_id in theme_client_ws_ttg_menus ? ' checked' }}/> {{ menu.name }}
+              </label>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-modules">{{ text_modules }}</label>
+          <div class="col-sm-10">
+            <table class="table table-bordered table-hover" id="modules">
+              <thead>
+                <tr>
+                  <td class="text-left">{{ entry_code }}</td>
+                  <td class="text-center">{{ entry_template }}</td>
+                  <td class="text-center">{{ entry_modules }}</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody id="modules-list">
+              {% set module_row = 0 %}
+              {% for item in theme_client_ws_ttg_modules %}
+                <tr data-row="module_row{{ module_row }}">
+                  <td class="text-left">
+                    <input type="text" name="theme_client_ws_ttg_modules[{{ module_row }}][code]" value="{{ item.code }}" class="form-control">
+                  </td>
+                  <td class="text-left">
+                    <input type="text" name="theme_client_ws_ttg_modules[{{ module_row }}][template]" value="{{ item.template }}" class="form-control">
+                  </td>
+                  <td class="text-left">
+                    <select name="theme_client_ws_ttg_modules[{{ module_row }}][module]" class="form-control">
+                    {% for extension in extensions %}
+                      <optgroup label="{{ extension.name }}">
+                        {% if not extension.module %}
+                          {% if extension.code == item.module %}
+                            <option value="{{ extension.code }}" selected="selected">{{ extension.name }}</option>
+                          {% else %}
+                            <option value="{{ extension.code }}">{{ extension.name }}</option>
+                          {% endif %}
+                        {% else %}
+                          {% for module in extension.module %}
+                            {% if module.code == item.module %}
+                              <option value="{{ module.code }}" selected="selected">{{ module.name }}</option>
+                            {% else %}
+                              <option value="{{ module.code }}">{{ module.name }}</option>
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                      </optgroup>
+                    {% endfor %}
+                    </select>
+                  </td>
+                  <td class="text-center"><button type="button" data-remove_template="module" data-row="{{ module_row }}" data-toggle="tooltip" rel="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fas fa-minus-circle"></i></button></td>
+                </tr>
+                {% set module_row = module_row + 1 %}
+              {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3"></td>
+                  <td class="text-center"><button type="button" data-add_template="module" data-row="{{ module_row }}" data-toggle="tooltip" title="{{ button_module_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle fa-fw"></i></button></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_composition }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-product_id">{{ entry_construstor_product_id }}</label>
+          <div class="col-sm-10">
+            <input type="text" value="{{ construstor_product.name }}" placeholder="{{ entry_construstor_product_id }}" id="input-product_id" class="form-control"/>
+            <input type="hidden" name="theme_client_ws_ttg_construstor_product_id" value="{{ construstor_product.product_id }}" id="autocomplete-product_id"/>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-product_exlude">{{ entry_construstor_exlude }}</label>
+          <div class="col-sm-10">
+            <input type="text" value="" placeholder="{{ entry_construstor_exlude }}" id="input-product_exlude" class="form-control"/>
+            <div id="products_exlude" class="form-control" style="height: 150px; overflow: auto;">
+            {% for product in products_exlude %}
+              <div id="products_exlude{{ product.product_id }}"><i class="fas fa-minus-circle"></i> {{ product.name }}
+                <input type="hidden" name="theme_client_ws_ttg_construstor_exlude[]" value="{{ product.product_id }}"/>
+              </div>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-construstor_min">{{ entry_construstor_min }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="theme_client_ws_ttg_construstor_min" value="{{ theme_client_ws_ttg_construstor_min }}" placeholder="{{ entry_construstor_min }}" id="input-construstor_min" class="form-control"/>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-construstor_max">{{ entry_construstor_max }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="theme_client_ws_ttg_construstor_max" value="{{ theme_client_ws_ttg_construstor_max }}" placeholder="{{ entry_construstor_max }}" id="input-construstor_max" class="form-control"/>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in theme_client_ws_ttg_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="theme_client_ws_ttg_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="theme_client_ws_ttg_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript" src="/assets/Sortable-1.10.2/Sortable.min.js"></script>
+<style type="text/css">#table-fields > tr{cursor: move;}</style>
+<script>
+var el = document.getElementById('modules-list');
+new Sortable(el, {
+  multiDrag: true,
+  filter: 'input, label',
+  preventOnFilter: false,
+  selectedClass: 'selected',
+  animation: 150,
+  // onEnd: function(){
+  //   $(el).find('input[data-sort_order]').each(function(i, e){this.value = i})
+  // }
+});
+</script>
+<script>
+$('#input-product_id').autocomplete({
+  source: function(request, response) {
+    fetch(getURLPath() + '?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      json.unshift({
+        name: '{{ text_none }}',
+        product_id: 0,
+      });
+
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['product_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  select: function(item) {
+    if (!item['value']) {
+      $('#input-product_id').val('');
+      $('#autocomplete-product_id').val('');
+    } else {
+      $('#input-product_id').val(item['label']);
+      $('#autocomplete-product_id').val(item['value']);
+    }
+  }
+});
+
+$('#input-product_exlude').autocomplete({
+  source: function(request, response) {
+    fetch(getURLPath() + '?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['product_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  select: function(item) {
+    $('#input-product_exlude').val('');
+
+    $('#products_exlude' + item['value']).remove();
+
+    $('#products_exlude').append('<div id="products_exlude' + item['value'] + '"><i class="fas fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="theme_client_ws_ttg_construstor_exlude[]" value="' + item['value'] + '" /></div>');
+  }
+});
+
+$('#products_exlude').on('click', '.fa-minus-circle', function() {
+  $(this).parent().remove();
+});
+</script>
+<script>
+$('#input-confidentiality').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=info/article/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      json.unshift({
+        name: '{{ text_none }}',
+        category_id: 0,
+      });
+
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['article_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('#input-confidentiality').val(item['value'] ? item['label'] : '');
+    $('#autocomplete-confidentiality').val(item['value']);
+  }
+});
+</script>
+<script>
+$('#input-agreement').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=info/article/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      json.unshift({
+        name: '{{ text_none }}',
+        category_id: 0,
+      });
+
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['article_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('#input-agreement').val(item['value'] ? item['label'] : '');
+    $('#autocomplete-agreement').val(item['value']);
+  }
+});
+</script>
+<script>
+$('#modules').on('click', '[data-add_template=module]', function() {
+  var row = Number($(this).data('row'));
+
+  html = '<tr data-row="module_row' + row + '">';
+  html += '  <td class="text-left">';
+  html += '    <input type="text" name="theme_client_ws_ttg_modules[' + row + '][code]" value="{{ module.code }}" class="form-control">';
+  html += '  </td>';
+  html += '  <td class="text-left">';
+  html += '    <input type="text" name="theme_client_ws_ttg_modules[' + row + '][template]" value="{{ module.template }}" class="form-control">';
+  html += '  </td>';
+  html += '  <td class="text-left">';
+  html += '    <select name="theme_client_ws_ttg_modules[' + row + '][module]" class="form-control">';
+{% for extension in extensions %}
+  html += '      <optgroup label="{{ extension.name }}">';
+  {% if not extension.module %}
+  html += '        <option value="{{ extension.code }}">{{ extension.name }}</option>';
+  {% else %}
+    {% for module in extension.module %}
+  html += '        <option value="{{ module.code }}">{{ module.name }}</option>';
+    {% endfor %}
+  {% endif %}
+  html += '      </optgroup>';
+{% endfor %}
+  html += '    </select>';
+  html += '  </td>';
+  html += '  <td class="text-center"><button type="button" data-remove_template="module" data-row="' + row + '" data-toggle="tooltip" rel="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fas fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#modules tbody').append(html);
+
+  $(this).data('row', Number(row) + 1);
+});
+
+$('#modules').on('click', '[data-remove_template=module]', function() {
+  var row = $(this).data('row');
+  $('[data-row=module_row' + row + ']').remove();
+});
+</script>

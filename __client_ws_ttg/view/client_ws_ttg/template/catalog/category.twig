@@ -1,0 +1,142 @@
+<div class="main-bg category-page">
+{% if not parent_id %}
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <div class="container">
+    <h1>{{ custom_fields.title_h1 ? custom_fields.title_h1 : heading_title }}</h1>
+  </div>
+  <section class="take-care">
+    <div class="take-care__spoiler js-spoiler-content">
+      <div class="container">
+        {{ menu_catalog }}
+      </div>
+    </div>
+    <a href="javascript:void(0);" class="main-btn js-spoiler d-md-none">Смотреть еще</a>
+  </section>
+{% endif %}
+  <div class="category-list{{ not parent_id ? ' blue-bg' }} ">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-4 col-xl-3">
+        {% if parent_id %}
+          <div class="menu-sidebar menu-sidebar-off-svg">
+            <a href="#" class="d-lg-none js-spoiler-partners">Препараты по проблемам</a>
+            <noindex>
+              {{ menu_catalog }}
+            </noindex>
+          </div>
+        {% endif %}
+          {% for module in custom_fields.module_center %}
+            {{ module }}
+          {% endfor %}
+          {{ modules.column }}
+        </div>
+        <div class="col-12 col-lg-8 col-xl-9" id="catalog_category">
+        {% if not parent_id %}
+          <div class="h2">Все товары</div>
+        {% else %}
+          {% include "client_ws_ttg/template/block/breadcrumb.twig" %}
+          <h1>{{ custom_fields.title_h1 ? custom_fields.title_h1 : heading_title }}</h1>
+          {% if custom_fields.image.image %}<img src="{{ custom_fields.image.thumb }}" class="content-img img-fluid">{% endif %}
+        {% endif %}
+          <a href="/product/individualnyj-nabor/" class="mb-3 d-block">
+            <img src="theme/client_ws_ttg/images/build-set.jpg" alt="" class="img-fluid">
+          </a>          
+          <div class="pos-sticky">
+            <div class="wrap-sorting">
+              <div class="sorting-category d-md-flex">
+              {% for item in sorts %}
+                {% if item.sort == sort and item.order != order %}
+                <a href="{{ item.href }}#catalog_category" class="active">{{ item.text }}<div class="sorting-arrow sorting-arrow-{{ item.order|lower }}"></div></a>
+                {% elseif item.sort != sort and item.order == 'ASC' %}
+                <a href="{{ item.href }}#catalog_category">{{ item.text }}</a>
+                {% endif %}
+              {% endfor %}
+              </div>
+              <a href="{{ actions.catalog_special }}#catalog_category" class="discount-filter{{ filter_catalog_special ? ' active' }}">{{ entry_catalog_special }}</a>
+            </div>
+            {{ product_list }}
+          </div>
+          {{ pagination }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% if custom_fields.content_dop or custom_fields.image_dop.image %}
+<section class="info-method blue-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        {% if custom_fields.image_dop.image %}<img src="{{ custom_fields.image_dop.thumb }}" class="img-fluid">{% endif %}
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="content-block">
+          {{ custom_fields.content_dop }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% if custom_fields.content %}
+<div class="main-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-10 offset-md-1">
+        <div class="content-block">
+          {{ custom_fields.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<script>
+(function(){
+  var catalog_category = $('#catalog_category');
+  history.replaceState({catalog_category: catalog_category.get(0).outerHTML}, null, null);
+
+  catalog_category.on('click', '.wrap-sorting a, .pagination a', function(e){
+    e.preventDefault();
+
+    var el = this;
+
+    fetch(el.href, {
+      credentials: 'include',
+      headers: {'Accept': 'text/html'}
+    })
+    .then(function(r){
+      return r.text();
+    })
+    .then(function(html){
+      if (html) {
+        html = $(html).find('#catalog_category');
+
+        catalog_category.find('.wrap-sorting').html(html.find('.wrap-sorting').html());
+        catalog_category.find('.product-list').html(html.find('.product-list').html());
+        catalog_category.find('.pagination').html(html.find('.pagination').html());
+
+        catalog_category.find('[name^=quantity]').each(function() {
+          quantity_update(this);
+        });
+
+        history.pushState({catalog_category: html.get(0).outerHTML}, null, el.href);
+      }
+    });
+  })
+
+  window.onpopstate = function(event) {
+    if (event.state && event.state.catalog_category) {
+      var html = $(event.state.catalog_category);
+
+      catalog_category.find('.wrap-sorting').html(html.find('.wrap-sorting').html());
+      catalog_category.find('.product-list').html(html.find('.product-list').html());
+      catalog_category.find('.pagination').html(html.find('.pagination').html());
+
+      catalog_category.find('[name^=quantity]').each(function() {
+        quantity_update(this);
+      });
+    }
+  }
+})();
+</script>

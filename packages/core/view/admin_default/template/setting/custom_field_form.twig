@@ -1,0 +1,181 @@
+{% import "admin_default/template/macro/form_group.twig" as macros %}
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="custom-field">
+      <fieldset>
+        <legend>{{ text_custom_field }}</legend>
+        <div class="form-group row required">
+          <label class="col-sm-2 col-form-label">{{ entry_name }}</label>
+          <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+              <input type="text" name="custom_field_description[{{ language.language_id }}][name]" value="{{ custom_field_description[language.language_id] ? custom_field_description[language.language_id].name }}" placeholder="{{ entry_name }}" class="form-control"/>
+            </div>
+            {% if error_name[language.language_id] %}
+              <div class="invalid-tooltip">{{ error_name[language.language_id] }}</div>
+            {% endif %}
+          {% endfor %}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_help }}</label>
+          <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.help }}"/></span></div>
+              <input type="text" name="custom_field_description[{{ language.language_id }}][help]" value="{{ custom_field_description[language.language_id] ? custom_field_description[language.language_id].help }}" placeholder="{{ entry_help }}" class="form-control"/>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+        {{ macros.text(
+          {'id': 'code', 'name' : 'code', 'value' : code, 'required' : 1},
+          {'label' : entry_code, 'placeholder' : entry_code, 'error' : error_code}
+        ) }}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_location }}</label>
+          <div class="col-sm-10">
+            <table class="table table-bordered table-hover" id="custom_field_location">
+              <thead>
+                <tr>
+                  <td class="text-left">{{ entry_location }}</td>
+                  <td class="text-center">{{ entry_required }}</td>
+                  <td class="text-center">{{ entry_readonly }}</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+              {% set location_row = 0 %}
+              {% for location in custom_field_location %}
+                <tr data-row="location_row{{ location_row }}">
+                  <td class="text-left">
+                    <select name="custom_field_location[{{ location_row }}][location]" class="form-control">
+                      <option value="">{{ text_none }}</option>
+                    {% for location_group in locations %}
+                      <optgroup label="{{ location_group.label }}">
+                      {% for option in location_group.options %}
+                        <option value="{{ option.value }}"{{ location.location == option.value ? ' selected' }}>{{ option.name }}</option>
+                      {% endfor %}
+                      </optgroup>
+                    {% endfor %}
+                    </select>
+                  </td>
+                  <td class="text-center"><input type="checkbox" name="custom_field_location[{{ location_row }}][required]" value="1"{{ location.required ? ' checked' }}></td>
+                  <td class="text-center"><input type="checkbox" name="custom_field_location[{{ location_row }}][readonly]" value="1" disabled></td>
+                  <td class="text-center"><button type="button" data-remove_template="location" data-row="{{ location_row }}" data-toggle="tooltip" rel="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fas fa-minus-circle"></i></button></td>
+                </tr>
+                {% set location_row = location_row + 1 %}
+              {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3"></td>
+                  <td class="text-center"><button type="button" data-add_template="location" data-row="{{ location_row }}" data-toggle="tooltip" title="{{ button_module_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle fa-fw"></i></button></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        {{ macros.select_group(
+          {'id': 'type', 'name' : 'type', 'value' : type},
+          {'label' : entry_type},
+          {'key' : 'value', 'title' : 'name', 'groups' : types}
+        ) }}
+        {{ macros.enable(
+          {'id': 'status', 'name' : 'status', 'value' : status},
+          {'label' : entry_status},
+          {'enabled' : text_enabled, 'disabled' : text_disabled}
+        ) }}
+        {{ macros.enable(
+          {'id': 'multilanguage', 'name' : 'multilanguage', 'value' : multilanguage},
+          {'label' : entry_multilanguage},
+          {'enabled' : text_enabled, 'disabled' : text_disabled}
+        ) }}
+        {{ macros.enable(
+          {'id': 'search', 'name' : 'search', 'value' : search},
+          {'label' : entry_search},
+          {'enabled' : text_enabled, 'disabled' : text_disabled}
+        ) }}
+        {{ macros.text(
+          {'id': 'sort_order', 'name' : 'sort_order', 'value' : sort_order},
+          {'label' : entry_sort_order, 'placeholder' : entry_sort_order, 'help' : help_sort_order}
+        ) }}
+      </fieldset>
+      <br/>
+      <div id="display-setting">
+        <textarea name="setting">{{ setting|json_encode(constant('JSON_UNESCAPED_UNICODE')) }}</textarea>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+$('#custom_field_location').on('click', '[data-add_template=location]', function() {
+  var row = Number($(this).data('row'));
+
+  html = '<tr data-row="location_row' + row + '">';
+  html += '  <td class="text-left">';
+  html += '  <select name="custom_field_location[' + row + '][location]" class="form-control">';
+  html += '    <option value="">{{ text_none }}</option>';
+{% for location_group in locations %}
+  html += '    <optgroup label="{{ location_group.label }}">';
+  {% for option in location_group.options %}
+  html += '      <option value="{{ option.value }}">{{ option.name }}</option>';
+  {% endfor %}
+  html += '    </optgroup>';
+{% endfor %}
+  html += '  </select>';
+  html += '  </td>';
+  html += '  <td class="text-center"><input type="checkbox" name="custom_field_location[' + row + '][required]" value="1"></td>';
+  html += '  <td class="text-center"><input type="checkbox" name="custom_field_location[' + row + '][readonly]" value="1" readonly></td>';
+  html += '  <td class="text-center"><button type="button" data-remove_template="location" data-row="' + row + '" data-toggle="tooltip" rel="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fas fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#custom_field_location tbody').append(html);
+
+  $(this).data('row', Number(row) + 1);
+});
+
+$('#custom_field_location').on('click', '[data-remove_template=location]', function() {
+  var row = $(this).data('row');
+  $('[data-row=location_row' + row + ']').remove();
+});
+//--></script>
+<script type="text/javascript"><!--
+var setting = new FormData();
+
+$('select[name=type]').on('change', function() {
+  var el = $(this);
+  $('#display-setting').find('input, textarea, select').not('[type=checkbox]:not(:checked), [type=radio]:not(:checked)').each(function(){
+    setting.append(this.name, this.value);
+  });
+
+  setting.append('type', this.value);
+
+  fetch('{{ setting_type|replace({"&amp;" : "&"}) }}', {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'text/html'},
+    method: 'post',
+    body: setting
+  })
+  .then(function(r){
+    $('#input-validation').prop('disabled', 1);
+    $('#display-setting').html('');
+
+    return r.text();
+  })
+  .then(function(html) {
+    $('#input-validation').prop('disabled', 0);
+
+    $('#display-setting').html(html);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+$('select[name=type]').trigger('change');
+//--></script>

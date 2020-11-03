@@ -1,0 +1,90 @@
+<div id="account_edit">
+  <div class="personal__header">
+  </div>
+  <span class="personal__heading">{{ heading_title }}</span>
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  {% if error_login %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_login }}</div>
+  {% endif %}
+  {% if error_login %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_email }}</div>
+  {% endif %}
+  {% if error_telephone %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_telephone }}</div>
+  {% endif %}
+  {% if success %}
+  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+  {% endif %}
+  <form action="{{ action }}" method="post" enctype="multipart/form-data">
+    <div class="item">
+      <label for="account_edit-login">{{ entry_login }}</label>
+      <input type="text" name="login" value="{{ login }}" id="account_edit-login" readonly>
+      <button type="button" class="item__btn"></button>
+    </div>
+    <div class="item">
+      <label for="account_edit-password">{{ entry_password }}</label>
+      <input type="text" name="password" value="{{ password }}" id="account_edit-password" readonly>
+      <button type="button" class="item__btn"></button>
+    </div>
+    <div class="mainLine mainLine_personal"></div>
+    <div class="item">
+      <label for="account_edit-email">{{ entry_email }}</label>
+      <input type="tel" name="email" value="{{ email }}" id="account_edit-email" readonly>
+      <button type="button" class="item__btn"></button>
+    </div>
+    <div class="item">
+      <label for="account_edit-telephone">{{ entry_telephone }}</label>
+      <input type="tel" name="telephone" value="{{ telephone }}" id="account_edit-telephone" readonly>
+      <button type="button" class="item__btn"></button>
+    </div>
+    {% for custom_field in custom_fields %}
+      {% if custom_field.code == 'hr_line' %}
+      {% else %}
+      <div class="item">
+        <label for="custom_field{{ custom_field.custom_field_id }}">{{ custom_field.name }}</label>
+        <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}" id="custom_field{{ custom_field.custom_field_id }}" readonly>
+        <button type="button" class="item__btn"></button>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </form>
+</div>
+
+<script type="text/javascript">
+$('#account_edit form').submit(function(e){
+  e.preventDefault();
+
+  fetch(this.action,{
+    method: this.method,
+    body: new FormData(this)
+  })
+  .then(function(r){
+    return fetch_data(r);
+  })
+  .then(function(html){
+    var data = $(html);
+
+    $('#account_edit .alert').remove();
+    $('#account_edit .personal__heading').before(data.find('.alert'));
+
+    $('#account_edit form').html(data.find('form').html());
+  })
+  .catch(function(e){
+    console.error(e);
+  });
+});
+
+$('#account_edit').on('change', 'input', function(){
+  $('#account_edit').find('form').submit();
+});
+
+$('#account_edit').on('blur', 'input', function(){
+  $(this).prop('readonly', 1);
+});
+
+$('#account_edit').on('click', '.item__btn', function(){
+  $(this).prev().prop('readonly', 0).focus();
+});
+</script>

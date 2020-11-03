@@ -1,0 +1,26 @@
+{% if heading_title %}<h2>{{ heading_title }}</h2>{% endif %}
+<div class="row">
+{% for article in articles %}
+  {% if article.custom_fields.date_end is same as(null) %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <a href="{{ article.href }}" class="news-item">
+      {% if article.custom_fields.image_preview.image %}<img src="{{ article.custom_fields.image_preview.thumb }}" class="img-fluid">{% endif %}
+      {% if article.date_added and not('date_end' in article.custom_field_codes) %}<div class="news-item__date">{{ article.date_added|date(date_format_short) }}</div>{% endif %}
+      <div class="news-item__text">{{ article.title }}</div>
+      <div class="show-more">{{ button_more }}<i class="show-more_svg"><svg><use xlink:href="theme/client_ws_ttg/images/show-more.svg#show-more_svg"></use></svg></i></div>
+    </a>
+  </div>
+  {% else %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <a href="{{ article.href }}" class="action-link">
+      {% if article.custom_fields.image_preview.image %}<img src="{{ article.custom_fields.image_preview.thumb }}" class="img-fluid">{% endif %}
+      <div class="action-link__info">{{ article.title }}</div>
+    {% if article.custom_fields.date_end %}
+      {% set days = ((article.custom_fields.date_end - 'now'|date('U'))/3600/24)|round(0, 'ceil') %}
+      <div class="badge-action">{% if days > 0 %}{{ text_akcija_end }} {{ days }} {{ _context['days_' ~ (days % 10)] }}{% else %}{{ text_akcija_ended }}{% endif %}</div>
+    {% endif %}
+    </a>
+  </div>
+  {% endif %}
+{% endfor %}
+</div>

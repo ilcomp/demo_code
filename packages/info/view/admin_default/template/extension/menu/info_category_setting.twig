@@ -1,0 +1,55 @@
+{% import "admin_default/template/macro/form_group.twig" as macros %}
+<div class="row">
+	<div class="col-12 col-sm-6">
+		{{ macros.select(
+			{'id': 'info_category_language' ~ language_id ~ '_' ~ menu_row, 'value' : language_id},
+			{'label' : entry_language},
+			{'options' : languages, 'key' : 'language_id', 'title' : 'name'}
+		, 4) }}
+	</div>
+	<div class="col-12 col-sm-6">
+		{{ macros.autocomplete(
+			{'id': 'info_category' ~ language_id ~ '_' ~ menu_row, 'value' : title},
+			{'label' : entry_category},
+			{}
+		, 4) }}
+	</div>
+</div>
+<script type="text/javascript">
+$('#input-info_category{{ language_id }}_{{ menu_row }}').autocomplete({
+	'source': function(request, response) {
+		var url = getURLPath() + '?route=info/category/autocomplete_link&user_token={{ user_token }}&language_id={{ language_id }}&filter_name=' + encodeURIComponent(request);
+
+		fetch(url)
+		.then(function(r) {
+			return r.json(r);
+		})
+		.then(function(json) {
+			json.unshift({
+				name: '{{ text_none }}',
+				link: 0,
+			});
+
+			response($.map(json, function(item) {
+				return {
+					label: item['name'],
+					value: item['link']
+				}
+			}));
+		})
+		.catch(function(error) {
+			console.error(error);
+		});
+	},
+	'select': function(item) {
+		if (item['value'] == 0) {
+			$('#input-info_category{{ language_id }}_{{ menu_row }}').val('');
+			$('#input-link{{ language_id }}_{{ menu_row }}').val('');
+		} else {
+			$('#input-info_category{{ language_id }}_{{ menu_row }}').val(item['label']);
+			$('#input-title{{ language_id }}_{{ menu_row }}').val(item['label']);
+			$('#input-link{{ language_id }}_{{ menu_row }}').val(item['value']);
+		}
+	}
+});
+</script>

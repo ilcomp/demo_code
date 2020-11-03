@@ -1,0 +1,63 @@
+<div id="modal_account" class="modal fade modal-authoriz" tabindex="-1" role="dialog">
+  <div class="modal-dialog" >
+    <div class="modal_form">
+      <div class="callback" data-modal_form="login">
+        <div class="h4">Вход/регистрация</div>
+        {{ form_login }}
+      </div>
+      <div class="callback d-none" data-modal_form="forgotten">
+        <div class="h4">Востановление пароля</div>
+        {{ form_forgotten }}
+      </div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+<script>
+(function(){
+  var modal_account = $('#modal_account'),
+      forms = [];
+
+  modal_account.on('click', 'a[data-modal_form_toggle]', function(e){
+    e.preventDefault();
+
+    modal_account.find('.callback').addClass('d-none').filter('[data-modal_form="' + this.dataset.modal_form_toggle + '"]').removeClass('d-none');
+  });
+
+  modal_account.find('form').each(function(){
+    forms.push(this.innerHTML);
+
+    $(this).submit(function(e){
+      e.preventDefault();
+
+      var form = $(this);
+
+      fetch(this.action, {
+        method: 'post',
+        body: new FormData(this),
+        credentials: 'include',
+        headers: {'Accept': 'text/html'}
+      })
+      .then(function(r){
+        $(document).trigger('cart_loaded');
+
+        return r.text();
+      })
+      .then(function(html){
+        form.html($(html).filter('form').html());
+      })
+      .catch(function(e){
+        console.error(e);
+      });
+    });
+  });
+
+  modal_account.on('hidden.bs.modal', function(){
+    modal_account.find('.callback').addClass('d-none').filter('[data-modal_form="login"]').removeClass('d-none');
+
+    modal_account.find('form').each(function(i){
+      this.innerHTML = forms[i];
+    });
+  });
+})()
+</script>

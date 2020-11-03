@@ -1,0 +1,20 @@
+<div class="form-group row custom-field">
+  <label class="col-sm-2 col-form-label" for="display-setting-image_size">{{ entry_image_size }}</label>
+  <div class="col-sm-10">
+    <div class="row">
+      <div class="col-sm-4">
+        <input type="text" name="setting[width]" value="{{ values.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+      </div>
+      <div class="col-sm-4">
+        <input type="text" name="setting[height]"value="{{ values.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+      </div>
+      <div class="col-sm-4">
+        <select name="setting[method]" class="form-control">
+          <option value="resize"{{ values.method == 'resize' ? ' selected' }}>{{ entry_resize }}</option>
+          <option value="crop"{{ values.method == 'crop' ? ' selected' }}>{{ entry_crop }}</option>
+          <option value="link"{{ values.method == 'link' ? ' selected' }}>{{ entry_link }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

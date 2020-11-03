@@ -1,0 +1,94 @@
+<fieldset class="custom-field" data-sort="{{ custom_field.sort_order }}">
+  <legend>{{ custom_field.name }}</legend>
+  <table id="composition_product_row{{ custom_field.custom_field_id }}" class="table table-striped table-bordered table-hover">
+    <thead>
+      <th>{{ text_product }}</th>
+      <th>{{ entry_quantity }}</th>
+      <th></th>
+    </thead>
+    <tbody>
+    {% for row in custom_field.value[-1] %}
+      <tr data-row="composition_product{{ loop.index0 }}">
+        <td class="text-center">
+          <input type="text" value="{{ row.name }}" data-autocomplete="{{ loop.index0 }}" class="form-control"/>
+          <input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1][{{ loop.index0 }}][product_id]" value="{{ row.product_id }}"/>
+        </td>
+        <td class="text-center">
+          <input type="number" name="custom_field[{{ custom_field.custom_field_id }}][-1][{{ loop.index0 }}][quantity]" value="{{ row.quantity }}" class="form-control"/>
+        </td>
+        <td class="text-right"><button type="button" onclick="$(this).parents('[data-row^=composition_product]').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td></td>
+        <td></td>
+        <td class="text-right"><button type="button" data-add_template="composition_product" data-row="{{ custom_field.value|length }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i></button></td>
+      </tr>
+    </tfoot>
+  </table>
+
+<script>
+(function(){
+  var custom_field = $('#composition_product_row{{ custom_field.custom_field_id }}');
+      func_autocomplete = function(row){
+        custom_field.find('input[data-autocomplete="' + row + '"]').autocomplete({
+          'source': function(request, response) {
+            fetch(getURLPath() + '?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+              credentials: 'include',
+              cache: 'no-cache',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+              },
+            })
+            .then(function(r){
+              return r.json();
+            })
+            .then(function(json){
+              response($.map(json, function(item) {
+                return {
+                  label: (item['model'] ? item['model'] + ' ' : '') + item['name'],
+                  value: item['product_id'],
+                }
+              }));
+            })
+            .catch(function(error) {
+              console.error(error);
+            });
+          },
+          'select': function(item) {
+            custom_field.find('input[data-autocomplete="' + row + '"]').val(item['label']);
+            custom_field.find('input[name="custom_field[{{ custom_field.custom_field_id }}][-1][' + row + '][product_id]"]').val(item['value']);
+          }
+        });
+      };
+
+  custom_field.find('input[data-autocomplete]').each(function(){
+    func_autocomplete(this.dataset.autocomplete);
+  });
+
+  custom_field.find('[data-add_template=composition_product]').on('click', function() {
+    var row = $(this).data('row');
+
+    html = '<tr data-row="composition_product' + row + '">';
+    html += '  <td class="text-center">';
+    html += '    <input type="text" data-autocomplete="' + row + '" class="form-control"/><input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1][' + row + '][product_id]"/>';
+    html += '  </td>';
+    html += '  <td class="text-center">';
+    html += '    <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1][' + row + '][quantity]" class="form-control"/>';
+    html += '  </td>';
+    html += '  <td class="text-right"><button type="button" onclick="$(this).parents(\'[data-row^=composition_product]\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>';
+    html += '</tr>';
+
+    custom_field.find('tbody').append(html);
+
+    func_autocomplete(row);
+
+    $(this).data('row', row + 1);
+  });
+})();
+</script>
+<hr>
+</fieldset>

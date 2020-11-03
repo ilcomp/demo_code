@@ -1,0 +1,36 @@
+{% if cols == 2 %}{% set class = 'col-lg-4 col-md-4 col-sm-6 col-xs-12' %}
+{% elseif cols == 1 %}{% set class = 'col-lg-4 col-md-4 col-sm-6 col-xs-12' %}
+{% elseif cols == -1 %}{% set class = 'col-xs-12 product-list' %}
+{% else %}{% set class = 'col-lg-3 col-md-3 col-sm-6 col-xs-12' %}
+{% endif %}
+
+{% if heading_title %}<h2 class="fs_42 blue black">{{ heading_title }}</h2>{% endif %}
+<div class="row{{ not heading_title ? ' auto-clear' }}">
+{% for product in products %}
+  <div class="{{ class }}">
+    <div class="slide-cart">
+      <a href="{{ product.href }}" class="slide-image"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" /></a>
+      <div class="slide-desc">
+        <a href="{{ product.href }}" class="slide-desc-header">
+          <h4>{{ product.name }}</h4>
+          <span>{{ product.subtitle }}</span>
+        </a>
+      </div>
+      <hr>
+      <div class="slide-desc-buy clearfix">
+        {% if product.price %}
+        <span class="price">
+        {% if not product.special %}
+        {{ product.price|replace({'руб.':'<i>руб</i>'}) }}
+        {% else %}
+        <span class="price-new">{{ product.special|replace({'руб.':'<i>руб</i>'}) }}</span> <span class="price-old">{{ product.price|replace({'руб.':'<i>руб</i>'}) }}</span>
+        {% endif %}
+        {% if product.tax %}<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>{% endif %}
+        </span>
+        {% endif %}
+        <a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');" class="cart-but" title="{{ button_cart }}"></a>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>

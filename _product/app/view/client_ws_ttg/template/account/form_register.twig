@@ -1,0 +1,93 @@
+<form action="{{ action }}" method="post" enctype="multipart/form-data" data-form="account_register">
+  <input type="hidden" name="method" value="{{ method }}">
+  <input type="hidden" name="redirect" value="{{ redirect }}">
+  {% if account_group_id %}
+  <input type="hidden" name="account_group_id" value="{{ account_group_id }}">
+  {% endif%}
+
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  {% if location %}
+  <script type="text/javascript">location = '{{ location }}';</script>
+  {% endif %}
+  {% if refresh %}
+  <script type="text/javascript">location.reload();</script>
+  {% endif %}
+{% if custom_fields_contact %}
+  {% for custom_field in custom_fields_contact %}
+  <div class="callback-input">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user{{ custom_field.code == 'lastname' ? 's' }}.svg#form_svg"></use></svg></i>
+    <div>{{ custom_field.name }}</div>
+    <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+    {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  <div class="registration-page__line"></div>
+{% endif %}
+  <div class="callback-input">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/mail.svg#form_svg"></use></svg></i>
+    <div>{{ entry_email }}</div>
+    <input type="email" name="email" value="{{ email }}">
+    {% if error.email %}<div class="error-input">{{ error.email }}</div>{% endif %}
+  </div>
+  <div class="callback-input">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/phone.svg#form_svg"></use></svg></i>
+    <div>{{ entry_telephone }}</div>
+    <input type="tel" name="telephone" value="{{ telephone }}">
+    {% if error.telephone %}<div class="error-input">{{ error.telephone }}</div>{% endif %}
+  </div>
+  <div class="callback-input">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/password.svg#form_svg"></use></svg></i>
+    <div>{{ entry_password }}</div>
+    <input type="password" name="password" value="{{ password }}">
+    {% if error.password %}<div class="error-input">{{ error.password }}</div>{% endif %}
+  </div>
+  <div class="callback-input">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/password.svg#form_svg"></use></svg></i>
+    <div>{{ entry_password_confirm }}</div>
+    <input type="password" name="password_confirm" value="{{ password_confirm }}">
+    {% if error.password_confirm %}<div class="error-input">{{ error.password_confirm }}</div>{% endif %}
+  </div>
+  <div class="registration-page__line"></div>
+
+{% if secret %}
+  <div class="wrap-file-block">
+    <label class="file-upload">
+      <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/clip.svg#form_svg"></use></svg></i>
+      <input type="file" name="secret_file[]" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.ppt,.pptx,.odt,.avi,.ogg,.m4a,.mov,.mp3,.mp4,.mpg,.wav,.wmv" aria-invalid="false">
+      <span class="file-label small-cart__point">Прикрепить резюме</span><div class="small-cart__point"><span data-placement="bottom" data-toggle="tooltip" data-html="true" title="<p>Выберите сразу все прикрепляемые файлы.</p>">i</span></div>
+      {% if error.secret_file %}<div class="error-input">{{ error.secret_file }}</div>{% endif %}
+    </label>
+    {% for file in secret_file %}
+      <div><input type="hidden" name="secret_code[]" value="{{ file.code }}">{{ file.name }} <button type="button" onclick="$(this).parent().remove()">X</button></div>
+    {% endfor %}
+  </div>
+  <div class="confirm-qualification">Для подтверждения вашей квалификации как Специалиста, просим приложить в заявку на регистрацию сканированную копию вашего диплома врача/младшего мед.персонала и первой страницы паспорта. Для специалистов-стилистов/парикмахеров закрытый раздел будет доступен после прохождения обучения (ссылка на курс <a href="https://iat-education.ru/" target="_blank">https://iat-education.ru/esteticheskay...ikmaherov/</a>) Также вы можете связаться с нами по телефону и электронной почте)</div>
+{% endif %}
+
+  {{ code_confirm }}
+  {{ captcha }}
+  <button type="submit" class="main-btn">{{ button_submit }}</button>
+  <div class="create-account-form">Уже есть аккаунт? <a href="{{ actions.login }}">Войдите</a></div>
+{% if agreement and confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a> и согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a> сайта</p>
+{% elseif agreement %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a></p>
+{% elseif confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a></p>
+{% endif %}
+<input type="checkbox" name="agree" value="1" checked>
+<script>$('form[data-form="account_register"] input[name="agree"]').prop('checked', 0);</script>
+
+<script>
+$('form[data-form="account_register"] input[type="file"]').change(function(){
+  var block = $(this).parent();
+
+  block.nextAll('.file-name').remove();
+
+  for (var i = this.files.length - 1; i >= 0; i--)
+    block.after('<div class="file-name">' + this.files[i].name + '</div>');
+});
+</script>
+</form>

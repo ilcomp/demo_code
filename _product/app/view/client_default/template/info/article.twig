@@ -1,0 +1,30 @@
+<section class="content">
+  <div class="container">
+    <h1>{{ heading_title }}</h1>
+    {% if thumb %}
+    <img src="{{ thumb }}" class="img-responsive" alt="{{ name }}">
+    {% endif %}
+    {% if images %}
+    <div class="galary auto-clear">
+      <div class="row">
+        {% for image in images %}
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+          <a href="{{ image.original }}" data-lightbox="image-1"><img src="{{ image.thumb }}" class="img-responsive" alt="{{ name }}"></a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {{ description }}
+    {% if files %}
+    <div class="catalog_file">
+      {% for file in files %}
+      <a href="{{ file.href }}" class="{{ file.type }}_file"><span>{{ file.name }}</span>{{ file.size }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if back %}
+    <a href="{{ back }}" class="other_btn dbg">{{ text_back }}</a>
+    {% endif %}
+  </div>
+</section>

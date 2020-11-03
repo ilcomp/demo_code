@@ -1,0 +1,73 @@
+<table id="list_item_row{{ custom_field.custom_field_id }}" class="table table-striped table-bordered table-hover custom-field" data-sort="{{ custom_field.sort_order }}">
+  <thead>
+    <tr>
+      <td class="text-left required">{{ custom_field.name }}</td>
+      <td class="text-center">{{ entry_value }}</td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+    {% set list_item_row = 0 %}
+    {% for row in custom_field_value[-1].list_item %}
+      <tr data-row="list_item{{ list_item_row }}">
+        <td class="text-center">
+          <select name="custom_field[{{ custom_field.custom_field_id }}][-1][list_item][{{ list_item_row }}][list_item_id]">
+          {% for list_item in list_items %}
+            {% if row.list_item_id == list_item.list_item_id %}
+            <option value="{{ list_item.list_item_id }}" selected>{{ list_item.name }}</option>
+            {% else %}
+            <option value="{{ list_item.list_item_id }}">{{ list_item.name }}</option>
+            {% endif %}
+          {% endfor %}
+          </select>
+        </td>
+        <td class="text-center">
+        {% for language in languages %}
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}"/></span>
+            </div>
+            <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1][list_item][{{ list_item_row }}][value][{{ language.language_id }}]" value="{{ row.value[language.language_id] ? row.value[language.language_id] }}" placeholder="{{ entry_value }}" class="form-control"/>
+          </div>
+        {% endfor %}</td>
+        <td class="text-right"><button type="button" onclick="$(this).parents('[data-row^=list_item]').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>
+      </tr>
+      {% set list_item_row = list_item_row + 1 %}
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"></td>
+      <td class="text-right"><button type="button" data-add_template="list_item" data-row="{{ list_item_row }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i></button></td>
+    </tr>
+  </tfoot>
+</table>
+
+<script type="text/javascript"><!--
+$('#list_item_row{{ custom_field.custom_field_id }} [data-add_template=list_item]').on('click', function() {
+  var row = $(this).data('row');
+
+  html = '<tr id="list_item_row' + row + '">';
+  html += '  <td class="text-left"><select name="custom_field[{{ custom_field.custom_field_id }}][-1][list_item][' + row + '][list_item_id]">';
+{% for list_item in list_items %}
+  html += '<option value="{{ list_item.list_item_id }}">{{ list_item.name }}</option>';
+{% endfor %}
+  html += '  <td class="text-center">';
+        {% for language in languages %}
+  html += '<div class="input-group">';
+  html += '<div class="input-group-prepend">';
+  html += '<span class="input-group-text"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}"/></span>';
+  html += '</div>';
+  html += '<input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1][list_item][' + row + '][value][{{ language.language_id }}]" value="" placeholder="{{ entry_value }}" class="form-control"/>';
+  html += '</div>';
+        {% endfor %}
+  html += '  </td>';
+  html += '  <td class="text-right"><button type="button" onclick="$(this).parents(\'[data-row^=list_item]\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#list_item_row{{ custom_field.custom_field_id }} tbody').append(html);
+
+  $(this).data('row', row + 1);
+});
+//--></script>
+</fieldset>

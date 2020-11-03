@@ -1,0 +1,11 @@
+<div class="news-block">
+  {% if heading_title %}
+  <a href="{{ href }}"><h2>{{ heading_title }}</h2></a>
+  {% endif %}
+  {% for article in articles %}
+  <a href="{{ article.href }}" class="news-subblock">
+    <div class="date">{{ article.posted }}</div>
+    <div class="txt">{{ article.description }}</div>
+  </a>
+  {% endfor %}
+</div>

@@ -1,0 +1,15 @@
+<div class="form-group row custom-field">
+  <label class="col-sm-2 col-form-label" for="display-setting-list">{{ entry_list }}</label>
+  <div class="col-sm-10">
+    <select name="setting[list_id]" id="display-setting-list" class="form-control">
+      <option value="">{{ text_none }}</option>
+      {% for list in lists %}
+        {% if values.list_id == list.list_id  %}
+          <option value="{{ list.list_id }}" selected="selected">{{ list.name }}</option>
+        {% else %}
+          <option value="{{ list.list_id }}">{{ list.name }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+</div>

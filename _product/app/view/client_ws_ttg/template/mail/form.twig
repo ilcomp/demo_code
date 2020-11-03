@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }}</title>
+</head>
+<body style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000000;">
+<div style="width: 680px;">
+  {% if logo %}
+    <a href="{{ store_url }}" title="{{ store_name }}"><img src="{{ logo }}" alt="{{ store_name }}" style="margin-bottom: 20px; border: none; width: auto; height: 50px;"/></a>
+  {% else %}
+    <h2><a href="{{ store_url }}" title="{{ store_name }}">{{ store_name }}</a></h2>
+  {% endif %}
+  <p>{% for field in fields %}
+    {% if field.type == 'checkbox' %}
+    <b>{{ field.name ?: field.help }}</b>: {{ field.value|column('name')|join(', ') }}<br>
+    {% elseif field.type == 'select' or field.type == 'radio' %}
+    <b>{{ field.name ?: field.help }}</b>: {{ field.value.name }}<br>
+    {% elseif field.type == 'textarea' %}
+    <b>{{ field.name  ?: field.help }}</b><br>{{ field.value|nl2br }}<br>
+    {% else %}
+    <b>{{ field.name ?: field.help }}</b>: {{ field.value }}<br>
+    {% endif %}
+  {% endfor %}</p>
+  
+  <p style="margin-top: 0px; margin-bottom: 20px;">{{ text_footer }}</p>
+</div>
+</body>
+</html>

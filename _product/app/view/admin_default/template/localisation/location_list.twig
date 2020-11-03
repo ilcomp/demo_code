@@ -1,0 +1,59 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-list"></i> {{ text_list }}</div>
+  <div class="card-body">
+    <form action="{{ actions.delete }}" method="post" enctype="multipart/form-data" id="form-general" data-form="location">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').trigger('click');"/></td>
+              <td class="text-left">{% if sort == 'ld.name' %}
+                  <a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>
+                {% else %}
+                  <a href="{{ sort_name }}">{{ column_name }}</a>
+                {% endif %}</td>
+              <td class="text-left">{% if sort == 'ld.address' %}
+                  <a href="{{ sort_address }}" class="{{ order|lower }}">{{ column_address }}</a>
+                {% else %}
+                  <a href="{{ sort_address }}">{{ column_address }}</a>
+                {% endif %}</td>
+              <td class="text-left">{{ column_status }}</td>
+              <td class="text-left">{% if sort == 'l.sort_order' %}
+                  <a href="{{ sort_sort_order }}" class="{{ order|lower }}">{{ column_sort_order }}</a>
+                {% else %}
+                  <a href="{{ sort_sort_order }}">{{ column_sort_order }}</a>
+                {% endif %}</td>
+              <td class="text-right">{{ column_action }}</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% if location %}
+              {% for locations in location %}
+                <tr>
+                  <td class="text-center">{% if locations.location_id in selected %}
+                      <input type="checkbox" name="selected[]" value="{{ locations.location_id }}" checked="checked"/>
+                    {% else %}
+                      <input type="checkbox" name="selected[]" value="{{ locations.location_id }}"/>
+                    {% endif %}</td>
+                  <td class="text-left">{{ locations.name }}</td>
+                  <td class="text-left">{{ locations.address }}</td>
+                  <td class="text-left">{{ locations.status }}</td>
+                  <td class="text-left">{{ locations.sort_order }}</td>
+                  <td class="text-right"><a href="{{ locations.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td class="text-center" colspan="6">{{ text_no_results }}</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-sm-6 text-left">{{ pagination }}</div>
+      <div class="col-sm-6 text-right">{{ results }}</div>
+    </div>
+  </div>
+</div>

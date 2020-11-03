@@ -1,0 +1,73 @@
+<div class="row">
+  <div id="filter-account" class="col-md-3 col-sm-12 order-md-9 d-none d-md-block mb-3">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-filter"></i> {{ text_filter }}</div>
+      <div class="card-body">
+        <form method="get" enctype="multipart/form-data" id="form-filter" data-form="account_attempt">
+          <input type="hidden" name="route" value="account/account_attempt">
+          <input type="hidden" name="user_token" value="{{ user_token }}">
+
+          <div class="form-group">
+            <label class="col-form-label" for="input-login">{{ entry_login }}</label> <input type="text" name="filter_login" value="{{ filter_login }}" placeholder="{{ entry_login }}" id="input-login" class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label" for="input-ip">{{ entry_ip }}</label> <input type="text" name="filter_ip" value="{{ filter_ip }}" placeholder="{{ entry_ip }}" id="input-ip" class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label" for="input-date-added">{{ entry_date_added }}</label>
+            <div class="input-group date">
+              <input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }}" id="input-date-added" class="form-control"/>
+              <div class="input-group-append">
+                <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group text-right">
+            <button type="submit" class="btn btn-light"><i class="fas fa-filter"></i> {{ button_filter }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9 col-sm-12">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-list"></i> {{ text_list }}</div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <td class="text-left">{{ column_login }}</td>
+                <td class="text-left">{{ column_ip }}</td>
+                <td class="text-left">{{ column_attempt }}</td>
+                <td class="text-left">{{ column_date_added }}</td>
+                <td class="text-right">{{ column_action }}</td>
+              </tr>
+            </thead>
+            <tbody>
+            {% if account_attempts %}
+            {% for account_attempt in account_attempts %}
+            <tr>
+              <td class="text-left">{{ account_attempt.login }}</td>
+              <td class="text-left">{{ account_attempt.ip }}</td>
+              <td class="text-left">{{ account_attempt.attempt }}</td>
+              <td class="text-left">{{ account_attempt.date_added }}</td>
+              <td class="text-right">{% if account_attempt.unlock %}<a href="{{ account_attempt.unlock }}" data-toggle="tooltip" title="{{ button_unlock }}" class="btn btn-success"><i class="fas fa-thumbs-up"></i></a>{% endif %}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td class="text-center" colspan="4">{{ text_no_results }}</td>
+            </tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

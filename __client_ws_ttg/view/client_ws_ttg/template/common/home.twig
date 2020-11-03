@@ -1,0 +1,63 @@
+{% for module in custom_fields.module_top %}
+  {{ module }}
+{% endfor %}
+{{ custom_fields.content_top }}
+<section class="wrap-main-block">
+{% for module in custom_fields.module_center %}
+  {{ module }}
+{% endfor %}
+</section>
+<section class="advantage-line">
+  <div class="container">
+    <div class="main-title">
+      <img src="theme/client_ws_ttg/images/main-title3.png" class="img-fluid main-title__img">
+      <h2>Преимущества линейки</h2>
+      <img src="theme/client_ws_ttg/images/leaf.png" class="main-title__leaf">
+      <img src="theme/client_ws_ttg/images/leaf7.png" class="main-title__leaf2">
+    </div>
+    <div class="advantage-line__info">
+      <img src="theme/client_ws_ttg/images/advantage-line_img.png" class="img-fluid">
+      <div class="bottle-advantage">
+        <div class="plus_bottle"></div>
+        <div class="bottle-advantage__title">Лучшие ингредиенты</div>
+        <p>Из Европы и Японии, в максимальных концентрациях, на натуральной основе.</p>
+      </div>
+      <div class="bottle-advantage">
+        <div class="plus_bottle"></div>
+        <div class="bottle-advantage__title">Разработано врачами-трихологами</div>
+        <p>На основе многолетнего опыта в лечении проблем волос</p>
+      </div>
+      <div class="bottle-advantage">
+        <div class="plus_bottle"></div>
+        <div class="bottle-advantage__title">Трихологическая программа Time to grow</div>
+        <p>Консультативная поддержка, диагностика, процедуры</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="about_block">
+  <div class="container">
+    <img src="theme/client_ws_ttg/images/leaf8.png" class="about_block__leaf">
+    <img src="theme/client_ws_ttg/images/leaf9.png" class="about_block__leaf2">
+    <div class="row">
+      <div class="col-12 col-md-5">
+        <img src="theme/client_ws_ttg/images/grow_img.png" class="about_block__img">
+      </div>
+      <div class="col-12 col-md-7">
+        <div class="about_block__content">
+          {{ custom_fields.content }}
+          {% if custom_fields.link %}<a href="{{ custom_fields.link }}" class="show-more">Подробнее<i class="show-more_svg"><svg><use xlink:href="theme/client_ws_ttg/images/show-more.svg#show-more_svg"></use></svg></i></a>{% endif %}
+          {% if menu.social %}
+          <div class="about_block__soc">
+            <div class="text-soc">МЫ В СОЦ.СЕТЯХ</div>
+            {{ menu.social.view|replace({"soc-block":"soc-block soc-block-bg"}) }}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% for module in custom_fields.module_bottom %}
+  {{ module }}
+{% endfor %}

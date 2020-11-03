@@ -1,0 +1,17 @@
+<p>{{ text_signup }}</p>
+<p>
+{% for custom_ in custom_fields %}
+  {% if item.value %}
+<strong>{{ item.name }}</strong> {{ item.value is iterable ? item.value|join(' | ') : item.value }}{{ not loop.last ? '<br>' }}
+  {% endif %}
+{% endfor %}
+</p>
+<p>
+{% if customer_group %}
+<strong>{{ text_customer_group }}</strong> {{ customer_group }}
+{% endif %}
+</p>
+<p>
+<strong>{{ text_email }}</strong> {{ email }}<br>
+<strong>{{ text_telephone }}</strong> {{ telephone }}
+</p>

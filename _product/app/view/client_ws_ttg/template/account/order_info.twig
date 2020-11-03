@@ -1,0 +1,115 @@
+<div class="main-bg order-info-page">
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <div class="container">
+    <div class="order-info-page__wrap">
+      <h1>{{ heading_title }}</h1>
+      {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+      {% endif %}
+      <div class="h3">{{ text_order_id }}{{ order_id }}</div>
+      <div class="order-block">
+        <div class="shadow-item basket-block">
+          <table>
+            <tr>
+              <th></th>
+              <th>{{ column_product }}</th>
+            {% for option in options %}
+              <th>{{ option.name }}</th>
+            {% endfor %}
+              <th>{{ column_price }}</div></th>
+              <th class="text-center">{{ column_quantity }}</th>
+              <th>{{ column_total }}</th>
+            </tr>
+          {% for product in products %}
+            <tr>
+              <td>{% if product.image %}<img src="{{ product.thumb }}">{% endif %}</td>
+              <td>{{ product.name }}</td>
+            {% for option in options %}
+              <td>
+              {% for option_data in product.option_data %}
+                {% if option.option_code == option_data.option_code %}
+                  {{ option.name }}:{{ option_data.value }}
+                {% endif %}
+              {% endfor %}
+              </td>
+            {% endfor %}
+              <td>
+                {% if product.special %}
+                  <div class="product-price">{{ product.special_format }}</div>
+                  <div class="product-price__old">{{ product.price_format }}</div>
+                {% else %}
+                  <div class="product-price">{{ product.price_format }}</div>
+                {% endif %}
+              </td>
+              <td class="text-center">{{ product.quantity }}</td>
+              <td>{{ product.total_format }}</td>
+            </tr>
+          {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="history-item__table">
+        <div>
+          <span>{{ text_status }}:</span>
+          <div class="history-order-text">{{ order_status ? order_status.name }}</div>
+        </div>
+      {% for total in totals %}
+        {% if total.code != 'reward' or total.value < 0 %}
+        <div>
+          <span>{{ total.title }}:</span>
+          <div class="history-order-text">{{ total.text }}</div>
+        </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+    {% for total in totals %}
+      {% if total.code == 'reward' and total.value > 0 %}
+      <div class="history-item__table history-item-bonus-wrap">
+        <div>
+          <span>{{ total.title }}:</span>
+          <div class="history-order-text"><div class="history-blue">{{ total.text }}</div></div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+      <div class="h4">{{ text_order_detail }}</div>
+      <div class="history-item__table">
+        <div>
+          <span>{{ text_payment_method }}:</span>
+          <div class="history-order-text">{{ payment_method }}</div>
+        </div>
+        <div>
+          <span>{{ text_payment }}:</span>
+          <div class="history-order-text">{{ order_status and order_status.name == text_payment ? text_yes }}</div>
+        </div>
+        <div>
+          <span>{{ text_shipping_method }}:</span>
+          <div class="history-order-text">{{ shipping_method }}</div>
+        </div>
+      </div>
+      <div class="h4">{{ text_shipping }}</div>
+      <div class="history-item__table">
+        <div>
+          <span>{{ text_address }}:</span>
+          <div class="history-order-text">{{ custom_fields_address|column('value')|filter(v => v)|join(', ') }}</div>
+        </div>
+        <div>
+          <span>{{ text_contact }}:</span>
+          <div class="history-order-text">{{ custom_fields_account|column('value')|filter(v => v)|join(' ') }}</div>
+        </div>
+        <div>
+          <span>{{ text_telephone }}:</span>
+          <div class="history-order-text">{{ telephone }}</div>
+        </div>
+        <div>
+          <span>{{ text_email }}:</span>
+          <div class="history-order-text"><div class="history-blue">{{ email }}</div></div>
+        </div>
+        <div>
+          <span>{{ text_comment }}:</span>
+          <div class="history-order-text">{{ comment ? comment : '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

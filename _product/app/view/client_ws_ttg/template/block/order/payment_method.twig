@@ -1,0 +1,32 @@
+<div class="delivery-block">
+{% if error.warning %}
+  <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error.warning }}</div>
+{% endif %}
+  <div class="h3">{{ text_payment_method }}</div>
+{% for method in payment_methods %}
+  <div class="delivery-block__item">
+    <input type="radio" name="payment_method" value="{{ method.code }}" id="payment_method_{{ method.code }}" {{ method.code == payment_method ? ' checked'}}>
+    <label for="payment_method_{{ method.code }}">
+    {% if method.code == 'tinkoff' or method.description %}
+      <div class="d-md-flex justify-content-between">
+        <div>
+          <div class="text-delivery">{{ method.code == 'tinkoff' ? text_payment_title : method.title }}</div> 
+          <p>{{ method.code == 'tinkoff' ? text_payment_description : method.description }}</p>
+        </div>
+      {% if method.code == 'tinkoff' %}
+        <div class="delivery-img">
+          <img src="/theme/client_ws_ttg/images/visa.svg">
+          <img src="/theme/client_ws_ttg/images/mastercard.svg">
+          <img src="/theme/client_ws_ttg/images/mir.svg">
+        </div>
+      {% endif %}
+      </div>
+    {% else %}
+      <div class="text-delivery">{{ method.title }}</div>
+      {% if method.terms %}({{ method.terms }}){% endif %}
+    {% endif %}
+    </label>
+  </div>
+{% endfor %}
+</div>
+<hr>

@@ -1,0 +1,63 @@
+<div class="form-group row custom-field" data-sort="{{ custom_field.sort_order }}">
+  <label class="col-sm-2 col-form-label">{{ custom_field.name }}</label>
+  <div class="col-sm-10">
+    <ul class="nav nav-tabs" id="custom_field{{ custom_field.custom_field_id }}">
+    {% for language in languages %}
+      <li class="nav-item"><a href="#custom_field{{ custom_field.custom_field_id }}_{{ language.language_id }}" data-toggle="tab" class="nav-link"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <div class="tab-content">
+    {% for language in languages %}
+      <div class="tab-pane" id="custom_field{{ custom_field.custom_field_id }}_{{ language.language_id }}">
+        <table id="custom_field{{ custom_field.custom_field_id }}" class="table table-striped table-bordered table-hover">
+          <tbody>
+          {% set table_row = 0 %}
+          {% for row in custom_field.value[language.language_id] %}
+            <tr data-row="table{{ table_row }}">
+            {% for col in 0..(custom_field.setting.cols - 1) %}
+              <td class="text-center">
+                <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][{{ language.language_id }}][{{ table_row }}][{{ col }}]" value="{{ row[col] }}" placeholder="{{ entry_value }}" class="form-control"/>
+              </td>
+            {% endfor %}
+              <td class="text-right"><button type="button" onclick="$(this).parents('[data-row^=table]').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>
+            </tr>
+            {% set table_row = table_row + 1 %}
+          {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"></td>
+              <td class="text-right"><button type="button" data-add_template="custom_field_table" data-row="{{ table_row }}" data-language="{{ language.language_id }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i></button></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+
+
+<script type="text/javascript"><!--
+$('#custom_field{{ custom_field.custom_field_id }} [data-add_template=custom_field_table]').on('click', function() {
+  var row = $(this).data('row'),
+      language = $(this).data('language');
+
+  html = '<tr data-row="table' + row + '">';
+{% for col in 0..(custom_field.setting.cols - 1) %}
+  html += '  <td class="text-center">';
+  html += '    <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][' + language + '][' + row + '][{{ col }}]" placeholder="{{ entry_value }}" class="form-control"/>';
+  html += '  </td>';
+{% endfor %}
+  html += '  <td class="text-right"><button type="button" onclick="$(this).parents(\'[data-row^=table]\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#custom_field{{ custom_field.custom_field_id }} tbody').append(html);
+
+  $(this).data('row', row + 1);
+});
+//--></script>
+<script type="text/javascript"><!--
+$('#custom_field{{ custom_field.custom_field_id }} a:first').tab('show');
+//--></script>
+
+</div>

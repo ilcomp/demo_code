@@ -1,0 +1,32 @@
+<button type="submit" name="submit" value="1" class="main-btn main-btn-green" id="button_order_confirm">{{ button_confirm }}</button>
+
+{% if redirect %}
+	{% if payment is same as(true) %}
+<script>
+	{% if api is defined and api %}
+		toast_modal('<h2 class="h6">{{ submit == 1 ? text_success : text_save }}</h2><p>{{ submit == 1 ? text_success_help : text_save_help }}</p>');
+	{% else %}
+    $('#form_order_confirm').append('<div class="preload-full"><div class="preload"><span class="preload-b1"></span><span class="preload-b2"></span></div></div>');
+
+		location = '{{ redirect|replace({"&amp;":"&"}) }}';
+	{% endif %}
+</script>
+	{% else %}
+{{ payment }}
+	{% endif %}
+{% endif %}
+
+<script type="text/javascript">
+$('#button_order_confirm[type=submit]').click(function(e){
+	e.preventDefault();
+
+	$(this).parents('form').append('<input type="hidden" name="submit" value="' + this.value + '">').submit();
+});
+
+$(document).on('checkout_loaded', function(e, form){
+	if (form == 'checkout_form')
+		$('#checkout_form').find('input[name=submit]').remove();
+	if (form == 'confirm_form')
+		$('#confirm_form').find('input[name=submit]').remove();
+});
+</script>

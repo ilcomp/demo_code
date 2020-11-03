@@ -1,0 +1,40 @@
+<section class="profile">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7" id="account_order">
+        <h1>{{ heading_title }}</h1>
+        {% if success %}
+        <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+        {% endif %}
+      </div>
+      <div class="col-md-5 personal" id="account_edit">
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="text/javascript">
+$(function(){
+  fetch('{{ order }}')
+  .then(function(r){
+    return fetch_data(r);
+  })
+  .then(function(html){
+    $('#account_order').append(html);
+  })
+  .catch(function(e){
+    console.error(e);
+  });
+
+  fetch('{{ edit }}')
+  .then(function(r){
+    return fetch_data(r);
+  })
+  .then(function(html){
+    $('#account_edit').append(html);
+  })
+  .catch(function(e){
+    console.error(e);
+  });
+});
+</script>

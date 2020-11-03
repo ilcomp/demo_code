@@ -1,0 +1,26 @@
+{% if error_warning %}
+  <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+{% endif %}
+{% if payment_methods %}
+<div class="order_block_top">
+  <div class="order_title">{{ text_payment_method }}</div>
+  </div>
+  <div class="order_block_content">
+  {% for method in payment_methods %}
+    {% if not payment_method %}
+      {% set  payment_method = method.code %}
+    {% endif %}
+    {% if method.code == payment_method %}
+    <input type="radio" name="payment_method" value="{{ method.code }}" id="shipping_method_{{ method.code }}" checked>
+    {% else %}
+    <input type="radio" name="payment_method" value="{{ method.code }}" id="shipping_method_{{ method.code }}"/>
+    {% endif %}
+    <label for="shipping_method_{{ method.code }}">
+      {% if method.image %}<img src="{{ method.image }}" alt="" class="img-fluid">{% endif %}
+      <div class="name_sent">{{ method.title }}</div>
+    </label>
+    {% if method.terms %}
+      ({{ method.terms }})
+    {% endif %}
+  {% endfor %}
+{% endif %}

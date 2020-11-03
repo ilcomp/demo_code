@@ -1,0 +1,29 @@
+<div class="step-wrap__form">
+  <div class="h3">{{ text_contact }}</div>
+  <div class="row">
+  {% for custom_field in custom_fields %}
+    <div class="col-12 col-md-6">
+      <div class="callback-input">
+        <div>{{ custom_field.name }}</div>
+        <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}"{{custom_field.required ? ' class="required"'}}/>
+        {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+      </div>
+    </div>
+  {% endfor %}
+    <div class="col-12"></div>
+    <div class="col-12 col-md-6">
+      <div class="callback-input">
+        <div>{{ entry_telephone }}</div>
+        <input type="tel" name="telephone" value="{{ telephone }}" class="required"/>
+        {% if error.telephone %}<div class="error-input">{{ error.telephone }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="callback-input">
+        <div>{{ entry_email }}</div>
+        <input type="email" name="email" value="{{ email }}" class="required"/>
+        {% if error.email %}<div class="error-input">{{ error.email }}</div>{% endif %}
+      </div>
+    </div>
+  </div>
+</div>

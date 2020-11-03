@@ -1,0 +1,10 @@
+<div class="delivery-block">
+  <div class="h3">Откуда вы узнали о нашей продукции?</div>
+{% for row, item in additionally_option_methods%}
+  <div class="delivery-block__item">
+      <input type="radio" name="additionally[option][{{ item.code }}]" value="{{ item.title }}" id="wire{{ item.code }}_{{ loop.index }}"{{ item.title in additionally ? ' checked' }}>
+      <label for="wire{{ item.code }}_{{ loop.index }}"><div class="text-delivery">{{ item.title }}</div></label> 
+  </div>
+  {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+{% endfor %}
+</div>

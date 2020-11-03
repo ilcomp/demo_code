@@ -1,0 +1,173 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="mail">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="order_status" id="input-status" class="form-control">
+            {% if order_status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-min_amount">{{ entry_min_amount }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="order_min_amount" value="{{ order_min_amount }}" placeholder="{{ entry_min_amount }}" id="input-min_amount" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_listing">{{ entry_status_listing }}</label>
+        <div class="col-sm-10">
+          <select name="order_status_listing" id="input-status_listing" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing in listings %}
+              {% if listing.listing_id == order_status_listing %}
+                <option value="{{ listing.listing_id }}" selected="selected">{{ listing.name }}</option>
+              {% else %}
+                <option value="{{ listing.listing_id }}">{{ listing.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_default_id">{{ entry_status_default_id }}</label>
+        <div class="col-sm-10">
+          <select name="order_status_default_id" id="input-status_default_id" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing_item in listing_items %}
+              {% if listing_item.listing_item_id == order_status_default_id %}
+                <option value="{{ listing_item.listing_item_id }}" selected="selected">{{ listing_item.name }}</option>
+              {% else %}
+                <option value="{{ listing_item.listing_item_id }}">{{ listing_item.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_draft_id">{{ entry_status_draft }}</label>
+        <div class="col-sm-10">
+          <select name="order_status_draft_id" id="input-status_draft_id" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing_item in listing_items %}
+              {% if listing_item.listing_item_id == order_status_draft_id %}
+                <option value="{{ listing_item.listing_item_id }}" selected="selected">{{ listing_item.name }}</option>
+              {% else %}
+                <option value="{{ listing_item.listing_item_id }}">{{ listing_item.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">{{ help_status_draft }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_edited_id">{{ entry_status_edited }}</label>
+        <div class="col-sm-10">
+          <select name="order_status_edited_id" id="input-status_edited_id" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing_item in listing_items %}
+              {% if listing_item.listing_item_id == order_status_edited_id %}
+                <option value="{{ listing_item.listing_item_id }}" selected="selected">{{ listing_item.name }}</option>
+              {% else %}
+                <option value="{{ listing_item.listing_item_id }}">{{ listing_item.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">{{ help_status_edited }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_canceled_id">{{ entry_status_canceled }}</label>
+        <div class="col-sm-10">
+          <select name="order_status_canceled_id" id="input-status_canceled_id" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing_item in listing_items %}
+              {% if listing_item.listing_item_id == order_status_canceled_id %}
+                <option value="{{ listing_item.listing_item_id }}" selected="selected">{{ listing_item.name }}</option>
+              {% else %}
+                <option value="{{ listing_item.listing_item_id }}">{{ listing_item.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_completed_id">{{ entry_status_completed }}</label>
+        <div class="col-sm-10">
+          <select name="order_status_completed_id" id="input-status_completed_id" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing_item in listing_items %}
+              {% if listing_item.listing_item_id == order_status_completed_id %}
+                <option value="{{ listing_item.listing_item_id }}" selected="selected">{{ listing_item.name }}</option>
+              {% else %}
+                <option value="{{ listing_item.listing_item_id }}">{{ listing_item.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_status_processing }}</label>
+        <div class="col-sm-10">
+          <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for listing_item in listing_items %}
+              <label class="form-check">{% if listing_item.listing_item_id in order_status_processing %}
+                  <input type="checkbox" name="order_status_processing[]" value="{{ listing_item.listing_item_id }}" checked="checked" class="form-check-input"/>
+                  {{ listing_item.name }}
+                {% else %}
+                  <input type="checkbox" name="order_status_processing[]" value="{{ listing_item.listing_item_id }}" class="form-check-input"/>
+                  {{ listing_item.name }}
+                {% endif %}
+              </label>
+            {% endfor %}
+          </div>
+          <small class="form-text text-muted">{{ help_status_processing }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_status_complete }}</label>
+        <div class="col-sm-10">
+          <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for listing_item in listing_items %}
+              <label class="form-check">{% if listing_item.listing_item_id in order_status_complete %}
+                  <input type="checkbox" name="order_status_complete[]" value="{{ listing_item.listing_item_id }}" checked="checked" class="form-check-input"/>
+                  {{ listing_item.name }}
+                {% else %}
+                  <input type="checkbox" name="order_status_complete[]" value="{{ listing_item.listing_item_id }}" class="form-check-input"/>
+                  {{ listing_item.name }}
+                {% endif %}
+              </label>
+            {% endfor %}
+          </div>
+          <small class="form-text text-muted">{{ help_status_complete }}</small>
+        </div>
+      </div>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in order_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="order_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="order_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>

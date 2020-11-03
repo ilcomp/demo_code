@@ -1,0 +1,136 @@
+<form method="post" id="form-form{{ form_id }}">
+  <input type="hidden" name="form_method" value="block/form/send">
+  <input type="hidden" name="form_id" value="{{ form_id }}">
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+
+{% if title %}<div class="h4">{{ title }}</div>{% endif %}
+{% if form_id == 4 %}<div class="row">{% endif %}
+{% for field in fields %}
+  {% if form_id == 4 and field.type != 'hidden' %}<div class="col-12 col-md-6 col-lg-5">{% endif %}
+  {% if field.type == 'hidden' %}
+    <input type="hidden" name="{{ field.code }}" value="{{ field.value }}">
+  {% elseif field.type == 'select' %}
+    <div class="h6{{ field.required ? ' required' }}">{{ field.name }}</div>
+    <div class="callback-input">
+      <select name="{{ field.code }}">
+      {% if field.help %}<option value="">{{ field.help }}</option>{% endif %}
+      {% for listing_item in field.listing_items %}
+        <option value="{{ listing_item.listing_item_id }}"{{ listing_item.listing_item_id == field.value ? ' selected' }}>{{ listing_item.name }}</option>
+      {% endfor %}
+      </select>
+    {% if error[field.code] %}<div class="error-input">{{ error[field.code] }}</div>{% endif %}
+    </div>
+  {% elseif field.type == 'radio'%}
+    <div class="h6{{ field.required ? ' required' }}">{{ field.name }}</div>
+    <div class="callback-input">
+      {% for listing_item in field.listing_items %}
+      <div class="form-group form-check">
+        <input type="{{ field.type }}" name="{{ field.code }}" value="{{ listing_item.listing_item_id }}" class="form-check-input" id="input-form{{ field.field_id }}_{{ loop.index }}"{{ listing_item.listing_item_id == field.value ? ' checked' }}>
+        <label class="form-check-label" for="input-form{{ field.field_id }}_{{ loop.index }}">{{ listing_item.name }}</label>
+      </div>
+      {% endfor %}
+    </div>
+    {% if error[field.code] %}<div class="error-input">{{ error[field.code] }}</div>{% endif %}
+    </div>
+  {% elseif field.type == 'checkbox' %}
+    <div class="h6{{ field.required ? ' required' }}">{{ field.name }}</div>
+    <div class="callback-input">
+      {% for listing_item in field.listing_items %}
+      <div class="form-group form-check">
+        <input type="{{ field.type }}" name="{{ field.code }}[]" value="{{ listing_item.listing_item_id }}" class="form-check-input" id="input-form{{ field.field_id }}_{{ loop.index }}"{{ listing_item.listing_item_id in field.value ? ' checked' }}>
+        <label class="form-check-label" for="input-form{{ field.field_id }}_{{ loop.index }}">{{ listing_item.name }}</label>
+      </div>
+      {% endfor %}
+    </div>
+    {% if error[field.code] %}<div class="error-input">{{ error[field.code] }}</div>{% endif %}
+    </div>
+  {% elseif field.name %}
+    <div class="callback-input{{ field.required ? ' required' }}">
+      <div>{{ field.name }}</div>
+      <input type="{{ field.type }}" name="{{ field.code }}" value="{{ field.value }}" placeholder="{{ field.help }}">
+    {% if field.type == 'tel' %}
+      <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/phone.svg#form_svg"></use></svg></i>
+    {% elseif field.type == 'email' %}
+      <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/mail.svg#form_svg"></use></svg></i>
+    {% elseif field.type == 'text' %}
+      <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user.svg#form_svg"></use></svg></i>
+    {% endif %}
+    {% if error[field.code] %}<div class="error-input">{{ error[field.code] }}</div>{% endif %}
+    </div>
+  {% else %}
+    <div class="input-wrap">
+      <input type="{{ field.type }}" name="{{ field.code }}" value="{{ field.value }}" placeholder="{{ field.help }}">
+      {% if error[field.code] %}<div class="error-input">{{ error[field.code] }}</div>{% endif %}
+    </div>
+  {% endif %}
+  {% if form_id == 4 and field.type != 'hidden' %}</div>{% endif %}
+{% endfor %}
+  {% if form_id == 4 %}<div class="col-12 col-md-4">{% endif %}
+  <button type="submit" class="main-btn">{{ button_send }}</button>
+  {% if form_id == 4 %}</div>{% endif %}
+{% if form_id == 4 %}</div>{% endif %}
+{% if agreement and confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a> и согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a> сайта</p>
+{% elseif agreement %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a></p>
+{% elseif confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a></p>
+{% endif %}
+<input type="checkbox" name="agree" value="1" checked>
+<script>$('#form-form{{ form_id }} input[name="agree"]').prop('checked', 0);</script>
+  
+</form>
+
+<script>
+(function(){
+  var form = $('#form-form{{ form_id }}');
+
+  form.find('.alert-dismissible').remove();
+
+  form.find('[name=page]').val(location.href);
+
+  form.submit(function(e){
+    e.preventDefault();
+
+    form.find('.error-input').remove();
+
+    fetch('{{ actions.form|replace({"&amp;": "&"}) }}&form_id={{ form_id }}', {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {'Accept': 'application/json'},
+      method: 'post',
+      body: new FormData(this)
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      if (json['error'])
+        for (code in json['error']) {
+          if (code == 'warning')
+            form.prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'][code] + '</div>');
+          else
+            form.find('[name="' + code + '"]').parent().append('<div class="error-input">' + json['error'][code] + '</div>');
+        }
+
+      if (json['success']) {
+        toast_message(json['success'], ' ', 5000);
+
+        form.find('input, textarea, select').val('');
+        form.find('radio, checked').prop('checked', false);
+
+        form.parents('.modal').modal('hide');
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  })
+
+  form.on('change', 'input, select, textarea', function(e){
+    $(this).next('.error-input').remove();
+  });
+})()
+</script>

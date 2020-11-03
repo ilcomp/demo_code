@@ -1,0 +1,81 @@
+{% if token %}
+<a href="javascript:void(0);" class="link-sdec location" id="boxberry_open"><i class="geo_svg"><svg><use xlink:href="theme/client_ws_ttg/images/geo2.svg#geo_svg"></use></svg></i> {{ button_pickup }}</a>
+
+<script type="text/javascript">
+(function() {
+  var form = $('#boxberry_open').parents('form'),
+      block_boxberry = $('#shipping_method_boxberry_view');
+
+  if (block_boxberry.find('input[name="boxberry[cost]"]').val() > 0) {
+    form.find('input[data-address="address"]').prop('readonly', 1);
+  }
+
+  form.find('input[data-address="address"]').val(block_boxberry.find('input[name="boxberry[address]"]').val());
+
+  Promise.resolve().then(function() {
+    if ('boxberry' in window)
+      return true;
+    else
+      return new Promise(function(resolve, reject) {
+        var element = document.createElement('script');
+
+        element.onload = function() {resolve()};
+        element.onerror = function() {reject()};
+
+        element.async = false;
+        element['src'] = 'https://points.boxberry.de/js/boxberry.js';
+
+        document.body.appendChild(element);
+      });
+  }).then(function() {
+    var onChoose_function = function(item){
+      block_boxberry.find('input[name="boxberry[city]"]').val(item.name);
+      block_boxberry.find('input[name="boxberry[address]"]').val(item.address);
+      block_boxberry.find('input[name="boxberry[cost]"]').val(item.price);
+      form.find('input[data-address="city"]').val(item.name);
+      form.find('input[data-address="address"]').val(item.address).prop('readonly', 1);
+
+      form.submit();    	
+    }
+
+    $('#boxberry_open').click(function(){
+      var cod = form.find('input[name=payment_method]:checked').length > 0 && form.find('input[name=payment_method]:checked').val().slice(-4) == '.cod';
+
+    	boxberry.open(onChoose_function, '{{ token }}', form.find('input[data-address="city"]').val(), '{{ city_from }}', Number('{{ price }}'), Number('{{ weight }}'), Number(cod ? '{{ total }}' : 0), Number('{{ height }}'), Number('{{ width }}'), Number('{{ length }}'));
+    });
+  });
+})();
+</script>
+{% else %}
+<script type="text/javascript">var widjet_boxberry;</script>
+<div id="shipping_method_boxberry_view" class="radio-label__name">
+  <input type="hidden" name="boxberry[city]" value="{{ boxberry ? boxberry.city|e }}">
+  <input type="hidden" name="boxberry[address]" value="{{ boxberry ? boxberry.address|e }}">
+  <input type="hidden" name="boxberry[cost]" value="{{ boxberry ? boxberry.cost }}">
+</div>
+<script type="text/javascript">
+$(function(){
+  var form = $('#shipping_method_boxberry_view').parents('form'),
+      boxberry_refresh = function(){
+        fetch('{{ action }}', {
+          credentials: 'include',
+          headers: {'Accept': 'text/html'}
+        })
+        .then(function(r){
+          return r.text();
+        })
+        .then(function(html) {
+          $('#shipping_method_boxberry_view').append(html);
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      };
+
+  if (form.find('input[name=shipping_method]:checked').val() == 'boxberry.boxberry')
+    boxberry_refresh();
+  else
+    $('#shipping_method_boxberry_view').html('');
+});
+</script>
+{% endif %}

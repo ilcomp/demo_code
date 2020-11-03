@@ -1,0 +1,71 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="module">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          {% if error.name %}<div class="invalid-tooltip">{{ error.name }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="status" id="input-status" class="form-control">
+            <option value="1"{{ status ? ' selected' }}>{{ text_enabled }}</option>
+            <option value="0"{{ not status ? ' selected' }}>{{ text_disabled }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-form_id">{{ entry_form_id }}</label>
+        <div class="col-sm-10">
+          <select name="form_id" id="input-form_id" class="form-control">
+          {% for form in forms %}
+            <option value="{{ form.form_id  }}"{{ form.form_id == form_id ? ' selected' }}>{{ form.name }}</option>
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-description{{ language.language_id }}">{{ entry_html }}</label>
+        <div class="col-sm-10">
+          <div class="tab-pane">
+            <ul class="nav nav-tabs" id="language">
+            {% for language in languages %}
+              <li class="nav-item"><a href="#language{{ language.language_id }}" data-toggle="tab" class="nav-link"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/> {{ language.name }}</a></li>
+            {% endfor %}
+            </ul>
+            <div class="tab-content">
+            {% for language in languages %}
+              <div class="tab-pane" id="language{{ language.language_id }}">
+                <switcheditor-wrap editor="{{editor }}" lang="{{ language.language }}" class="form-group">
+                  <div>
+                  {% for item in dialogs %}
+                    <switcheditor-dialog-{{ item.code }} slot="dialog" class="btn btn-primary mb-2{{ loop.last ? ' mr-2'}}" {% for code,value in item.setting %} {{ code }}="{{ value }}"{% endfor %}><i class="{{ item.icon }}"></i></switcheditor-dialog-{{ item.code }}>
+                  {% endfor %}
+                  {% for item in editors %}
+                    <switcheditor-editor-{{ item.code }} slot="editor" class="btn btn-primary mb-2" {% for code,value in item.setting %} {{ code }}="{{ value }}"{% endfor %}><i class="{{ item.icon }}"></i></switcheditor-editor-{{ item.code }}>
+                  {% endfor %}
+                  </div>
+                  <textarea name="html[{{ language.language_id }}]" data-toggle="editor" placeholder="{{ entry_description }}" class="form-control">{{ html[language.language_id] ? html[language.language_id] }}</textarea>
+                </switcheditor-wrap>
+              </div>
+            {% endfor %}
+            </div>
+          </div>
+          <small class="form-text text-muted">{{ help_html }}</small>
+          {% if error.html %}<div class="invalid-tooltip">{{ error.html }}</div>{% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+$('#language li:first-child a').tab('show');
+//--></script>
+<style>
+.ck-editor__editable_inline {min-height: 400px;}
+</style>

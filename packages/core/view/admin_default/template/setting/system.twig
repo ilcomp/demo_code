@@ -1,0 +1,260 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="system">
+      <fieldset>
+        <legend>{{ text_general }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_maintenance }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if system_maintenance %}
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_maintenance" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_maintenance" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_maintenance" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_maintenance" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+            <small class="form-text text-muted">{{ help_maintenance }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_seo_url }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if system_seo_url %}
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_seo_url" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_seo_url" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_seo_url" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_seo_url" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+            <small class="form-text text-muted">{{ help_seo_url }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-seo_url_consolidate">{{ entry_seo_url_consolidate }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <select name="system_seo_url_consolidate" id="input-seo_url_consolidate" class="form-control">
+                {% if system_seo_url_consolidate == '' %}
+                  <option value="" selected="selected">Canonical</option>
+                {% else %}
+                  <option value="">Canonical</option>
+                {% endif %}
+                {% if system_seo_url_consolidate == '301' %}
+                  <option value="301" selected="selected">301</option>
+                {% else %}
+                  <option value="301">301</option>
+                {% endif %}
+                {% if system_seo_url_consolidate == '404' %}
+                  <option value="404" selected="selected">404</option>
+                {% else %}
+                  <option value="404">404</option>
+                {% endif %}
+            </select>
+            </div>
+            <small class="form-text text-muted">{{ help_seo_url }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-robots">{{ entry_robots }}</label>
+          <div class="col-sm-10">
+            <textarea name="system_robots" rows="5" placeholder="{{ entry_robots }}" id="input-robots" class="form-control">{{ system_robots }}</textarea>
+            <small class="form-text text-muted">{{ help_robots }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-compression">{{ entry_compression }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="system_compression" value="{{ system_compression }}" placeholder="{{ entry_compression }}" id="input-compression" class="form-control"/>
+            <small class="form-text text-muted">{{ help_compression }}</small>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_security }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_password }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if system_password %}
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_password" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_password" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_password" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_password" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+            <small class="form-text text-muted">{{ help_password }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_shared }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if system_shared %}
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_shared" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_shared" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_shared" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_shared" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+            <small class="form-text text-muted">{{ help_shared }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-encryption">{{ entry_encryption }}</label>
+          <div class="col-sm-10">
+            <textarea name="system_encryption" rows="5" placeholder="{{ entry_encryption }}" id="input-encryption" class="form-control">{{ system_encryption }}</textarea>
+            <small class="form-text text-muted">{{ help_encryption }}</small>
+            {% if error_encryption %}
+              <div class="invalid-tooltip">{{ error_encryption }}</div>
+            {% endif %}</div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_upload }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-file-max-size">{{ entry_file_max_size }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="system_file_max_size" value="{{ system_file_max_size }}" placeholder="{{ entry_file_max_size }}" id="input-file-max-size" class="form-control"/>
+            <small class="form-text text-muted">{{ help_file_max_size }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-file-ext-allowed">{{ entry_file_ext_allowed }}</label>
+          <div class="col-sm-10">
+            <textarea name="system_file_ext_allowed" rows="5" placeholder="{{ entry_file_ext_allowed }}" id="input-file-ext-allowed" class="form-control">{{ system_file_ext_allowed }}</textarea>
+            <small class="form-text text-muted">{{ help_file_ext_allowed }}</small>
+            {% if error_extension %}
+              <div class="invalid-tooltip">{{ error_extension }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-file-mime-allowed">{{ entry_file_mime_allowed }}</label>
+          <div class="col-sm-10">
+            <textarea name="system_file_mime_allowed" rows="5" placeholder="{{ entry_file_mime_allowed }}" id="input-file-mime-allowed" class="form-control">{{ system_file_mime_allowed }}</textarea>
+            <small class="form-text text-muted">{{ help_file_mime_allowed }}</small>
+            {% if error_mime %}
+              <div class="invalid-tooltip">{{ error_mime }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_error }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-timezone">{{ entry_timezone }}</label>
+          <div class="col-sm-10">
+            <select name="system_timezone" id="input-timezone" class="form-control">
+              {% for timezone in timezones %}
+                {% if timezone.value == system_timezone %}
+                  <option value="{{ timezone.value }}" selected="selected">{{ timezone.text }}</option>
+                {% else %}
+                  <option value="{{ timezone.value }}">{{ timezone.text }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_error_display }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if system_error_display %}
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_error_display" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_error_display" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_error_display" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_error_display" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_error_log }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if system_error_log %}
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_error_log" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_error_log" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-outline-secondary"><input type="radio" name="system_error_log" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-outline-secondary active"><input type="radio" name="system_error_log" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-sm-2 col-form-label" for="input-error-filename">{{ entry_error_filename }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="system_error_filename" value="{{ system_error_filename }}" placeholder="{{ entry_error_filename }}" id="input-error-filename" class="form-control"/>
+            {% if error_log %}
+              <div class="invalid-tooltip">{{ error_log }}</div>
+            {% endif %}</div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_api }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-api">{{ entry_api }}</label>
+          <div class="col-sm-10">
+            <select name="system_api_id" id="input-api" class="form-control">
+              <option value="0">{{ text_none }}</option>
+              {% for api in apis %}
+                {% if api.api_id == system_api_id %}
+                  <option value="{{ api.api_id }}" selected="selected">{{ api.username }}</option>
+                {% else %}
+                  <option value="{{ api.api_id }}">{{ api.username }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <small class="form-text text-muted">{{ help_api }}</small>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_captcha }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_captcha }}</label>
+          <div class="col-sm-10">
+            <select name="system_captcha" id="input-captcha" class="form-control">
+              <option value="">{{ text_none }}</option>
+              {% for captcha in captchas %}
+                {% if captcha.value == system_captcha %}
+                  <option value="{{ captcha.value }}" selected="selected">{{ captcha.text }}</option>
+                {% else %}
+                  <option value="{{ captcha.value }}">{{ captcha.text }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <small class="form-text text-muted">{{ help_captcha }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_captcha_page }}</label>
+          <div class="col-sm-10">
+            <div class="form-control" style="height: 150px; overflow: auto;">
+              {% for captcha_page in captcha_pages %}
+                <label class="form-check">
+                  {% if captcha_page.value in system_captcha_page %}
+                    <input type="checkbox" name="system_captcha_page[]" value="{{ captcha_page.value }}" checked="checked" class="form-check-input"/>
+                    {{ captcha_page.text }}
+                  {% else %}
+                    <input type="checkbox" name="system_captcha_page[]" value="{{ captcha_page.value }}" class="form-check-input"/>
+                    {{ captcha_page.text }}
+                  {% endif %}
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>

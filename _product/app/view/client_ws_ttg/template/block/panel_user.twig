@@ -1,0 +1,25 @@
+<style>
+#user_panel{
+    position: fixed;
+    bottom: 50px;
+    left: 100px;
+    z-index: 1000;
+}
+#user_panel a{
+	display: block;
+	padding: 15px;
+    margin-bottom: 5px;
+    border-radius: 50%;
+    background: #ddd;
+    opacity: 0.5;
+}
+#user_panel a:hover{
+	text-decoration: none;
+    opacity: 0.8;
+}
+</style>
+<div id="user_panel">
+	{% if edit %}
+	<a href="{{ edit }}" target="_blank">🖊</a>
+	{% endif %}
+</div>

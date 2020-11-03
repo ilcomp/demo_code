@@ -1,0 +1,32 @@
+<section class="take-care blue-bg">
+  <img src="theme/client_ws_ttg/images/leaf3.png" class="take-care__leaf">
+  <img src="theme/client_ws_ttg/images/leaf4.png" class="take-care__leaf2">
+  <img src="theme/client_ws_ttg/images/leaf5.png" class="take-care__leaf3">
+  <img src="theme/client_ws_ttg/images/leaf6.png" class="take-care__leaf4">
+  <div class="take-care__spoiler js-spoiler-content">
+    <div class="container">
+      <div class="row">
+      {% for category in categories %}
+        <div class="col-6 col-md-3 col-lg-2">
+          <a href="{{ category.href }}" class="take-care__item">
+            {% if category.image %}<span class="take-care__img"><img src="{{ category.thumb }}" class="img-fluid"></span>{% endif %}
+            <span class="take-care__title">{{ category.title }}</span>
+            <span class="take-care__text">Перейти в каталог</span>
+          </a>
+        </div>
+        {% if loop.index == 4 %}
+        <div class="col-12 col-lg-4 order-first order-lg-0">
+          <div class="main-title">
+            <img src="theme/client_ws_ttg/images/main-title2.png" class="img-fluid main-title__img" alt="">
+            <h2>ПОДОБРАТЬ уход</h2>
+            <img src="theme/client_ws_ttg/images/leaf.png" alt="" class="main-title__leaf">
+            <img src="theme/client_ws_ttg/images/leaf2.png" alt="" class="main-title__leaf2">
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+  <a href="javascript:void(0);" class="main-btn js-spoiler d-md-none">Смотреть еще</a>
+</section>

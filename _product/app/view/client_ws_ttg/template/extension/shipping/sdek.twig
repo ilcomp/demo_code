@@ -1,0 +1,129 @@
+{% if products %}
+<a href="javascript:void(0);" class="link-sdec location" id="sdek_open"><i class="geo_svg"><svg><use xlink:href="theme/client_ws_ttg/images/geo2.svg#geo_svg"></use></svg></i> {{ button_pickup }}</a>
+
+<script type="text/javascript">
+(function() {
+  var form = $('#sdek_open').parents('form'),
+      block_sdek = $('#shipping_method_sdek_view');
+
+  if (block_sdek.find('input[name="sdek[cost]"]').val() > 0 && block_sdek.find('input[name="sdek[courier]"]').val() == 0) {
+    form.find('input[data-address="address"]').prop('readonly', 1);
+  }
+
+  Promise.resolve().then(function() {
+    if ('ISDEKWidjet' in window)
+      return true;
+    else
+      return new Promise(function(resolve, reject) {
+        var element = document.createElement('script');
+
+        element.onload = function() {resolve()};
+        element.onerror = function() {reject()};
+
+        element.async = false;
+        element['src'] = '/assets/sdek/widjet.js';
+        // element['src'] = 'https://www.cdek.ru/website/edostavka/template/js/widjet.js';
+
+        document.body.appendChild(element);
+      });
+  }).then(function() {
+    widjet_sdek = new ISDEKWidjet ({
+      showWarns: false,
+      showLogs: false,
+      hidedress: true,
+      // apikey: '',
+      // hidedelt: true,
+      popup: true,
+      defaultCity: form.find('input[data-address="city"]').val().split(',')[0],
+      cityFrom: '{{ city_from }}',
+      country: 'Россия',
+      link: false,
+      path: '/assets/sdek/scripts/',
+      // path: 'https://www.cdek.ru/website/edostavka/template/scripts/',
+      servicepath: '{{ action }}',
+{% if products %}
+      goods: {
+  {% for key, product in products %}
+        {{key}}:{
+            length: {{product.length}},
+            width: {{product.width}},
+            height: {{product.height}},
+            weight: {{product.weight}}
+        },
+  {% endfor %}
+      },
+{% endif %}
+      // onCalculate: function(item){
+      //      console.log(item);
+      //  },
+
+      onChoose: function(item){
+        block_sdek.find('input[name="sdek[city]"]').val(item.cityName);
+        block_sdek.find('input[name="sdek[address]"]').val(item.PVZ.Address);
+        block_sdek.find('input[name="sdek[cost]"]').val(item.price);
+        block_sdek.find('input[name="sdek[courier]"]').val(0);
+        form.find('input[data-address="city"]').val(item.cityName);
+        form.find('input[data-address="address"]').val(item.PVZ.Address).prop('readonly', 1);
+
+        form.submit();
+      },
+      onChooseProfile: function(item){
+        block_sdek.find('input[name="sdek[city]"]').val(item.cityName);
+        block_sdek.find('input[name="sdek[address]"]').val('');
+        block_sdek.find('input[name="sdek[cost]"]').val(item.price);
+        block_sdek.find('input[name="sdek[courier]"]').val(1);
+        form.find('input[data-address="city"]').val(item.cityName);
+        form.find('input[data-address="address"]').val('').prop('readonly', 0);
+
+        form.submit();
+      },
+      onPVZLoad: function(){
+
+      }
+    });
+
+    $('#sdek_open').click(function(){
+      widjet_sdek.open();
+    });
+  });
+})();
+</script>
+{% else %}
+<script type="text/javascript">var widjet_sdek;</script>
+<div id="shipping_method_sdek_view" class="radio-label__name">
+  <input type="hidden" name="sdek[city]" value="{{ sdek ? sdek.city|e }}">
+  <input type="hidden" name="sdek[address]" value="{{ sdek ? sdek.address|e }}">
+  <input type="hidden" name="sdek[cost]" value="{{ sdek ? sdek.cost }}">
+  <input type="hidden" name="sdek[courier]" value="{{ sdek ? sdek.courier }}">
+</div>
+<script type="text/javascript">
+$(function(){
+  var form = $('#shipping_method_sdek_view').parents('form'),
+      sdek_refresh = function(){
+        fetch('{{ action }}', {
+          credentials: 'include',
+          headers: {'Accept': 'text/html'}
+        })
+        .then(function(r){
+          return r.text();
+        })
+        .then(function(html) {
+          $('#shipping_method_sdek_view').append(html);
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      };
+
+  if (form.find('input[name=shipping_method]:checked').val() == 'sdek.sdek')
+    sdek_refresh();
+  else
+    $('#shipping_method_sdek_view').html('');
+
+  $(document).on('click', '.CDEK-widget__popup__close-btn', function(e){
+    e.preventDefault();
+  });
+});
+</script>
+<style>.CDEK-widget__popup-mask{z-index: 2000;}</style>
+{% endif %}

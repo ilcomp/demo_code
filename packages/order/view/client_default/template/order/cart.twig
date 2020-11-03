@@ -1,0 +1,86 @@
+<section class="head_cart">
+  <div class="container">
+    <div class="head_cart_left" id="cart_title">
+      <h1>{{ heading_title }}{% if weight %} ({{ weight }}){% endif %}</h1>
+      <span>{{ text_count }} {{ count }}</span>
+    </div>
+    <div class="head_cart_right" id="cart_total">
+      {{ module.total }}
+      <a href="{{ checkout }}" class="other_btn">{{ button_checkout }}<i class="download_arr"></i></a>
+    </div>
+  </div>
+</section>
+<section class="cart_content">
+  <div class="container" id="cart_content">
+  {% if attention %}
+    <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ attention }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+  {% endif %}
+  {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+  {% endif %}
+  {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+  {% endif %}
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="cart_form">
+      {{ module.cart_product }}
+    </form>
+  {% if modules %}
+    <h2>{{ text_next }}</h2>
+    <p>{{ text_next_choice }}</p>
+    {% for module in modules %}
+      {{ module }}
+    {% endfor %}
+  {% endif %}
+  </div>
+</section>
+
+<script type="text/javascript">
+var cart_form = $('#cart_form'),
+    cart_title = $('#cart_title'),
+    cart_total = $('#cart_total'),
+    cart_content = $('#cart_content');
+
+cart_form.submit(function(e){
+  e.preventDefault();
+
+  $(document).trigger('cart_load');
+
+  fetch('{{ action_fetch|replace({"&amp;":"&"}) }}', {
+    method: 'post',
+    body: new FormData(this),
+    credentials: 'include'
+  })
+  .then(function(r){
+    $(document).trigger('cart_loaded', 'cart_form');
+
+    return fetch_data(r);
+  })
+  .then(function(html){
+    if (!html)
+      location.reload();
+
+    var data = $(html);
+
+    cart_form.html(data.find('#cart_form').html());
+    cart_title.html(data.find('#cart_title').html());
+    cart_total.html(data.find('#cart_total').html());
+
+    cart_content.find('.alert').remove();
+    cart_content.prepend(data.find('#cart_content > .alert'));
+  })
+  .catch(function(e){
+    console.error(e);
+  });
+});
+
+$(document).on('cart_loaded', function(e, el = ''){
+  if (el != 'cart_form')
+    cart_form.submit();
+});
+</script>

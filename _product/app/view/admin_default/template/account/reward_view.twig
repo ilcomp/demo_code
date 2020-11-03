@@ -1,0 +1,90 @@
+<div class="form-group row" id="account_reward"></div>
+<script>
+(function(){
+  var account_reward = $('#account_reward'),
+  refresh = function(action){
+    fetch(action || '{{ actions.view|replace({"&amp;": "&"}) }}', {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'applicastion/json'
+      }
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json) {
+      if (json['error']) {
+        account_reward.before('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+      } else {
+        var html = '';
+
+        html += '<label class="col-sm-2 col-form-label" for="input-reward">' + json['heading_title'] + '</label><div class="col-sm-10">';
+
+        if (json['rewards'] && json['rewards'].length > 0) {
+          html += '<div class="table-responsive"><table class="table table-bordered table-hover"><thead><tr><td class="text-left">' + json['text_comment'] + '</td><td class="text-left">' + json['text_value'] + '</td><td class="text-left">' + json['text_date_add'] + '</td></tr></thead><tbody>';
+
+          for (key in json['rewards']) {
+            html += '<tr><td class="text-left">' + json['rewards'][key]['comment'] + '</td><td class="text-left">' + json['rewards'][key]['reward'] + '</td><td class="text-left">' + json['rewards'][key]['date_added'] + '</td></tr>';
+          }
+
+          if (json['pagination'])
+            html += '<tr><td colspan="3">' + json['pagination'] + '</td></tr>';
+
+          if (json['total'])
+            html += '<tr><td class="text-left">' + json['text_total'] + '</td><td class="text-left">' + json['total'] + '</td><td></td></tr>';
+
+          html += '</tbody></table></div>';
+        }
+
+        html += '<div class="form-group"><label for="input-reward-value">' + json['entry_value'] + '</label><input type="text" placeholder="' + json['entry_value'] + '" id="input-reward-value" class="form-control"/></div>';
+        html += '<div class="form-group"><label for="input-reward-comment">' + json['entry_comment'] + '</label><input type="text" placeholder="' + json['entry_comment'] + '" id="input-reward-comment" class="form-control"/></div>';
+        html += '<button type="button" id="button-reward" class="btn btn-primary"><i class="fa fa-plus-circle"></i> ' + json['button_add'] + '</button>';
+
+        html += '</div>';
+
+        account_reward.html(html);
+
+        account_reward.find('.pagination a').click(function(e){
+          e.preventDefault();
+
+          refresh(this.href);
+        })
+
+        account_reward.find('#button-reward').click(function(e){
+          fetch(action || '{{ actions.add|replace({"&amp;": "&"}) }}', {
+            credentials: 'include',
+            cache: 'no-cache',
+            headers: {
+              'Accept': 'applicastion/json',
+              'Content-Type': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify({account_id: '{{ account_id }}', value: account_reward.find('#input-reward-value').val(), comment: account_reward.find('#input-reward-comment').val()})
+          })
+          .then(function(r){
+            return r.json();
+          })
+          .then(function(json) {
+            if (json['error']) {
+              account_reward.find('#button-reward').before('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+
+            if (json['success']) {
+              refresh();
+            }
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
+        })
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  }
+
+  refresh();
+})()
+</script>

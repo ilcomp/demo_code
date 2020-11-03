@@ -1,0 +1,110 @@
+<a href="#modal_faq" data-toggle="modal" data-target="#modal_faq" class="main-btn reverse-btn">{{ button_faq }}</a>
+<div class="row">
+  <div class="col-12 col-lg-8">
+    <div class="feedback-block" id="faq_list">
+{% for faq in faqs %}
+      <div class="feedback-block__item">
+        <div class="name-feedback">{{ faq.author }}<span>{{ faq.date_added }}</span></div>
+        <div class="text-feedback">
+          <p>{{ faq.text }}</p>
+        </div>
+      </div>
+  {% if faq.answer %}
+      <div class="feedback-block__item answer-feedback">
+        <div class="name-feedback">{{ text_admin }}</div>
+        <div class="text-feedback">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+  {% endif %}
+{% endfor %}
+    </div>
+  </div>
+</div>
+<div id="faq_pagination">{{ pagination }}</div>
+<div id="modal_faq" class="modal fade modal-reviews" tabindex="-1" role="dialog">
+  <div class="modal-dialog" >
+    <div class="modal_form">
+      <div class="callback">
+        <h4 class="d-block d-md-none">{{ text_form }}</h4>
+        <form method="post" id="form_faq">
+          <input type="hidden" name="form_method" value="extension/module/faq/write">
+          <input type="hidden" name="module_id" value="{{ module_id }}">
+
+          {% if success %}
+          <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+          {% endif %}
+          {% if error_warning %}
+          <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+          {% endif %}
+
+          <div class="d-block d-md-flex">
+            <div class="modal-reviews__path">
+              <div class="small-t d-none d-md-block">{{ entry_author }}<span></span></div>
+              <input type="text" name="author" value="{{ author }}" placeholder="{{ entry_author }}">
+              {% if error.author %}<div class="error-input">{{ error.author }}</div>{% endif %}
+            </div>
+            <div class="modal-reviews__path">
+              <div class="small-t d-none d-md-block">{{ entry_text }}<span></span></div>
+              <textarea name="text" cols="30" rows="10" placeholder="{{ entry_text }}"></textarea>
+              {% if error.text %}<div class="error-input">{{ error.text }}</div>{% endif %}
+              <button type="submit" class="main-btn">{{ button_submit }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+
+<script>
+$('a[data-target="faq"] span, a[href="#faq"] span').html('{{ total }}');
+
+$('#faq_pagination').on('click', 'a', function(e){
+  e.preventDefault();
+
+  fetch(this.href, {
+    credentials: 'include',
+    headers: {'Accept': 'text/html'}
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html) {
+    var html = $(html);
+    $('#faq_list').html(html.find('#faq_list').html());
+    $('#faq_pagination').html(html.find('#faq_pagination').html());
+
+    $('body,html').animate({scrollTop: $('#faq_list').offset().top - 150}, 300);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script>
+$('#form_faq').submit(function(e){
+  e.preventDefault();
+
+  var data = new FormData(this);
+
+  fetch(location, {
+    credentials: 'include',
+    headers: {'Accept': 'text/html'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html) {
+    var html = $(html);
+    $('#form_faq').html(html.find('#form_faq').html());
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>

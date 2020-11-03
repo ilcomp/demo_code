@@ -1,0 +1,443 @@
+{% set keys = contents|first|keys %}
+{% if 'coord' in keys %}
+<div id="map"></div>
+<div class="accordion accordion-procedures" id="cities_list">
+{% set cities = [] %}
+{% for content in contents %}
+  {% if content.city and content.city not in cities %}
+    {% set cities = cities|merge([content.city]) %}
+  {% endif %}
+{% endfor %}
+{% for key, city in cities|sort() %}
+  <div class="card d-none" data-city>
+    <div class="card-header">
+      <button type="button" data-toggle="collapse" data-target="#collapse_city{{ key }}" class="collapsed">{{ city }}</button>
+    </div>
+    <div id="collapse_city{{ key }}" class="collapse">
+      <div class="content-block">
+        <ul class="list-unstyled">
+          {#<li><a href="javascript:0" data-city_name>{{ city }}</a></li>#}
+      {% for content in contents %}
+        {% if content.city == city %}
+          <li data-type="{{ content.type.value ? content.type.value : content.type|column('value')|join(',') }}"><a href="javascript:0" data-content_id="{{ content.content_id }}">{{ content.name }} - {{ content.address }}</a></li>
+        {% endif %}
+      {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript" defer></script>
+<script type="text/javascript">
+  {% if 'details' in keys %}
+$(function(){
+  {% set points = [] %}
+  {% for content in contents %}
+    {% set coord = content.coord|split(',') %}
+    {% set points = points|merge([{
+      'title': content.name,
+      'left_c': coord[0]|trim(),
+      'right_c': coord[1]|trim(),
+      'text_ur': content.contact_ul,
+      'text_phis': content.contact_fl,
+      'text_recvis': content.details,
+      'baloon': content.address,
+      'city': '1'
+    }]) %}
+  {% endfor %}
+  var text_markers = {{ points|json_encode(JSON_UNESCAPED_UNICODE) }};
+
+  function init() {
+    var center = [55.773215, 37.862504];
+    var clusterer = '';
+    var myPlacemark = [];
+    var myMap = new ymaps.Map("map", {
+      center: center,
+      zoom: 15,
+      //controls:[] // Убираем все элементы управления
+      controls: ['zoomControl']
+    },
+    clusterer = new ymaps.Clusterer({
+      preset: 'islands#darkBlueClusterIcons',
+      openBalloonOnClick: false,
+      //zoomMargin: [0,400,0,0],
+      // groupByCoordinates: false,
+      // clusterDisableClickZoom: true,
+    }),
+    {
+      suppressMapOpenBlock: true
+    });
+
+    function html_point(text_markers){  
+      if(text_markers.text_ur != ""){
+        $(".js-information-ur .content-block").html(text_markers.text_ur);
+      }
+      if(text_markers.text_phis != ""){
+        $(".js-information-phis .content-block").html(text_markers.text_phis);
+      }
+      if(text_markers.text_recvis != ""){
+        $(".js-information-recvis .content-block").html(text_markers.text_recvis);
+      }
+    }
+    // активный город
+    var active_city = $(".dropdown-city .dropdown-item:first-child");
+    var text_city = active_city.text();
+    $(".dropdown-city").find(".dropdown-toggle").text(text_city);
+    active_city.addClass("hide_block");
+
+    // тип активной карты
+    var city_map = active_city.data("city");
+
+    for (var i = 0; i < text_markers.length; i++ ) {
+      if(text_markers[i].city == city_map){
+        myPlacemark[i] = new ymaps.Placemark([text_markers[i].left_c, text_markers[i].right_c], {
+          balloonContent: '<div class="baloon-wrap-contacts"><div class="h4">Наш адрес:</div><div class="baloon-wrap-contacts__text">'+text_markers[i].baloon+'</div></div>'
+        },{
+          balloonMaxWidth: 700
+        });
+        html_point(text_markers[i]);
+      }
+    }
+    // отображение только подходящих салонов
+    function show_active_markers(city_map){
+      // стираем точки внутри кластера
+      clusterer.removeAll();
+      //добавляем к карте новые точки
+      var myPlacemark = [];
+      for (var i = 0; i < text_markers.length; i++ ) {
+        if(text_markers[i].city == city_map){
+          myPlacemark[i] = new ymaps.Placemark([text_markers[i].left_c, text_markers[i].right_c], {
+            balloonContent: '<div class="baloon-wrap-contacts"><div class="h4">Наш адрес:</div><div class="baloon-wrap-contacts__text">'+text_markers[i].baloon+'</div></div>'
+          },{
+            balloonMaxWidth: 700
+          });
+
+          // добавляем новые точки в кластер
+          //myMap.geoObjects.add(myPlacemark[i]);
+          clusterer.add(myPlacemark[i]);
+          html_point(text_markers[i]);
+        }         
+      }
+
+      myMap.setBounds(myMap.geoObjects.getBounds(), {
+        checkZoomRange: true
+      }).then(function(){if(myMap.getZoom() > 17) myMap.setZoom(17);}); //Установить границы карты по объектам
+    }
+
+
+    // изменение отображения типа точек на карте
+    $('.dropdown-city .dropdown-item').click(function(e) {
+      e.preventDefault();
+
+      $(this).siblings('.dropdown-item').removeClass("hide_block");
+      var a = $(this).text();
+      $(this).parents(".dropdown-city").find(".dropdown-toggle").text(a);
+      $(this).addClass("hide_block");
+      city_map = $(this).data("city");
+
+      myMap.balloon.close();
+      show_active_markers(city_map);
+    });
+
+    myMap.behaviors.disable('scrollZoom');
+
+    if (myPlacemark.length > 0) {
+      $.each(myPlacemark, function(i, myid){
+        myMap.geoObjects.add(myPlacemark[i]);
+      });
+      //myMap.geoObjects.add(visible);
+      myMap.setBounds(myMap.geoObjects.getBounds(), {
+        checkZoomRange: true
+      }).then(function(){if(myMap.getZoom() > 17) myMap.setZoom(17);}); //Установить границы карты по объектам
+    } else {
+      myMap.setCenter([55.755814, 37.617635]);
+      myMap.setZoom(10);
+    }
+
+    clusterer.add(myPlacemark);
+    myMap.geoObjects.add(clusterer);
+
+
+  }
+  ymaps.ready(init);
+
+
+});
+  {% else %}
+$(function(){
+  {% set points = [] %}
+  {% for content in contents %}
+    {% set coord = content.coord|split(',') %}
+    {% set points = points|merge([{
+      'content_id': content.content_id,
+      'title': content.name,
+      'left_c': coord[0]|trim(),
+      'right_c': coord[1]|trim(),
+      'img': content.image_preview.image ? content.image_preview.thumb,
+      'place': content.address,
+      'work': content.work,
+      'phone': content.phone,
+      'mail': content.email,
+      'type': content.type.value ? [content.type.value] : content.type|column('value'),
+      'link': content.link
+    }]) %}
+  {% endfor %}
+  var text_markers = {{ points|json_encode(JSON_UNESCAPED_UNICODE) }};
+
+  function init() {
+    var cities_list = $('#cities_list');
+    var center = [55.773215, 37.862504];
+    var myPlacemark = [];
+    var clusterer = '';
+    var myMap = new ymaps.Map("map", {
+      center: center,
+      zoom: 15,
+      //controls:[] // Убираем все элементы управления
+      controls: ['zoomControl']
+    },
+    clusterer = new ymaps.Clusterer({
+      preset: 'islands#darkBlueClusterIcons',
+      openBalloonOnClick: false,
+      //zoomMargin: [0,400,0,0],
+      // groupByCoordinates: false,
+      // clusterDisableClickZoom: true,
+    }),
+    {
+      suppressMapOpenBlock: true
+    });
+
+    function content_myPlacemark(text_markers){
+      var html = "";
+
+      if(text_markers.title != "")
+        html += '<div class="h6">'+text_markers.title+'</div>';
+        if(text_markers.place != "")
+        html += '<p><img src="/theme/client_ws_ttg/images/ya-map.svg" alt="">'+text_markers.place+'</p>';
+      if(text_markers.work != "")
+        html += '<p><img src="/theme/client_ws_ttg/images/ya-cal.svg" alt="">'+text_markers.work+'</p>';
+      if(text_markers.phone != "")
+        html += '<a href="tel:'+text_markers.phone+'"><img src="/theme/client_ws_ttg/images/ya-tel.svg" alt="">'+text_markers.phone+'</a>';
+      if(text_markers.mail != "")
+        html += '<a href="mailto:'+text_markers.mail+'" class="baloon-mail">'+text_markers.mail+'<img src="/theme/client_ws_ttg/images/ya-link.svg" alt=""></a>';
+      if(text_markers.link != "")
+        html += '<a href="'+text_markers.link+'" class="baloon-mail" target="_blank">'+text_markers.link+'<img src="/theme/client_ws_ttg/images/ya-link.svg" alt=""></a>';
+
+      return html;
+    }
+
+    // отображение только подходящих салонов
+    function show_active_markers(){
+      myPlacemark = [];
+      // стираем точки внутри кластера
+      clusterer.removeAll();
+      //добавляем к карте новые точки
+      type_map = $(".fake-tab__link.active").data("type");
+      for (var i = 0; i < text_markers.length; i++ ) {
+        if(text_markers[i].type.indexOf(type_map) > -1){
+          // если поля не пусты, то добавляем их в шаблон
+          var html = "";
+          var content = content_myPlacemark(text_markers[i]);
+          myPlacemark[i] = new ymaps.Placemark([text_markers[i].left_c, text_markers[i].right_c], {
+            balloonContent: '<div class="d-flex baloon-wrap"><img src="'+text_markers[i].img+'" alt=""><div class="baloon-wrap__right">'+content+'</div></div>'
+          },{
+            balloonMaxWidth: 700
+          });
+
+          // добавляем новые точки в кластер
+          //myMap.geoObjects.add(myPlacemark[i]);
+          clusterer.add(myPlacemark[i]);
+
+          cities_list.find('[data-content_id="' + text_markers[i].content_id + '"]').attr('data-placemark', i).click(function(){
+            myMap.setBounds(ymaps.geoQuery([myPlacemark[this.dataset.placemark]]).getBounds(), {
+              checkZoomRange: true
+            }).then(function(){if(myMap.getZoom() > 17) myMap.setZoom(17);});
+          });
+        }
+      }
+
+      cities_list.find('[data-type]').each(function(){
+        var types = this.dataset.type.split(',');
+
+        if (types.indexOf(type_map) > -1)
+          this.classList.remove('d-none');
+        else
+          this.classList.add('d-none');
+      });
+
+      cities_list.find('[data-city]').each(function(){
+        var has_point = this.querySelector('[data-type]:not(.d-none)');
+
+        if (has_point != undefined)
+          this.classList.remove('d-none');
+        else
+          this.classList.add('d-none');
+      });
+
+      myMap.setBounds(myMap.geoObjects.getBounds(), {
+        checkZoomRange: true
+      }).then(function(){if(myMap.getZoom() > 17) myMap.setZoom(17);}); //Установить границы карты по объектам
+    }
+
+    // изменение отображения типа точек на карте
+    $('.fake-tab__link').click(function(e) {
+      $('.fake-tab__link').removeClass('active');
+      $(this).addClass('active');
+      myMap.balloon.close();
+      show_active_markers();
+    });
+
+    myMap.geoObjects.add(clusterer);
+    myMap.behaviors.disable('scrollZoom');
+
+    show_active_markers();
+
+    cities_list.find('[data-city_name]').click(function(){
+      var objects = [];
+
+      $(this).parents('[data-city]').find('[data-type]:visible [data-content_id]').each(function(){
+        var obj = myPlacemark[this.dataset.placemark];
+
+        objects.push(myPlacemark[this.dataset.placemark]);
+      });
+
+      myMap.setBounds(ymaps.geoQuery(objects).getBounds(), {
+        checkZoomRange: true
+      }).then(function(){if(myMap.getZoom() > 17) myMap.setZoom(17);});
+    });
+  }
+  ymaps.ready(init);
+});
+  {% endif %}
+</script>
+{% elseif 'video' in keys %}
+  {% for content in contents %}
+<div class="video-wrap">
+  <div class="row">
+    <div class="col-12 col-md-5">
+      <div class="full-width-video">
+        <iframe width="560" height="315" src="{{ content.video }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="col-12 col-md-7">
+      <div class="video-content">
+        <h2>{{ content.name }}</h2>
+        {{ content.content }}
+      </div>
+    </div>
+  </div>
+</div>
+  {% endfor %}
+<!-- <div class="video-wrap-btn">
+  <a href="#" class="main-btn reverse-btn">Загрузить еще</a>
+</div> -->
+{% elseif 'gallery' in keys %}
+<div class="award-list">
+  {% for key, content in contents %}
+  <div class="award-item content-block">
+    <div class="row">
+      <div class="col-12 col-md-9 col-lg-10">
+        <div class="h2">{{ content.name }}</div>
+        {{ content.content }}
+      </div>
+    </div>
+    {% if content.gallery %}
+    <div class="award-slider owl-carousel">
+      {% for image in content.gallery %}
+      <a href="{{ image.original }}" data-lightbox="gallery-{{ key }}" title="{{ content.name|e }}"><img src="{{ image.thumb }}"></a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% elseif 'link' in keys %}
+<div class="learning-block">
+  <div class="h4">Есть несколько вариантов обучения, выберите свой!</div>
+  <div class="row">
+  {% for content in contents %}
+    <div class="col-12 col-md-6 col-xl-5">
+      <a href="{{ content.link }}" class="learning-item" target="_blank">
+        <div>
+          {% if content.image.image %}<img src="{{ content.image.thumb }}" class="img-fluid">{% endif %}
+          <span class="learning-item__text">{{ content.description }}</span>
+        </div>
+        <span class="show-more">Узнать подробнее</span>
+      </a>
+    </div>
+  {% endfor %}
+  </div>
+</div>
+{% elseif 'title' in keys %}
+<div class="clinics-wrap clinics-page">
+  <div class="row">
+  {% for content in contents %}
+    {% if content.image.image %}
+    <div class="col-12 col-md-6 col-xl-4">
+      <a href="#clinic-info" class="clinics-item" data-toggle="modal">
+        {% if content.image_preview.image %}<img src="{{ content.image_preview.thumb }}" class="img-fluid">{% endif %}
+        <div class="clinics-item__name">{{ content.name }}</div>
+        <span>{{ content.address }}</span>
+      </a>
+      <div class="clinics-item__hidden" data-img="{{ content.image.image ? content.image.thumb }}">
+        <div class="h2">{{ content.title }}</div>
+        {{ content.content }}
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+</div>
+<div id="clinic-info" class="modal fade modal-clinic" tabindex="-1" role="dialog">
+  <div class="modal-dialog" >
+    <div class="modal-clinic__content">
+      <div class="modal-clinic-img"></div>
+      <div class="content-block"></div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+<script>
+$('.clinics-item').on('click', function () {
+  var el = $(this).next(".clinics-item__hidden"),
+    html = el.html(),
+    img = el.data('img');
+  $(".modal-clinic-img").html('<img src="'+img+'" alt="" class="content-img img-fluid">');
+  $(".modal-clinic .content-block").html(html);
+});
+</script>
+{% elseif 'image_preview' in keys %}
+<div class="clinics-wrap">
+  <div class="row">
+  {% for content in contents %}
+    {% if content.image_preview.image %}
+    <div class="col-12 col-md-6 col-xl-4">
+      <div class="clinics-item">
+        <img src="{{ content.image_preview.thumb }}" class="img-fluid">
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="accordion accordion-procedures">
+  {% for content in contents %}
+  <div class="card">
+    <div class="card-header" id="heading{{ content.content_id }}">
+      <button type="button" data-toggle="collapse" data-target="#collapse{{ content.content_id }}" class="collapsed">{{ content.name }}</button>
+    </div>
+    <div id="collapse{{ content.content_id }}" class="collapse">
+      {% if content.note %}
+      <div class="accordion-procedures__table">
+        <a href="#" class="spoiler-procedure-title js-spoiler-procedure"><span></span>Примечание к процедуре</a>
+        <div class="js-spoiler-procedure-content">{{ content.note }}</div>
+      </div>
+      {% endif %}
+      <div class="content-block">{{ content.content }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

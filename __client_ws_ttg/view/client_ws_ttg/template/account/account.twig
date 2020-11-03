@@ -1,0 +1,41 @@
+<div class="main-bg">
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <div class="container">
+  {% if account_secret %}
+      <div class="row">
+        <div class="col-12 col-md-7">
+          <h1>{{ heading_title }}</h1>
+        </div>
+        <div class="col-12 col-md-5">
+          <div class="designation-block">Тип профиля:<div class="designation-block__check"></div><span>Специалист</span></div>
+        </div>
+      </div>
+  {% else %}
+    <h1>{{ heading_title }}</h1>
+  {% endif %}
+    {{ menu.account.view }}<script type="text/javascript">console.log({{tab_code|json_encode()}});</script>
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link{{ tab_code != 'account_order' ? ' active' }}" data-toggle="tab" href="#account_edit" role="tab">ЛИЧНЫЕ ДАННЫЕ</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link{{ tab_code == 'account_order' ? ' active' }}" data-toggle="tab" href="#account_order" role="tab">История заказов</a>
+      </li>
+    </ul>
+    <div class="row">
+      <div class="col-12 col-lg-4 order-lg-1">
+        {% if reward %}<div class="accumulated-points">Сумма накопленных баллов: <span>{{ reward }}</span></div>{% endif %}
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="tab-content">
+          <div class="tab-pane fade{{ tab_code != 'account_order' ? ' show active' }}" id="account_edit" role="tabpanel">
+            {{ account_edit }}
+          </div>
+          <div class="tab-pane fade{{ tab_code == 'account_order' ? ' show active' }}" id="account_order" role="tabpanel">
+            {{ account_order }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

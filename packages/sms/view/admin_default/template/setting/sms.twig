@@ -1,0 +1,43 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="sms">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sms-engine">{{ entry_sms_engine }}</label>
+        <div class="col-sm-10">
+          <select name="sms_engine" id="input-sms-engine" class="form-control">
+            <option value="">{{ text_none }}</option>
+          {% for key, engine in engines %}
+            <option value="{{ key }}"{{ key == sms_engine ? ' selected="selected"' }}>{{ engine }}</option>
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sms-login">{{ entry_sms_login }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="sms_login" value="{{ sms_login }}" placeholder="{{ entry_sms_login }}" id="input-sms-login" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sms-api_key">{{ entry_sms_api_key }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="sms_api_key" value="{{ sms_api_key }}" placeholder="{{ entry_sms_api_key }}" id="input-sms-api_key" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sms-sign">{{ entry_sms_sign }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="sms_sign" value="{{ sms_sign }}" placeholder="{{ entry_sms_sign }}" id="input-sms-sign" class="form-control"/>
+          <small class="form-text text-muted">{{ help_sms_sign }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sms-code_lifetime">{{ entry_sms_code_lifetime }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="sms_code_lifetime" value="{{ sms_code_lifetime }}" placeholder="{{ entry_sms_code_lifetime }}" id="input-sms-code_lifetime" class="form-control"/>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

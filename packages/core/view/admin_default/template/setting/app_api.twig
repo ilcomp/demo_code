@@ -1,0 +1,48 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="app_api">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-app_api-language">{{ entry_language }}</label>
+        <div class="col-sm-10">
+          <select name="app_api_language" id="input-app_api-language" class="form-control">
+            {% for language in languages %}
+              {% if language.code == app_api_language %}
+                <option value="{{ language.code }}" selected="selected">{{ language.name }}</option>
+              {% else %}
+                <option value="{{ language.code }}">{{ language.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-sm-2 col-form-label" for="input-app_api-limit">{{ entry_limit }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="app_api_limit" value="{{ app_api_limit }}" placeholder="{{ entry_limit }}" id="input-app_api-limit" class="form-control"/>
+          <small class="form-text text-muted">{{ help_limit }}</small>
+          {% if error_limit %}
+            <div class="invalid-tooltip">{{ error_limit }}</div>
+          {% endif %}</div>
+      </div>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in app_api_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="app_api_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="app_api_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="account">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="account_status" id="input-status" class="form-control">
+            {% if account_status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-account-group">{{ entry_account_group }}</label>
+        <div class="col-sm-10">
+          <select name="account_group_id" id="input-account-group" class="form-control">
+            {% for account_group in account_groups %}
+              {% if account_group.account_group_id == account_group_id %}
+                <option value="{{ account_group.account_group_id }}" selected="selected">{{ account_group.name }}</option>
+              {% else %}
+                <option value="{{ account_group.account_group_id }}">{{ account_group.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">{{ help_account_group }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_account_group_display }}</label>
+        <div class="col-sm-10">
+          <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for account_group in account_groups %}
+              <label class="form-check">{% if account_group.account_group_id in account_group_display %}
+                  <input type="checkbox" name="account_group_display[]" value="{{ account_group.account_group_id }}" checked="checked" class="form-check-input"/>
+                  {{ account_group.name }}
+                {% else %}
+                  <input type="checkbox" name="account_group_display[]" value="{{ account_group.account_group_id }}" class="form-check-input"/>
+                  {{ account_group.name }}
+                {% endif %}</label>
+            {% endfor %}
+          </div>
+          <small class="form-text text-muted">{{ help_account_group_display }}</small>
+          {% if error_account_group_display %}
+            <div class="invalid-tooltip">{{ error_account_group_display }}</div>
+          {% endif %}</div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-login-attempts">{{ entry_login_attempts }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="account_login_attempts" value="{{ account_login_attempts }}" placeholder="{{ entry_login_attempts }}" id="input-login-attempts" class="form-control"/>
+          <small class="form-text text-muted">{{ help_login_attempts }}</small>
+          {% if error_login_attempts %}
+            <div class="invalid-tooltip">{{ error_login_attempts }}</div>
+          {% endif %}</div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-information">{{ entry_agrement_information }}</label>
+        <div class="col-sm-10">
+          <select name="account_agrement_information_id" id="input-information" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for information in informations %}
+              {% if information.information_id == account_agrement_information_id %}
+                <option value="{{ information.information_id }}" selected="selected">{{ information.name }}</option>
+              {% else %}
+                <option value="{{ information.information_id }}">{{ information.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">{{ help_information }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-information">{{ entry_police_information }}</label>
+        <div class="col-sm-10">
+          <select name="account_police_information_id" id="input-information" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for information in informations %}
+              {% if information.information_id == account_police_information_id %}
+                <option value="{{ information.information_id }}" selected="selected">{{ information.name }}</option>
+              {% else %}
+                <option value="{{ information.information_id }}">{{ information.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">{{ help_information }}</small>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

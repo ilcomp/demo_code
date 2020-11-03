@@ -1,0 +1,21 @@
+<div class="promo-block__right d-md-flex align-items-center">
+  <input type="checkbox" name="reward_status" value="1" id="input-reward_status"{{ reward_status ? ' checked' }}>
+  <label class="checkbox-block js-focus-input" for="input-reward_status">
+    <div class="checkbox-block__top">Применить бонусные баллы <span>(доступно: {{ reward }})</span></div>
+    <div class="checkbox-block__bottom">Сколько баллов использовать (максимум {{ max }}{{ min ? ', минимум ' ~ min }})</div>
+  </label>
+  <input type="number" name="reward_value" value="{{ reward_value ? reward_value }}" max="{{ max }}" min="{{ min }}" id="input-reward_value" class="checkbox-block-count"{{ not reward_status ? ' disabled' }}>
+</div>
+
+<script>
+$('#input-reward_status').change(function(){
+  $('#input-reward_value').prop('disabled', !this.checked).val(this.checked ? 0 : '');
+});
+$('#input-reward_value').on('input change', function(){
+  if ($('#input-reward_status').prop('checked')) {
+    this.value = Number(this.value);
+    if (Number(this.value) > Number(this.max)) this.value = this.max;
+    if (Number(this.value) < Number(this.min)) this.value = this.min;
+  }
+}).change();
+</script>

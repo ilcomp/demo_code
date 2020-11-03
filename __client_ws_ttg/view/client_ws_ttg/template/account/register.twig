@@ -1,0 +1,30 @@
+<div class="main-bg padding-wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-4 offset-lg-4 col-md-6 offset-md-3">
+        <div class="registration-page">
+        {% if account_groups %}
+          <ul class="nav nav-tabs" role="tablist">
+          {% for account_group in account_groups %}
+            <li class="nav-item">
+              <a class="nav-link{{ account_group.account_group_id == account_group_id ? ' active' }}" data-toggle="tab" href="#account_group{{ account_group.account_group_id }}" role="tab" aria-controls="home" aria-selected="true">Я {{ account_group.name }}</a>
+            </li>
+          {% endfor %}
+          </ul>
+          {% if success %}<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>s{% endif %}
+          <div class="tab-content">
+          {% for account_group in account_groups %}
+            <div class="tab-pane fade{{ account_group.account_group_id == account_group_id ? ' show active' }}" id="account_group{{ account_group.account_group_id }}" role="tabpanel">
+              {{ account_group.form }}
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+        {% else %}
+          {% if success %}<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>{% endif %}
+          {{ form }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,370 @@
+<div class="main-bg category-page">
+  <div class="category-list">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-4 col-xl-3">
+          <div class="menu-sidebar menu-sidebar-off-svg">
+            <a href="#" class="d-lg-none js-spoiler-partners">Препараты по проблемам</a>
+            <noindex>
+              {{ menu_catalog }}
+            </noindex>
+          </div>
+          {% for module in custom_fields.module_center %}
+            {{ module }}
+          {% endfor %}
+          {{ modules.column }}
+        </div>
+        <div class="col-12 col-lg-8 col-xl-9" id="catalog_category">
+          {% include "client_ws_ttg/template/block/breadcrumb.twig" %}
+          <noindex>
+            <div class="row">
+              <div class="col-12 col-md-5">
+                <div class="title-discount">
+                  <h1>Создайте свой набор</h1>
+                  <p>Создайте набор, который нужен именно вам!</p>
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <div class="discount-set d-xl-flex">
+                  <img src="theme/client_ws_ttg/images/discount-set.svg" alt="" class="img-fluid">
+                  <div class="discount-set__text">Добавьте в набор необходимые товары и оформите заказ <strong>со скидкой!</strong> 3 товара - скидка 10%, 4 товара - скидка 15%, 5 товаров и более - скидка 20%</div>
+                </div>
+              </div>
+            </div>
+            <div class="set-product-list set-product-list-main">
+              <div class="row" id="constructor_list">
+                <div class="col-12 col-md-6 col-xl-4">
+                  <a href="#modal-set" data-toggle="modal" class="set-product-list__item" data-constructor="add">
+                      <div class="plus-set-prod"> </div>
+                      <div class="plus-set-text">Добавьте шампунь, лосьон или маску</div>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4">
+                  <a href="#modal-set" data-toggle="modal" class="set-product-list__item" data-constructor="add">
+                      <div class="plus-set-prod"> </div>
+                      <div class="plus-set-text">Добавьте шампунь, лосьон или маску</div>
+                  </a>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4">
+                  <a href="#modal-set" data-toggle="modal" class="set-product-list__item" data-constructor="add">
+                      <div class="plus-set-prod"> </div>
+                      <div class="plus-set-text">Добавьте шампунь, лосьон или маску</div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <form method="post" data-form="cart_add" id="constructor_form">
+              <input type="hidden" name="form_method" value="order/cart/add">
+              <input type="hidden" name="product_id" value="{{ product_id }}">
+
+              <div class="our-set-product">
+                <div class="our-set-product__left">
+                  <div class="our-set-product__title">Ваш набор</div>
+                  <div class="preview-set">
+                    <div class="preview-set__item">
+                      <div class="wrap-img-set">
+                      </div>
+                      <div class="wrap-price-prod-set">Пусто</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="our-set-product__right">
+                  <div>
+                  {% if special %}
+                    <div class="small-cart__price">{{ special_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                    <div class="small-cart__old-price">{{ price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                  {% else %}
+                    <div class="small-cart__price">{{ price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                  {% endif %}
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between flex-wrap">
+                    <div class="quantity count-item" style="display: none;">
+                      <input type="hidden" name="quantity" value="1" size="2" class="form-control">
+                    </div>
+                    <button type="submit" class="main-btn">{{ button_cart }}</button>
+                  </div>
+                </div>
+              </div>
+            <form>
+          </noindex>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% if custom_fields.content %}
+<div class="main-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-10 offset-md-1">
+        <div class="content-block">
+          {{ custom_fields.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="modal fade" tabindex="-1" role="dialog" id="modal-set">
+  <div class="modal-dialog" >
+    <div class="modal_form">
+      <div class="callback">
+        <div class="set-modal-wrap">
+          <div class="h1 text-left">Выберите продукт</div>
+          <div class="search-block d-flex cance-search-block">            
+            <input type="text" name="product_name" placeholder="{{ entry_search }}" class="search-block__input">
+            <button type="button" class="search-block__button"></button>
+          </div>
+        </div>
+        <div class="set-product-list" id="constructor_product_list">
+          <div class="row">
+          {% for product in all_products %}
+            <div class="col-12 col-md-6">
+              <div class="set-product-list__item set-product-exist" data-product_id="{{ product.product_id }}">
+                <div class="wrap-exist-set">
+                  <img src="{{ product.thumb }}">
+                  <div class="wrap-exist-set__right">
+                    <div class="modal-set-p">
+                      <p>{{ product.title }}</p>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                      <div class="small-cart__price">{{ product.price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                      <div class="plus-set-prod"> </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+<script>
+var constructor_form = $('#constructor_form'),
+    construstor_min = Number('{{ construstor_min }}'),
+    construstor_max = Number('{{ construstor_max }}');
+
+constructor_form.submit(function(e){
+  e.preventDefault();
+
+  $(document).trigger('cart_load');
+
+  var data = new FormData(this);
+
+  data.set('form_method', 'order/cart/add');
+
+  fetch(location, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    $(document).trigger('cart_loaded');
+
+    if (r.status == 401) {
+      $('#modal_account').modal('show');
+
+      return [];
+    } else
+      return r.json();
+  })
+  .then(function(json) {
+    if (json['error']) {
+      constructor_form.append('<div class="alert alert-warning" role="alert">' + json['error'] + '</div>');
+    }
+
+    if (json['success']) {
+      toast_message(json['success'], '<a href="' + json['link_cart'] + '" class="main-btn" data-toast="cart">' + json['button_to_cart'] + '</a>', 5000);
+    }
+
+    $(document).trigger('cart_add', json);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script>
+var product_refresh = function(){
+      var data = new FormData(constructor_form[0]);
+
+      data.set('form_method', 'catalog/product/calculate');
+
+      fetch(location, {
+        credentials: 'include',
+        headers: {'Accept': 'application/json'},
+        cache: 'no-cache',
+        method: 'post',
+        body: data
+      })
+      .then(function(r){
+        return r.json();
+      })
+      .then(function(json) {
+        var price = json['price_format'] || '';
+            price_block = constructor_form.find('.our-set-product__right .small-cart__price').html('');
+
+        constructor_form.find('.our-set-product__right .small-cart__old-price').remove();
+
+        if (json['special']) {
+          price_block.html(json['special_format'].replace('₽', '<span>₽</span>'));
+          price_block.before('<div class="small-cart__old-price">' + json['price_format'].replace('₽', '<span>₽</span>') + '</div>');
+        } else {
+          price_block.html(json['price_format'].replace('₽', '<span>₽</span>'));
+        }
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+    };
+
+constructor_form.find('input').change(function(){
+  product_refresh();
+});
+</script>
+<script>
+// constructor
+// хранить в локале, выводить из all_products
+(function(){
+  var constructor_products = localStorage.getItem('constructor_products') ? localStorage.getItem('constructor_products').split(',') : [],
+      replace = false,
+      constructor_list = $('#constructor_list'),
+      product_list = $('#constructor_product_list'),
+      template_product = function(product) {
+        return '<div class="col-12 col-md-6 col-xl-4" data-item>'
+          + '<div class="set-product-list__item set-product-exist">'
+            + '<div class="wrap-exist-set">'
+              + '<img src="' + product.thumb + '">'
+              + '<div class="wrap-exist-set__right">'
+                + '<p>' + product.title + '</p>'
+                + '<div class="wrap-all-price">'
+                  + '<div class="small-cart__price">' + product.price_format + '</div>'
+                + '</div>'
+              + '</div>'
+              + '<div class="exist-set-hide">'
+                + '<a href="#modal-set" data-toggle="modal" class="exist-set-hide__item" data-constructor="replace" data-product_id="' + product.product_id + '">'
+                  + '<img src="/image/circle-set.svg">'
+                  + '<span>Поменять</span>'
+                + '</a>'
+                + '<a href="#" class="exist-set-hide__item" data-constructor="remove" data-product_id="' + product.product_id + '">'
+                  + '<img src="/image/trash-set.svg">'
+                  + '<span>Удалить</span>'
+                + '</a>'
+              + '</div>'
+            + '</div>'
+          + '</div>'
+        + '</div>';
+      },
+      template_product_form = function(product) {
+        return '<div class="preview-set__item" data-item data-toggle="tooltip" data-html="true" title="<p>' + product.title.replace(/"/g, '') + '</p>">'
+          + '<input type="hidden" name="option[composition][]" value="' + product.product_id + '">'
+          + '<div class="wrap-img-set">'
+            + '<img src="' + product.thumb + '" class="img-fluid">'
+          + '</div>'
+          + '<div class="wrap-price-prod-set">'
+            + '<div class="small-cart__price">' + product.price_format + '</div>'
+          + '</div>'
+        + '</div>';
+      },
+      refersh = function(){
+        var html = '',
+            html_form = '';
+
+        constructor_form.find('.alert').remove();
+
+        for (i in constructor_products) {
+          var product_block = product_list.find('[data-product_id="' + constructor_products[i] + '"]');
+
+          if (product_block.length > 0) {
+            var product = {
+                  product_id: product_block.data('product_id'),
+                  thumb: product_block.find('img').attr('src'),
+                  title: product_block.find('p').text(),
+                  price_format: product_block.find('.small-cart__price').html(),
+                };
+
+            html += template_product(product);
+            html_form += template_product_form(product);
+          } else {
+            delete constructor_products[constructor_products.indexOf(constructor_products[i])];
+          }
+        }
+
+        constructor_products = constructor_products.filter(function (el) {
+          return Number(el) > 0;
+        });
+
+        var len = constructor_products.length;
+
+        constructor_list.find('[data-item]').remove();
+        if (len > 0) {
+          constructor_list.children().eq(0).addClass('d-none');
+        } else {
+          constructor_list.children().eq(0).removeClass('d-none');
+        }
+        if (len > 1) {
+          constructor_list.children().eq(1).addClass('d-none');
+        } else {
+          constructor_list.children().eq(1).removeClass('d-none');
+        }
+        if (construstor_max && len >= construstor_max) {
+          constructor_list.children().eq(2).addClass('d-none');
+        } else {
+          constructor_list.children().eq(2).removeClass('d-none');
+        }
+        constructor_list.prepend(html);
+
+        constructor_form.find('[data-item]').remove();
+        if (construstor_max && len >= construstor_max) {
+          constructor_form.find('.preview-set__item').addClass('d-none');
+        } else {
+          constructor_form.find('.preview-set__item').removeClass('d-none');
+        }
+        constructor_form.find('.preview-set').prepend(html_form);
+
+        localStorage.setItem('constructor_products', constructor_products.join(','));
+
+        product_refresh();
+      };
+
+  constructor_list.on('click', '[data-constructor=add]', function(){
+    replace = false;
+  });
+
+  constructor_list.on('click', '[data-constructor=replace]', function(){
+    replace = this.dataset.product_id;
+  });
+
+  constructor_list.on('click', '[data-constructor=remove]', function(e){
+    e.preventDefault();
+
+    var product_id = this.dataset.product_id;
+
+    constructor_products.splice(constructor_list.find('[data-constructor=remove]').index(this), 1);
+
+    refersh();
+  });
+
+  $('#modal-set').on('click', '[data-product_id]', function(){
+    if (replace > 0) {
+      constructor_products[constructor_products.indexOf(replace)] = this.dataset.product_id;
+    } else if (!construstor_max || constructor_products.length < construstor_max) {
+      constructor_products.push(this.dataset.product_id);
+    } else {
+      constructor_form.append('<div class="alert alert-warning" role="alert">{{ error_constructor_composition_max|format(construstor_max) }}</div>');
+
+      return;
+    }
+
+    refersh();
+  });
+
+  refersh();
+})();
+</script>

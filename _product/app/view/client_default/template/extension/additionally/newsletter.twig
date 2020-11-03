@@ -1,0 +1,3 @@
+{% for row, item in additionally_newsletter_methods%}
+<label class="check_block"><input type="checkbox" name="additionally[newsletter][{{ row }}]" value="{{ item.title }}"{{ first_start or row in additionally|keys ? ' checked' }}><span class="check_input"></span>{{ item.title }}</label>
+{% endfor %}

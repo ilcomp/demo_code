@@ -1,0 +1,228 @@
+{% macro text(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value,
+  'required': input.required is defined ? input.required,
+  'readonly': input.readonly is defined ? input.readonly
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'placeholder': text.placeholder is defined ? text.placeholder,
+  'help': text.help is defined ? text.help,
+  'error': text.error is defined ? text.error
+}%}
+{% set data = {
+}%}
+<div class="form-group row{{ input.required ? ' required'}}">
+  <label class="col-sm-{{ size }} col-form-label" for="{{ input.id }}">{{ text.label }}</label>
+  <div class="col-sm-{{ 12 - size }}">
+    <input type="text" name="{{ input.name }}" value="{{ input.value }}" placeholder="{{ text.placeholder }}" {{ input.id ? 'id="' ~ input.id ~ '"' }} class="form-control"{{ input.readonly ? ' readonly="readonly"'}} />
+    {% if text.help %}
+    <small class="form-text text-muted">{{ text.help }}</small>
+    {% endif %}
+    {% if input.required and text.error %}
+    <div class="invalid-tooltip">{{ text.error }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro textarea(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value,
+  'required': input.required is defined ? input.required,
+  'readonly': input.readonly is defined ? input.readonly,
+  'rows': input.rows is defined ? input.rows : 5
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'placeholder': text.placeholder is defined ? text.placeholder,
+  'help': text.help is defined ? text.help,
+  'error': text.error is defined ? text.error
+}%}
+{% set data = {
+}%}
+<div class="form-group row{{ input.required ? ' required'}}">
+  <label class="col-sm-{{ size }} col-form-label" for="{{ input.id }}">{{ text.label }}</label>
+  <div class="col-sm-{{ 12 - size }}">
+    <textarea name="{{ input.name }}" rows="{{ input.rows }}" placeholder="{{ text.placeholder }}" {{ input.id ? 'id="' ~ input.id ~ '"' }} class="form-control"{{ input.readonly ? ' readonly="readonly"'}}>{{ input.value }}</textarea>
+    {% if text.help %}
+    <small class="form-text text-muted">{{ text.help }}</small>
+    {% endif %}
+    {% if input.required and text.error %}
+    <div class="invalid-tooltip">{{ text.error }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro enable(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value,
+  'readonly': input.readonly is defined ? input.readonly
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'help': text.help is defined ? text.help
+}%}
+{% set data = {
+  key: 'key',
+  title: 'title',
+  options: [
+    {'key': 1, 'title': data.enabled is defined ? data.enabled},
+    {'key': 0, 'title': data.disabled is defined ? data.disabled}
+  ]
+}%}
+{% import _self as macros %}
+{{ macros.select(input, text, data, size) }}
+{% endmacro %}
+
+{% macro select(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value : '',
+  'readonly': input.readonly is defined ? input.readonly
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'help': text.help is defined ? text.help,
+  'error': text.error is defined ? text.error
+}%}
+{% set data = {
+  default: data.default is defined ? data.default,
+  key: data.key is defined ? data.key : 'key',
+  title: data.title is defined ? data.title : 'title',
+  options: data.options is defined ? data.options,
+  data: data.data is defined ? data.data
+}%}
+<div class="form-group row{{ input.required ? ' required'}}">
+  <label class="col-sm-{{ size }} col-form-label" for="{{ input.id }}">{{ text.label }}</label>
+  <div class="col-sm-{{ 12 - size }}">
+    <select name="{{ input.name }}" {{ input.id ? 'id="' ~ input.id ~ '"' }} class="form-control"{{ input.readonly ? ' readonly="readonly"'}}>
+    {% if data.default %}
+      <option value=""{{ input.value == '' ? ' selected="selected"' }}>{{ data.default }}</option>
+    {% endif %}
+    {% for option in data.options %}
+      <option value="{{ option[data.key] }}"{{ option[data.key] == input.value ? ' selected="selected"' }}{{ data.data ? ' data-' ~ data.data ~ '="' ~ option[data.data] ~ '"' }}>{{ option[data.title] }}</option>
+    {% endfor %}
+    </select>
+    {% if text.help %}
+    <small class="form-text text-muted">{{ text.help }}</small>
+    {% endif %}
+    {% if input.required and text.error %}
+    <div class="invalid-tooltip">{{ text.error }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro select_group(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value : '',
+  'readonly': input.readonly is defined ? input.readonly
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'help': text.help is defined ? text.help,
+  'error': text.error is defined ? text.error
+}%}
+{% set data = {
+  default: data.default is defined ? data.default,
+  key: data.key is defined ? data.key : 'key',
+  title: data.title is defined ? data.title : 'title',
+  groups: data.groups is defined ? data.groups,
+  data: data.data is defined ? data.data
+}%}
+<div class="form-group row{{ input.required ? ' required'}}">
+  <label class="col-sm-{{ size }} col-form-label" for="{{ input.id }}">{{ text.label }}</label>
+  <div class="col-sm-{{ 12 - size }}">
+    <select name="{{ input.name }}" {{ input.id ? 'id="' ~ input.id ~ '"' }} class="form-control"{{ input.readonly ? ' readonly="readonly"'}}>
+    {% if data.default %}
+      <option value=""{{ input.value == '' ? ' selected="selected"' }}>{{ data.default }}</option>
+    {% endif %}
+    {% for group in data.groups %}
+      <optgroup label="{{ group.label }}">
+      {% for option in group.options %}
+        <option value="{{ option[data.key] }}"{{ option[data.key] == input.value ? ' selected="selected"' }}{{ data.data ? ' data-' ~ data.data ~ '="' ~ option[data.data] ~ '"' }}>{{ option[data.title] }}</option>
+      {% endfor %}
+      </optgroup>
+    {% endfor %}
+    </select>
+    {% if text.help %}
+    <small class="form-text text-muted">{{ text.help }}</small>
+    {% endif %}
+    {% if input.required and text.error %}
+    <div class="invalid-tooltip">{{ text.error }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro autocomplete(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value,
+  'required': input.required is defined ? input.required
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'help': text.help is defined ? text.help,
+  'error': text.error is defined ? text.error
+}%}
+{% set data = {
+  input: data.input is defined ? data.input : []
+}%}
+<div class="form-group row{{ input.required ? ' required'}}">
+  <label class="col-sm-{{ size }} col-form-label" for="{{ input.id }}">{{ text.label }}</label>
+  <div class="col-sm-{{ 12 - size }}">
+    <input type="text" name="{{ input.name }}" value="{{ input.value }}" placeholder="{{ text.placeholder }}" {{ input.id ? 'id="' ~ input.id ~ '"' }} class="form-control" />
+    {% for input in data.input %}
+    <input type="hidden" name="{{ input.name }}" value="{{ input.value }}"/>
+    {% endfor %}
+    {% if text.help %}
+    <small class="form-text text-muted">{{ text.help }}</small>
+    {% endif %}
+    {% if input.required and text.error %}
+    <div class="invalid-tooltip">{{ text.error }}</div>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro image(input, text, data, size = 2) %}
+{% set input = {
+  'id': input.id is defined ? 'input-' ~ input.id,
+  'name': input.name is defined ? input.name,
+  'value': input.value is defined ? input.value
+}%}
+{% set text = {
+  'label': text.label is defined ? text.label,
+  'placeholder': text.placeholder is defined ? text.placeholder,
+  'edit': text.edit is defined ? text.edit,
+  'clear': text.clear is defined ? text.clear
+}%}
+{% set data = {
+  'thumb': data.thumb is defined ? data.thumb
+}%}
+<div class="form-group row">
+  <label class="col-sm-{{ size }} col-form-label" for="{{ input.id }}">{{ text.label }}</label>
+  <div class="col-sm-{{ 12 - size }}">
+    <div class="card image">
+      <img src="{{ data.thumb }}" alt="" title="" id="thumb-{{ input.id }}" data-placeholder="{{ text.placeholder }}" class="card-img-top"/> <input type="hidden" name="{{ input.name }}" value="{{ input.value }}" id="{{ input.id }}"/>
+      <div class="card-body">
+        <button type="button" data-toggle="image" data-target="#{{ input.id }}" data-thumb="#thumb-{{ input.id }}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ text.edit }}</button>
+        <button type="button" data-toggle="clear" data-target="#{{ input.id }}" data-thumb="#thumb-{{ input.id }}" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ text.clear }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

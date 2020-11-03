@@ -1,0 +1,46 @@
+<div class="lk_profile register_block">
+<div id="account-login" class="container">
+  <form action="{{ action }}" method="post" enctype="multipart/form-data" id="{{ form_id }}">
+    <h1 class="callback_title">{{ heading_title }}</h1>
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+    {% endif %}
+    {% if sms_action %}
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $('.code_phone').load('{{ sms_action }} .code_phone > *');
+        $('.code_phone').modal('show');
+      });
+    </script>
+    {% endif %}
+    <div class="callback_inputs">
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+          <div class="callback_input">
+            <div>{{ entry_login }}</div>
+            <input type="login" name="login" value="{{ login }}">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-xs-12">
+          <div class="callback_input">
+            <div>{{ entry_password }}</div>
+            <input type="password" name="password" value="{{ password }}">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+    <button class="other_btn">{{ button_login }}</button>
+    <div class="clearfix"></div>
+    <a href="{{ forgotten }}" class="grey_a js_code" data-toggle="modal" data-target=".code_forgotten">{{ text_forgotten }}</a>
+    <a class="grey_a js_create" href="{{ register }}" data-toggle="modal" data-target=".create_acc">{{ text_new_customer }}</a>
+
+    <input type="hidden" name="redirect" value="{{ redirect }}">
+  </form>
+</div>
+</div>

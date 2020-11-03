@@ -1,0 +1,101 @@
+{% if template == 'html' %}
+<div data-option_variant="stock_data">
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock_data][model]" value="{{ option_variant.stock_data.model }}"/>
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock_data][sku]" value="{{ option_variant.stock_data.sku }}"/>
+</div>
+<div data-option_variant="stock_data_value">
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock_data][weight]" value="{{ option_variant.stock_data.weight }}"/>
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock_data][length]" value="{{ option_variant.stock_data.length }}"/>
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock_data][width]" value="{{ option_variant.stock_data.width }}"/>
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock_data][height]" value="{{ option_variant.stock_data.height }}"/>
+</div>
+<div data-option_variant="stock">
+  {% for stock in option_variant.stock %}
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock][{{ loop.index0 }}][stock_id]" value="{{ stock.stock_id }}" data-index="{{ loop.index0 }}">
+  <input type="text" name="option_variant[{{ option_variant_row }}][stock][{{ loop.index0 }}][quantity]" value="{{ stock.quantity }}">
+  {% endfor %}
+</div>
+{% elseif template == 'js' %}
+<script type="text/javascript"><!--
+var variant_stock_data_render = function(row_el){
+    var html = '',
+        value = '',
+        el = '',
+        row = row_el.parents('[data-row]').data('row');
+
+    html += '<label>{{ entry_model }}</label><input type="text" name="option_variant[' + row + '][stock_data][model]" class="form-control">';
+    html += '<label>{{ entry_sku }}</label><input type="text" name="option_variant[' + row + '][stock_data][sku]" class="form-control">';
+
+    html = $(html);
+
+    html.filter('[name="option_variant[' + row + '][stock_data][model]"]').val(row_el.find('[name="option_variant[' + row + '][stock_data][model]"]').val());
+    html.filter('[name="option_variant[' + row + '][stock_data][sku]"]').val(row_el.find('[name="option_variant[' + row + '][stock_data][sku]"]').val());
+
+    row_el.html(html);
+  },
+  variant_stock_data_value_render = function(row_el){
+    var html = '',
+        value = '',
+        el = '',
+        row = row_el.parents('[data-row]').data('row');
+
+    html += '<label>{{ entry_weight }}</label><input type="text" name="option_variant[' + row + '][stock_data][weight]" class="form-control">';
+    html += '<label>{{ entry_length }}</label><input type="text" name="option_variant[' + row + '][stock_data][length]" class="form-control">';
+    html += '<label>{{ entry_width }}</label><input type="text" name="option_variant[' + row + '][stock_data][width]" class="form-control">';
+    html += '<label>{{ entry_height }}</label><input type="text" name="option_variant[' + row + '][stock_data][height]" class="form-control">';
+
+    html = $(html);
+
+    html.filter('[name="option_variant[' + row + '][stock_data][weight]"]').val(row_el.find('[name="option_variant[' + row + '][stock_data][weight]"]').val());
+    html.filter('[name="option_variant[' + row + '][stock_data][length]"]').val(row_el.find('[name="option_variant[' + row + '][stock_data][length]"]').val());
+    html.filter('[name="option_variant[' + row + '][stock_data][width]"]').val(row_el.find('[name="option_variant[' + row + '][stock_data][width]"]').val());
+    html.filter('[name="option_variant[' + row + '][stock_data][height]"]').val(row_el.find('[name="option_variant[' + row + '][stock_data][height]"]').val());
+
+    row_el.html(html);
+  },
+  variant_stock_render = function(row_el){
+    var html = '',
+        value = '',
+        el = '',
+        row = row_el.parents('[data-row]').data('row');
+
+    html += '<label>{{ entry_quantity }}</label>';
+{% for stock in stocks %}
+    html += '<input type="hidden" name="option_variant[' + row + '][stock][{{ loop.index0 }}][stock_id]" value="{{ stock.stock_id }}" data-index="{{ loop.index0 }}">';
+    html += '<div class="input-group"><div class="input-group-prepend"><span class="input-group-text">{{ stock.name }}</span></div>';
+    html += '<input type="text" name="option_variant[' + row + '][stock][{{ loop.index0 }}][quantity]" class="form-control">';
+    html += '</div>';
+{% endfor %}
+
+    html = $(html);
+
+    row_el.find('[data-index]').each(function(){
+      var index = html.filter('[data-index][value=' + this.value + ']').data('index');
+
+      html.find('[name="option_variant[' + row + '][stock][' + index + '][quantity]"]').val(row_el.find('[name="option_variant[' + row + '][stock][' + this.dataset.index + '][quantity]"]').val());
+    });
+
+    row_el.html(html);
+  };
+//--></script>
+<script type="text/javascript"><!--
+$(document).on('option_variant.render', function(e, row_el){
+  var row_el = $(row_el);
+  var td_block = row_el.find('[data-option_variant="price"]').parent();
+
+  if (row_el.find('[data-option_variant="stock_data"]').length == 0)
+    td_block.append('<div data-option_variant="stock_data"></div>');
+  if (row_el.find('[data-option_variant="stock_data_value"]').length == 0)
+    td_block.append('<div data-option_variant="stock_data_value"></div>');
+  if (row_el.find('[data-option_variant="stock"]').length == 0)
+    td_block.append('<div data-option_variant="stock"></div>');
+
+  variant_stock_data_render(row_el.find('[data-option_variant="stock_data"]'));
+  variant_stock_data_value_render(row_el.find('[data-option_variant="stock_data_value"]'));
+  variant_stock_render(row_el.find('[data-option_variant="stock"]'));
+
+  td_block.after($('<td></td>').append(row_el.find('[data-option_variant="stock_data_value"]')));
+  td_block.prepend(row_el.find('[data-option_variant="stock_data"]'));
+});
+//--></script>
+{% endif %}

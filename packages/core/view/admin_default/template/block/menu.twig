@@ -1,0 +1,44 @@
+{% if position == 'general' %}
+<nav id="column-left">
+  <div id="navigation"><span class="fas fa-bars"></span> {{ title }}</div>
+  <ul id="menu">
+  {% for menu_item in menu_items %}
+    <li id="{{ menu_item.menu_item_id }}">
+    {% if not menu_item.submenu %}
+      <a href="{{ menu_item.href ? menu_item.href : 'javascript:void(0)' }}"><i class="fas {{ menu_item.icon }} fw"></i> {{ menu_item.title }}</a>
+    {% else %}
+      <a href="{{ menu_item.href ? menu_item.href : 'javascript:void(0);' }}" data-toggle="collapse" data-target="#collapse{{ menu_item.menu_item_id }}" class="parent collapsed">{{ menu_item.title }}</a>
+      {{ menu_item.submenu }}
+    {% endif %}
+  {% endfor %}
+  </ul>
+</nav>
+
+{% elseif position == 'submenu' %}
+  <ul id="collapse-{{ menu_item_id }}" class="collapse">
+  {% for menu_item in menu_items %}
+    <li id="{{ menu_item.menu_item_id }}">
+    {% if not menu_item.submenu %}
+      <a href="{{ menu_item.href }}">{{ menu_item.title }}</a>
+    {% else %}
+      <a href="{{ menu_item.href ? menu_item.href : 'javascript:void(0);' }}" data-toggle="collapse" data-target="#collapse{{ menu_item.menu_item_id }}" class="parent collapsed">{{ menu_item.title }}</a>
+      {{ menu_item.submenu }}
+    {% endif %}
+    <li>
+  {% endfor %}
+  </ul>
+
+{% else %}
+  <ul>
+  {% for menu_item in menu_items %}
+    <li>
+    {% if not menu_item.submenu %}
+      <a href="{{ menu_item.href ? menu_item.href : 'javascript:void(0)' }}">{{ menu_item.title }}</a>
+    {% else %}
+      <a href="{{ menu_item.href ? menu_item.href : 'javascript:void(0);' }}" data-toggle="collapse" data-target="#collapse{{ menu_item.menu_item_id }}" class="parent collapsed">{{ menu_item.title }}</a>
+      {{ menu_item.submenu }}
+    {% endif %}
+  {% endfor %}
+  </ul>
+
+{% endif %}

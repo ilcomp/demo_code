@@ -1,0 +1,61 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="mail">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="catalog_special_status" id="input-status" class="form-control">
+            {% if catalog_special_status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-operator">{{ entry_operator }}</label>
+        <div class="col-sm-10">
+          <select name="catalog_special_operator" id="input-operator" class="form-control">
+            {% for operator in ['=','%'] %}
+              {% if operator == catalog_special_operator %}
+                <option value="{{ operator }}" selected="selected">{{ operator }}</option>
+              {% else %}
+                <option value="{{ operator }}">{{ operator }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-round">{{ entry_round }}</label>
+        <div class="col-sm-10">
+          <select name="catalog_special_round" id="input-round" class="form-control">
+            {% for round in ['round','ceil','floor'] %}
+              {% if round == catalog_special_round %}
+                <option value="{{ round }}" selected="selected">{{ round }}</option>
+              {% else %}
+                <option value="{{ round }}">{{ round }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-accuracy">{{ entry_accuracy }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="catalog_special_accuracy" value="{{ catalog_special_accuracy }}" placeholder="{{ entry_accuracy }}" id="input-accuracy" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-subtraction">{{ entry_subtraction }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="catalog_special_subtraction" value="{{ catalog_special_subtraction }}" placeholder="{{ entry_subtraction }}" id="input-subtraction" class="form-control"/>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

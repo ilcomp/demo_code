@@ -1,0 +1,41 @@
+{% if error_install %}
+  <div class="alert alert-danger alert-dismissible">
+    <button type="button" class="close float-right" data-dismiss="alert">&times;</button>
+    <i class="fas fa-exclamation-circle"></i> {{ error_install }}</div>
+{% endif %}
+{% for row in rows %}
+  <div class="row">{% for dashboard_1 in row %}
+      {% set class = 'col-lg-%s %s'|format(dashboard_1.width, 'col-md-3 col-sm-6') %}
+      {% for dashboard_2 in row %}
+        {% if dashboard_2.width > 3 %}
+          {% set class = 'col-lg-%s %s'|format(dashboard_1.width, 'col-md-12 col-sm-12') %}
+        {% endif %}
+      {% endfor %}
+      <div class="{{ class }}">{{ dashboard_1.output }}</div>
+    {% endfor %}</div>
+{% endfor %}
+{{ security }}
+
+<script type="text/javascript"><!--
+$('#button-developer').on('click', function() {
+	var url = '{{ developer|replace({'&amp;': '&'}) }}';
+	$('#button-developer').button('loading');
+
+	fetch(url)
+	.then(function(r){
+		$('#button-developer').button('reset');
+
+		return r.text();
+	})
+	.then(function(html) {
+		$('#modal-developer').remove();
+
+		$('body').prepend(html);
+
+		$('#modal-developer').modal('show');
+	})
+	.catch(function(error) {
+		console.error(error);
+	});
+});
+//--></script>

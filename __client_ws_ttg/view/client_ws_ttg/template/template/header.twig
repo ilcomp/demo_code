@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<script>history.replaceState(null,null, decodeURI(location.href));</script>
+<script>function getURLPath() {return String(document.location.pathname);}</script>
+
+<title>{{ title }}</title>
+{% if description %}
+<meta name="description" content="{{ description }}" />
+{% endif %}
+{% if keywords %}
+<meta name="keywords" content="{{ keywords }}" />
+{% endif %}
+
+<base href="{{ base }}"/>
+{% for meta in metas %}
+  {% if meta.property %}
+  <meta property="{{ meta.property }}" content="{{ meta.content }}" />
+  {% else %}
+  <meta name="{{ meta.name }}" content="{{ meta.content }}" />
+  {% endif %}
+{% endfor %}
+
+<link rel="stylesheet" href="theme/client_ws_ttg/css/fonts.css">
+
+{% for link in links %}
+<link href="{{ link.link }}" rel="{{ link.rel }}" />
+{% endfor %}
+
+<style>input[name="agree"]{position: absolute;visibility: hidden;}</style>
+{% for style in styles %}
+<link rel="{{ style.rel }}" href="{{ style.link }}" media="{{ style.media }}" />
+{% endfor %}
+
+
+
+<script>
+// расчет минимальной высоты слайдера, чтобы не пригал контент при загрузке
+(function(){
+  var w_w = window.innerWidth;
+  var styleNode = document.createElement('style');
+  if (window.innerWidth > 676) {
+    var x_h = (599 * w_w)/1920;   
+    styleNode.type = "text/css";
+    styleNode.innerHTML = '.main-slider {min-height: '+x_h+'px;}';
+    document.head.appendChild(styleNode);
+  } 
+  window.addEventListener('resize', function(event){
+    var w_w = window.innerWidth;
+    if (window.innerWidth > 676) {
+      w_w = window.innerWidth;
+      x_h = (599 * w_w)/1920;
+      styleNode.innerHTML = '.main-slider{min-height: '+x_h+'px;}';
+    } else{
+      styleNode.innerHTML = '.main-slider{min-height: auto;}';
+    }
+  });
+})();
+</script>
+
+<script type="text/javascript" src="assets/jquery-3.3.1/dist/jquery.min.js"></script>
+<script type="text/javascript" src="assets/popper.min.js"></script>
+<script type="text/javascript" src="assets/bootstrap-4.3.1/dist/js/bootstrap.min.js"></script>
+
+<!-- <script type="text/javascript" src="assets/maskedinput/jquery.maskedinput.min.js" defer></script> -->
+<script type="text/javascript" src="assets/OwlCarousel2-2.3.4/dist/owl.carousel.min.js" defer></script>
+
+{% for script in scripts %}
+<script type="text/javascript" src="{{ script.link }}" {{ script.type_load }}></script>
+{% endfor %}
+
+{% for analytic in analytics %}
+{{ analytic }}
+{% endfor %}
+
+<script type="text/javascript" src="assets/lightbox2-2.10.0/dist/js/lightbox.min.js" defer></script>
+
+<!-- VK -->
+<script type="text/javascript">
+  !function(){var t=document.createElement("script");
+  t.type="text/javascript",t.async=!0,t.src="https://vk.com/js/api/openapi.js?168",
+  t.onload=function(){VK.Retargeting.Init("VK-RTRG-531126-gyAom"),VK.Retargeting.Hit()},
+  document.head.appendChild(t)}();
+</script>
+<noscript><img src="https://vk.com/rtrg?p=VK-RTRG-531126-gyAom" style="position:fixed; left:-999px;" alt=""/></noscript>
+<!-- VK -->
+
+</head>
+<body>
+
+<header>
+  <div class="header-top d-none d-lg-block">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between">
+      {% if actions.location %}
+        <a href="{{ actions.location }}" data-toggle="modal" data-target="#choose-city" class="location"><i class="geo_svg"><svg><use xlink:href="theme/client_ws_ttg/images/geo.svg#geo_svg"></use></svg></i>{{ location_name }}</a>
+      {% endif %}
+      {% if actions.account %}
+        <div class="d-flex align-items-center flex-end lk-in-out">
+          <a href="{{ actions.account }}" data-block="account" class="login-link"><i class="key_svg"><svg><use xlink:href="theme/client_ws_ttg/images/key.svg#key_svg"></use></svg></i>{{ text_account }}</a>
+          <a href="{{ actions.logout }}" class="login-link{{ not logged ? ' d-none' }}"><i class="go_out"><svg><use xlink:href="theme/client_ws_ttg/images/go_out.svg#go_out"></use></svg></i>{{ button_exit }}</a>
+        </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="header-center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-4 col-md-4 d-lg-none">
+          <a href="#" class="main-menu__but" data-toggle="collapse">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </a>
+        </div>
+        <div class="col-4 col-lg-5">
+          <div class="d-flex align-items-center justify-content-center justify-content-lg-between">
+            <!-- <a href="{{ base }}" class="logo"><img src="{{ logo }}" class="img-fluid"></a> -->
+            <a href="{{ base }}" class="logo"><img src="theme/client_ws_ttg/images/logo_new.svg" class="img-fluid"></a>
+          {% if actions.search %}
+            <div class="search-block d-none d-lg-flex">
+              {% set params = actions.search|split('?') %}
+              <form action="{{ params[0] }}">
+                {% set params = params[1] is defined ? params[1]|replace({'&amp;':'&'})|split('&') %}
+                {% for param in params %}
+                  {% set k_v = param|split('=') %}
+                <input type="hidden" name="{{ k_v[0] }}" value="{{ k_v[1] }}">
+                {% endfor %}
+                <input type="text" name="search" value="{{ search }}" placeholder="{{ entry_search }}" class="search-block__input">
+                <button type="submit" class="search-block__button"></button>
+              </form>
+            </div>
+          {% endif %}
+          </div>
+        </div>
+        <div class="col-4 col-lg-7">
+          <div class="d-flex align-items-center justify-content-end justify-content-lg-between js-wrap-cpec">
+            <div class="d-none d-lg-flex align-items-center justify-content-between flex-column flex-xl-row">
+            {% set phone = telephone|split(',') %}
+            {% if phone[0] %}
+              <div class="header-info-wrap">
+                <a class="phone" href="tel:{{ phone[0]|trim() }}">{{ phone[0]|trim() }}</a>
+                <div class="links-text">для юридических лиц</div>
+              </div>
+            {% endif %}
+            {% if phone[0] %}
+              <div class="header-info-wrap">
+                <a class="phone" href="tel:{{ phone[1]|trim() }}">{{ phone[1]|trim() }}</a>
+                <div class="links-text">для физических лиц</div>
+              </div>
+            {% endif %}
+            </div>
+            <div class="d-flex align-items-center justify-content-between wrap-specialist">
+            {% if header_link %}
+              <a href="{{ header_link }}" class="profi-block d-none d-lg-flex">
+                <i class="profi_svg"><svg><use xlink:href="theme/client_ws_ttg/images/profi.svg#profi_svg"></use></svg></i>
+                <span>Раздел «Для Специалистов»</span>
+              </a>
+            {% endif %}
+            {% if actions.cart %}
+              <a href="{{ actions.cart }}" class="basket-head" data-block="cart">
+                <span class="basket-head__icon"><span class="basket-count"></span><i class="basket_svg"><svg><use xlink:href="theme/client_ws_ttg/images/basket.svg#basket_svg"></use></svg></i></span>
+                <div>
+                  <span class="basket-head__text d-none d-md-block">{{ text_cart }}</span>
+                  <span class="links-text d-none d-md-block">{{ total_format }}</span>
+                </div>
+              </a>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-menu__menu2">
+      <div class="container">
+        <div class="d-flex align-items-center justify-content-between main-menu__menu2__geo">
+        {% if actions.location %}
+          <a href="{{ actions.location }}" data-toggle="modal" data-target="#choose-city" class="location"><i class="geo_svg"><svg><use xlink:href="theme/client_ws_ttg/images/geo.svg#geo_svg"></use></svg></i>{{ location_name }}</a>
+        {% endif %}
+        {% if actions.account %}
+          <div class="d-flex align-items-center flex-end lk-in-out">
+            <a href="{{ actions.account }}" data-block="account" class="login-link"><i class="key_svg"><svg><use xlink:href="theme/client_ws_ttg/images/key.svg#key_svg"></use></svg></i>{{ text_account }}</a>
+            <a href="{{ actions.logout }}" class="login-link{{ not logged ? ' d-none' }}"><i class="go_out"><svg><use xlink:href="theme/client_ws_ttg/images/go_out.svg#go_out"></use></svg></i>{{ button_exit }}</a>
+          </div>
+        {% endif %}
+        </div>
+        <div class="mobile_menu_wrap">
+          <a href="{{ header_link }}" class="profi-block">
+            <i class="profi_svg"><svg><use xlink:href="theme/client_ws_ttg/images/profi.svg#profi_svg"></use></svg></i>
+            <span>Раздел «Для Специалистов»</span>
+          </a>
+          <div class="d-flex align-items-center justify-content-between flex-xl-row main-menu__menu2__phones">
+          {% set phone = telephone|split(',') %}
+          {% if phone[0] %}
+            <div class="header-info-wrap">
+              <a class="phone" href="tel:{{ phone[0]|trim() }}">{{ phone[0]|trim() }}</a>
+              <div class="links-text">для юридических лиц</div>
+            </div>
+          {% endif %}
+          {% if phone[1] %}
+            <div class="header-info-wrap">
+              <a class="phone" href="tel:{{ phone[1]|trim() }}">{{ phone[1]|trim() }}</a>
+              <div class="links-text">для физических лиц</div>
+            </div>
+          {% endif %}
+          </div>
+        {% if actions.search %}
+          <div class="search-block d-flex">
+            {% set params = actions.search|split('?') %}
+            <form action="{{ params[0] }}">
+              {% set params = params[1] is defined ? params[1]|replace({'&amp;':'&'})|split('&') %}
+              {% for param in params %}
+                {% set k_v = param|split('=') %}
+              <input type="hidden" name="{{ k_v[0] }}" value="{{ k_v[1] }}">
+              {% endfor %}
+              <input type="text" name="search" value="{{ search }}" placeholder="{{ entry_search }}" class="search-block__input">
+              <button type="submit" class="search-block__button"></button>
+            </form>
+          </div>
+        {% endif %}
+        <noindex>
+          {{ menu.general.view }}
+        </noindex>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="header-bottom d-none d-lg-block">
+    <div class="container">
+      <noindex>
+        {{ menu.general.view }}
+      </noindex>
+    </div>
+  </div>
+</header>

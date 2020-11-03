@@ -1,0 +1,68 @@
+<form action="{{ action }}" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="method" value="{{ method }}">
+  <input type="hidden" name="redirect" value="{{ redirect }}">
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  {% if location %}
+  <script type="text/javascript">location = '{{ location }}';</script>
+  {% endif %}
+  {% if refresh %}
+  <script type="text/javascript">location.reload();</script>
+  {% endif %}
+  {% if sms_action %}
+  <script type="text/javascript">
+    $('.code_phone').load('{{ sms_action }} .code_phone > *');
+    $('.code_phone:not(.in)').modal('show');
+  </script>
+  {% endif %}
+  <div class="callback-input">
+    <div>{{ entry_email }}</div>
+    <input type="text" name="login" value="{{ login }}">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user.svg#form_svg"></use></svg></i>
+  </div>
+  <div class="callback-input">
+    <div>{{ entry_password }}</div>
+    <input type="password" name="password" value="{{ password }}">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/password.svg#form_svg"></use></svg></i>
+  </div>
+  <div class="create-account-form mb-2">
+    <a href="{{ actions.forgotten }}" data-modal_form_toggle="forgotten">Забыли пароль?</a>
+  </div>
+  {{ code_confirm }}
+  {{ captcha }}
+  <button type="submit" class="main-btn">Войти в аккаунт</button>
+  <div class="create-account-form">Нет аккаунта? <a href="{{ actions.register }}">Создайте его</a></div>
+{% if agreement and confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a> и согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a> сайта</p>
+{% elseif agreement %}
+  <p class="polit-confid">Отправляя форму, Вы принимаете условия <a href="{{ agreement }}" target="_blank">пользовательского соглашения</a></p>
+{% elseif confidentiality %}
+  <p class="polit-confid">Отправляя форму, Вы согласны с <a href="{{ confidentiality }}" target="_blank">политикой конфиденциальности</a></p>
+{% endif %}
+</form>
+
+<script type="text/javascript">
+// $('#modal_account_login').on('show.bs.modal', function(e){
+//   $(this).find('[name=redirect]').val($(e.relatedTarget).attr('href'));
+// });
+</script>
+<script type="text/javascript">
+// $('#modal_account_login form').submit(function(e){
+//   e.preventDefault();
+
+//   fetch(this.action, {
+//     method: this.method,
+//     body: new FormData(this)
+//   })
+//   .then(function(r){
+//     return fetch_data(r);
+//   })
+//   .then(function(html){
+//     $('#modal_account_login form').html($(html).find('form').html());
+//   })
+//   .catch(function(e){
+//     console.error(e);
+//   });
+// });
+</script>

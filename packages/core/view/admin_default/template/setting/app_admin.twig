@@ -1,0 +1,89 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-cog"></i> {{ text_setting }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="app_admin">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-app_admin-language">{{ entry_language }}</label>
+        <div class="col-sm-10">
+          <select name="app_admin_language" id="input-app_admin-language" class="form-control">
+          {% for language in languages %}
+            {% if language.code == app_admin_language %}
+              <option value="{{ language.code }}" selected="selected">{{ language.name }}</option>
+            {% else %}
+              <option value="{{ language.code }}">{{ language.name }}</option>
+            {% endif %}
+          {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-sm-2 col-form-label" for="input-app_admin-limit">{{ entry_limit }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="app_admin_limit" value="{{ app_admin_limit }}" placeholder="{{ entry_limit }}" id="input-app_admin-limit" class="form-control"/>
+          <small class="form-text text-muted">{{ help_limit }}</small>
+        {% if error_limit %}
+          <div class="invalid-tooltip">{{ error_limit }}</div>
+        {% endif %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-theme">{{ entry_theme }}</label>
+        <div class="col-sm-10">
+          <select name="app_client_theme" id="input-theme" class="form-control">
+          {% for theme in themes %}
+            {% if theme.value == app_client_theme %}
+              <option value="{{ theme.value }}" selected="selected">{{ theme.text }}</option>
+            {% else %}
+              <option value="{{ theme.value }}">{{ theme.text }}</option>
+            {% endif %}
+          {% endfor %}
+          </select>
+          <br/>
+          <img src="" alt="" id="theme" class="img-thumb"/>
+        </div>
+      </div>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in app_admin_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="app_admin_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="app_admin_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+$('select[name=\'app_client_theme\']').on('change', function() {
+  $('select[name=\'app_client_theme\']').prop('disabled', true);
+
+  fetch(getURLPath() + '?route=extension/extension/theme/image&user_token={{ user_token }}&theme=' + this.value, {
+    credentials: 'include',
+    cache: 'no-cache'
+  })
+  .then(function(r){
+    $('select[name=\'app_client_theme\']').prop('disabled', false);
+
+    return r.text();
+  })
+  .then(function(text){
+    $('#theme').attr('src', text);
+  })
+  .catch(function(e){
+    console.error(e);
+  });
+});
+
+$('select[name=\'app_client_theme\']').trigger('change');
+//--></script>

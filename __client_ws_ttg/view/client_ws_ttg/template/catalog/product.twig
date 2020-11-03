@@ -1,0 +1,319 @@
+<div class="main-bg padding-wrap">
+  <div class="container">
+    <div class="cart-wrap">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="cart-images">
+            <div class="cart-images__small d-none d-md-block">
+            {% for image in images %}
+              <div class="small-cart-img"><img src="{{ image.thumb }}" class="img-fluid"></div>
+            {% endfor %}
+            </div>
+            <div class="cart-images__large">
+            {% for image in images %}
+              {% if loop.first %}
+              <a href="{{ image.thumb }}" data-lightbox="lightbox-product"><img src="{{ image.thumb }}" class="img-fluid"></a>
+              {% endif %}
+            {% endfor %}
+            </div>
+            <div class="small-cart__badge">
+            {% for flag in attributes.flags %}
+              <div class="badge badge__{{ flag.value == 'discount' ? 'green' : flag.value }}">{{ flag.name }}</div>
+            {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="cart-block">
+            {% include "client_ws_ttg/template/block/breadcrumb.twig" %}
+            <h1 class="h3">{{ heading_title }}</h1>
+          {% if attributes.description %}
+            <div class="cart-block__text">
+              <p>{{ attributes.description }}</p>
+            </div>
+          {% endif %}
+          {% if price %}
+            <div class="wrap-all-price d-block d-lg-flex align-items-start" id="product_price">
+              <div class="d-flex align-items-start wrap-all-price__flex">
+                {% if special %}
+                  <div class="small-cart__price">{{ special_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                  <div class="small-cart__old-price">{{ price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                {% else %}
+                  <div class="small-cart__price">{{ price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+                {% endif %}
+              </div>
+            {% if attributes.missing %}
+              <p>{{ text_missing }}</p>
+            {% else %}
+              <a href="javascript:void(0);" class="main-btn" id="btn-fast_order">{{ button_fast_order }}</a>
+            {% endif %}
+            </div>
+          {% endif %}
+
+          {% if custom_fields.composition_products %}
+            <div class="title-complect">В набор входят:</div>
+            <div class="complect-list">
+            {% for composition_product in custom_fields.composition_products %}                
+              <a href="{{ composition_product.status ? composition_product.href : 'javascript:void(0)' }}" class="complect-list__item">{% if composition_product.image %} <span class="img-complect"><img src="{{ composition_product.thumb }}" class="img-fluid"></span>{% endif %} {{ composition_product.title ?: composition_product.name }}</a>
+            {% endfor %}
+            </div>
+          {% endif %}
+          
+          {% if private %}<div class="small-cart__point">Товар продаётся только специалистам</div>{% endif %}
+          {% if not attributes.missing %}
+            {% if price %}
+              <form method="post" data-form="cart_add" id="form_product">
+                <input type="hidden" name="form_method" value="order/cart/add">
+                <input type="hidden" name="product_id" value="{{ product_id }}">
+
+                {{ options }}
+
+                <div class="cart-block__basket d-xl-flex">
+                  <div class="wrap-card-price">
+                    <div class="quantity count-item">
+                      <input type="hidden" name="quantity" value="1" size="2" class="form-control">
+                    </div>
+                    <button type="submit" data-btn="cart" class="main-btn">{{ button_cart }}</button>
+                  </div>
+                  {% if reward %}<div class="small-cart__point"><div class="puble-bg">₽</div> +{{ reward }} бонусных баллов</div>{% endif %}
+                </div>
+              </form>
+            {% else %}
+              <a href="#modal-form" data-toggle="modal" data-form_id="1" data-form_value="{{ {product: heading_title}|json_encode(constant('JSON_UNESCAPED_UNICODE'))|e }}" class="main-btn">Запросить цену</a>
+            {% endif %}
+          {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      {% if custom_fields.content %}
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#content" role="tab">ОПИСАНИЕ ТОВАРА</a>
+      </li>
+      {% endif %}
+      {% if custom_fields.property %}
+      <li class="nav-item">
+        <a class="nav-link{{ not custom_fields.content ? ' active' }}" data-toggle="tab" href="#property" role="tab">СОСТАВ ТОВАРА</a>
+      </li>
+      {% endif %}
+      {% if custom_fields.content_dop %}
+      <li class="nav-item">
+        <a class="nav-link{{ not(custom_fields.content or custom_fields.property) ? ' active' }}" data-toggle="tab" href="#content_dop" role="tab">СПОСОБ ПРИМЕНЕНИЯ</a>
+      </li>
+      {% endif %}
+      {% if custom_fields.sertificat or custom_fields.sertificat_key %}
+      <li class="nav-item">
+        <a class="nav-link{{ not(custom_fields.content or custom_fields.property or custom_fields.content_dop) ? ' active' }}" data-toggle="tab" href="#sertificat" role="tab">СЕРТИФИКАТЫ</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-8 col-xl-9">
+        <div class="tab-content">
+          {% if custom_fields.content %}
+          <div class="tab-pane fade show active" id="content" role="tabpanel">
+            <div class="content-block">
+              {{ custom_fields.content }}
+              <p>Производитель: Time To Grow</p>
+            </div>
+          </div>
+          {% endif %}
+          {% if custom_fields.property %}
+          <div class="tab-pane fade{{ not custom_fields.content ? ' show active' }}" id="property" role="tabpanel">
+            <div class="content-block">
+              {{ custom_fields.property }}
+            </div>
+          </div>
+          {% endif %}
+          {% if custom_fields.content_dop %}
+          <div class="tab-pane fade{{ not(custom_fields.content or custom_fields.property) ? ' show active' }}" id="content_dop" role="tabpanel">
+            <div class="content-block">
+              {{ custom_fields.content_dop }}
+            </div>
+          </div>
+          {% endif %}
+          {% if custom_fields.sertificat or custom_fields.sertificat_key %}
+          <div class="tab-pane fade{{ not(custom_fields.content or custom_fields.property or custom_fields.content_dop) ? ' show active' }}" id="sertificat" role="tabpanel">
+            <div class="content-block">
+              <p>{{ custom_fields.sertificat_key }}</p>
+              {% if custom_fields.sertificat %}
+              <div class="award-slider owl-carousel">
+                {% for image in custom_fields.sertificat %}
+                <a href="{{ image.original }}" data-lightbox="sertificat-{{ key }}"><img src="{{ image.thumb }}"></a>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="h3">{{ text_share }}</div>
+        <div class="soc-block soc-block-bg soc-block-repost">
+          <a href="//vk.com/share.php?url={{ share|url_encode }}" target="_blank" class="vk"><i class="soc_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/vk.svg#soc_svg"></use></svg></i></a>
+          <a href="//www.facebook.com/sharer/sharer.php?u={{ share|url_encode }}" target="_blank" class="fb"><i class="soc_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/fb.svg#soc_svg"></use></svg></i></a>
+          <a href="//twitter.com/share?url={{ share|url_encode }}" target="_blank" class="twit"><i class="soc_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/twit.svg#soc_svg"></use></svg></i></a>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 col-xl-3">
+        {% for module in custom_fields.module_center %}
+          {{ module }}
+        {% endfor %}
+        {{ modules.column }}
+      </div>
+    </div>
+  </div>
+</div>
+{{ product_list }}
+
+<script>
+// var form_product = $('#form_product'),
+//     product_refresh = function(){
+//       var data = new FormData(form_product[0]);
+
+//       data.set('form_method', 'catalog/product/calculate');
+
+//       fetch(location, {
+//         credentials: 'include',
+//         headers: {'Accept': 'application/json'},
+//         cache: 'no-cache',
+//         method: 'post',
+//         body: data
+//       })
+//       .then(function(r){
+//         return r.json();
+//       })
+//       .then(function(json) {
+//         $('#product_price').find('.small-cart__price, .small-cart__old-price').remove();
+
+//         if (json['price'] > 0) {
+//           var html = '<div class="small-cart__price">';
+
+//           if (json['specia'])
+//             html += json['total_special_format'].replace('₽', '<span>₽</span>') + '</div><div class="small-cart__old-price">';
+
+//           html += json['total_format'].replace('₽', '<span>₽</span>') + '</div>';
+
+//           $('#product_price').html(html);
+//         }
+//       })
+//       .catch(function(error) {
+//         console.error(error);
+//       });
+//     };
+
+// form_product.find('input, select').change(function(){
+//   product_refresh();
+// });
+</script>
+<script type="text/javascript">
+var form_product = $('#form_product');
+
+form_product.find('[data-list=option_variant] input').change(function(){
+  form_product.find('[data-btn=option_variant]').text(this.parentNode.textContent);
+});
+
+form_product.submit(function(e){
+  e.preventDefault();
+
+  var variants = form_product.find('[data-list=option_variant] input');
+  if (variants.length > 0 && variants.filter(':checked').length == 0) {
+    form_product.find('[data-btn=option_variant]').click();
+
+    return;
+  }
+
+  $(document).trigger('cart_load');
+
+  var data = new FormData(this);
+
+  if (form_product.find('button[data-btn="cart"]').length > 0)
+    data.set('form_method', 'order/cart/add');
+  else if (form_product.find('button[data-btn="wishlist"]').length > 0)
+    data.set('form_method', 'account/wishlist/add');
+
+  fetch(location, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    $(document).trigger('cart_loaded');
+
+    if (r.status == 401) {
+      $('#modal_account').modal('show');
+
+      return [];
+    } else
+      return r.json();
+  })
+  .then(function(json) {
+    if (json['error']) {
+      form_product.append('<div class="alert alert-warning" role="alert">' + json['error'] + '</div>');
+    }
+
+    if (json['success']) {
+      ym(45332331,'reachGoal','Cart_add');
+
+      toast_message(json['success'], '<a href="' + json['link_cart'] + '" class="main-btn" data-toast="cart">' + json['button_to_cart'] + '</a>', 5000);
+    }
+
+    $(document).trigger('cart_add', json);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script>
+$('#btn-fast_order').click(function(e){
+  e.preventDefault();
+
+  $('#modal-fast_order').remove();
+
+  var data = new FormData(document.getElementById('form_product'));
+
+  data.delete('form_method');
+
+  fetch('/?route=order/fast', {
+    credentials: 'include',
+    headers: {'Accept': 'text/html'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html) {
+    $('body').append(html);
+
+    $('#modal-fast_order').modal('show');
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script type="application/ld+json">
+[{
+  "@context" : "http://schema.org",
+  "@type" : "Product",
+  "name" : "{{ heading_title|e }}",
+  "availability" : "В наличии",
+{#  "model" : "{{ stock.model }}",#}
+{#  "sku" : "{{ custom_fields.sku }}",#}
+  "manufacturer" : "Time To Grow",
+  "image" : "{{ image_link }}",
+  "description" : "{{ custom_fields.content|e }}",
+  "offers" : {
+    "@type" : "Offer",
+    "price" : "{{ price }}",
+    "priceCurrency" : "{{ currency }}"
+  }
+}]
+</script>

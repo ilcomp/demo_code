@@ -1,0 +1,84 @@
+<div class="main-bg">
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <section class="basket-block">
+    <div class="container">
+      <h1>{{ heading_title }}</h1>
+      <form method="post" enctype="multipart/form-data" id="form_order_checkout">
+        <input type="hidden" name="form_method" value="order/checkout/form">
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a href="{{ actions.cart }}" class="nav-link">Состав заказа</a>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="nav-link active">Контактные данные</button>
+          </li>
+          <li class="nav-item">
+            <button type="submit" class="nav-link">Выбор способов доставки и оплаты</button>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active">
+            <div class="step-wrap">
+              <div class="row">
+                <div class="col-12 col-lg-8">
+                  {{ block.contact }}
+                </div>
+                <div class="col-12 col-lg-4 d-block">
+                  <div class="step-wrap__short">
+                    <div class="h3">Состав заказа</div>
+                    {{ block.total_product }}
+                  </div>
+                </div>
+              </div>
+
+            {% if error_warning %}
+              <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+              </div>
+            {% endif %}
+              <div class="basket-end-step">
+                <button type="submit" class="main-btn main-btn-green">{{ button_submit }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var form = $('#form_order_checkout');
+
+  form.submit(function(e){
+    e.preventDefault();
+
+    fetch(location, {
+      credentials: 'include',
+      headers: {'Accept': 'text/html'},
+      method: 'post',
+      body: new FormData(this)
+    })
+    .then(function(r){
+      return r.text();
+    })
+    .then(function(html){
+      if (!html)
+        location.reload();
+
+      var data = $(html).find('#form_order_checkout');
+
+      form.html(data.html());
+    })
+    .catch(function(e){
+      console.error(e);
+    });
+  });
+
+  form.find('button[type="submit"]').click(function(e){
+    form.off('submit');
+  }){% if not(error_warning) and next %}.click(){% endif %};
+})();
+</script>

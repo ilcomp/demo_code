@@ -1,0 +1,1181 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item"><a href="#tab-cart" data-toggle="tab" class="nav-link active">{{ text_cart }}</a></li>
+  <li class="nav-item"><a href="#tab-contact" data-toggle="tab" class="nav-link">{{ text_contact_detail }}</a></li>
+  <li class="nav-item"><a href="#tab-total" data-toggle="tab" class="nav-link">{{ text_total_detail }}</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="tab-cart">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-shopping-cart fa-fw"></i> {{ text_cart }}</div>
+      <div class="card-body">
+        <form action="{{ catalog }}index.php?route=api/cart/create&api_token={{ api_token }}&store_id={{ store_id }}" method="post" id="form-order_cart">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <td class="text-left">{{ column_product }}</td>
+                <td class="text-left">{{ column_model }}</td>
+                <td class="text-right">{{ column_quantity }}</td>
+                <td class="text-right">{{ column_price }}</td>
+                <td class="text-right">{{ column_total }}</td>
+                <td>{{ column_action }}</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% if order_products %}
+              {% set product_row = 0 %}
+              {% for order_product in order_products %}
+                <tr>
+                  <td class="text-left">
+                    {{ order_product.name }}
+                    <br/>
+                    <input type="hidden" name="product[{{ product_row }}][product_id]" value="{{ order_product.product_id }}"/>
+                    {% for option in order_product.option %}
+                      -
+                      <small>{{ option.name }}: {{ option.value }}</small>
+                      <br/>
+                      {% if option.type == 'select' or option.type == 'color' or option.type == 'size' or option.type == 'radio' or option.type == 'image' %}
+                        <input type="hidden" name="product[{{ product_row }}][option][{{ option.product_option_id }}]" value="{{ option.listing_item_id }}"/>
+                      {% endif %}
+                      {% if option.type == 'checkbox' %}
+                        <input type="hidden" name="product[{{ product_row }}][option][{{ option.product_option_id }}][]" value="{{ option.listing_item_id }}"/>
+                      {% endif %}
+                      {% if option.type == 'text' or option.type == 'textarea' or option.type == 'file' or option.type == 'date' or option.type == 'datetime' or option.type == 'time' %}
+                        <input type="hidden" name="product[{{ product_row }}][option][{{ option.product_option_id }}]" value="{{ option.value }}"/>
+                      {% endif %}
+                    {% endfor %}
+                    {% for option in order_product.option_data %}
+                      -
+                      <small>{{ option.name }}: {{ option.value }}</small>
+                      <br/>
+                      {% if option.type == 'select' or option.type == 'color' or option.type == 'size' or option.type == 'radio' or option.type == 'image' %}
+                        <input type="hidden" name="product[{{ product_row }}][option][{{ option.product_option_id }}]" value="{{ option.listing_item_id }}"/>
+                      {% endif %}
+                      {% if option.type == 'checkbox' %}
+                        <input type="hidden" name="product[{{ product_row }}][option][{{ option.product_option_id }}][]" value="{{ option.listing_item_id }}"/>
+                      {% endif %}
+                      {% if option.type == 'text' or option.type == 'textarea' or option.type == 'file' or option.type == 'date' or option.type == 'datetime' or option.type == 'time' %}
+                        <input type="hidden" name="product[{{ product_row }}][option][{{ option.product_option_id }}]" value="{{ option.value }}"/>
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td class="text-left">{{ order_product.model }}</td>
+                  <td class="text-right">{{ order_product.quantity }}
+                    <input type="hidden" name="product[{{ product_row }}][quantity]" value="{{ order_product.quantity }}"/></td>
+                  <td class="text-right"></td>
+                  <td class="text-right"></td>
+                  <td class="text-center"></td>
+                </tr>
+                {% set product_row = product_row + 1 %}
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td class="text-center" colspan="6">{{ text_no_results }}</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </form>
+        <form action="{{ catalog }}index.php?route=api/cart/add&api_token={{ api_token }}&store_id={{ store_id }}" method="post" id="form-add_product">
+          <fieldset>
+            <legend>{{ text_product }}</legend>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="input-product">{{ entry_product }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="product_name" value="" id="input-product" class="form-control"/> <input type="hidden" name="product_id" value=""/>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="input-quantity">{{ entry_quantity }}</label>
+              <div class="col-sm-10">
+                <input type="number" name="quantity" value="1" id="input-quantity" class="form-control" min="1"/>
+              </div>
+            </div>
+            <div id="option"></div>
+          </fieldset>
+          <div class="text-right">
+            <button type="submit" data-loading-text="{{ text_loading }}" class="btn btn-primary"><i class="fas fa-plus-circle"></i> {{ button_product_add }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane" id="tab-contact">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-user fa-fw"></i> {{ text_contact_detail }}</div>
+      <div class="card-body">
+        <form action="{{ catalog }}index.php?route=api/contact&api_token={{ api_token }}&store_id={{ store_id }}" method="post" id="form-order_contact">
+          <input type="hidden" name="store_id" value="{{ store_id }}">
+<!--           <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-store">{{ entry_store }}</label>
+            <div class="col-sm-10">
+              <select name="store_id" id="input-store" class="form-control" disabled>
+                {% for store in stores %}
+                  {% if store.store_id == store_id %}
+                    <option value="{{ store.store_id }}" selected="selected">{{ store.name }}</option>
+                  {% else %}
+                    <option value="{{ store.store_id }}">{{ store.name }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div> -->
+          <input type="hidden" name="currency" value="{{ currency_code }}">
+<!--           <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-currency">{{ entry_currency }}</label>
+            <div class="col-sm-10">
+              <select name="currency" id="input-currency" class="form-control" disabled>
+                {% for currency in currencies %}
+                  {% if currency.code == currency_code %}
+                    <option value="{{ currency.code }}" selected="selected">{{ currency.title }}</option>
+                  {% else %}
+                    <option value="{{ currency.code }}">{{ currency.title }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div> -->
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-account">{{ entry_account }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="account" value="{{ account }}" placeholder="{{ entry_account }}" id="input-account" class="form-control" readonly/><input type="hidden" name="account_id" value="{{ account_id }}"/>
+            </div>
+          </div>
+          <input type="hidden" name="account_group_id" value="{{ account_group_id }}">
+<!--           <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-account-group">{{ entry_account_group }}</label>
+            <div class="col-sm-10">
+              <select name="account_group_id" id="input-account-group" class="form-control" disabled>
+                {% for account_group in account_groups %}
+                  {% if account_group.account_group_id == account_group_id %}
+                    <option value="{{ account_group.account_group_id }}" selected="selected">{{ account_group.name }}</option>
+                  {% else %}
+                    <option value="{{ account_group.account_group_id }}">{{ account_group.name }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div> -->
+        {{ custom_fields_contact }}
+          <!-- <input type="hidden" name="email" value="{{ email }}"> -->
+          <div class="form-group row required">
+            <label class="col-sm-2 col-form-label" for="input-email">{{ entry_email }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="email" value="{{ email }}" id="input-email" class="form-control"/>
+            </div>
+          </div>
+          <div class="form-group row required">
+            <label class="col-sm-2 col-form-label" for="input-telephone">{{ entry_telephone }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="telephone" value="{{ telephone }}" id="input-telephone" class="form-control"/>
+            </div>
+          </div>
+        {{ custom_fields_address }}
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane" id="tab-total">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-dollar-sign fa-fw"></i> {{ text_total_detail }}</div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <td class="text-left">{{ column_product }}</td>
+                <td class="text-left">{{ column_model }}</td>
+                <td class="text-right">{{ column_quantity }}</td>
+                <td class="text-right">{{ column_price }}</td>
+                <td class="text-right">{{ column_total }}</td>
+              </tr>
+            </thead>
+            <tbody id="total">
+            {% set total_shipping = 0 %}
+            {% set total_order_sale = 0 %}
+            {% set total_sub_total = 0 %}
+            {% for order_total in order_totals %}
+              {% if order_total.code == 'shipping' %}
+                {% set total_shipping = order_total.value %}
+              {% elseif order_total.code == 'order_sale' %}
+                {% set total_order_sale = order_total.value|abs %}
+              {% elseif order_total.code == 'sub_total' %}
+                {% set total_sub_total = order_total.value %}
+              {% endif %}
+              <tr>
+                <td class="text-right" colspan="4">{{ order_total.title }}</td>
+                <td class="text-center">
+                  {{ order_total.total_format }}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <form action="{{ catalog }}index.php?route=api/order/{{ order_id ? 'edit' : 'add'}}&api_token={{ api_token }}&store_id={{ store_id }}" method="post" id="form-order_total">
+          <input type="hidden" name="order_id" value="{{ order_id }}"/>
+          <fieldset>
+            <legend>{{ text_order_detail }}</legend>
+            <div class="form-group row required">
+              <label class="col-sm-2 col-form-label" for="input-shipping-method">{{ entry_shipping_method }}</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+                  <select name="shipping_method" id="input-shipping-method" class="form-control">
+                    <option value="">{{ text_select }}</option>
+                    {% if shipping_code %}
+                      <option value="{{ shipping_code }}" selected="selected">{{ shipping_method }}</option>
+                    {% endif %}
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" id="button-shipping-method" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_apply }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row required">
+              <label class="col-sm-2 col-form-label" for="input-payment-method">{{ entry_payment_method }}</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+                  <select name="payment_method" id="input-payment-method" class="form-control">
+                    <option value="">{{ text_select }}</option>
+                    {% if payment_code %}
+                      <option value="{{ payment_code }}" selected="selected">{{ payment_method }}</option>
+                    {% endif %}
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" id="button-payment-method" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_apply }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="input-order-status">{{ entry_order_status }}</label>
+              <div class="col-sm-10">
+                <select name="order_status_id" id="input-order-status" class="form-control">
+                  {% for order_status in order_statuses %}
+                    {% if order_status.listing_item_id == order_status_id %}
+                      <option value="{{ order_status.listing_item_id }}" selected="selected">{{ order_status.name }}</option>
+                    {% else %}
+                      <option value="{{ order_status.listing_item_id }}">{{ order_status.name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="input-total_shipping">{{ entry_total_shipping }}</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+                  <input type="text" name="total_shipping" value="{{ total_shipping }}" id="input-total_shipping" class="form-control">
+                  <div class="input-group-append">
+                    <button type="button" id="button-total_shipping" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_apply }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" for="input-total_order_sale">{{ entry_total_order_sale }}</label>
+              <div class="col-sm-10">
+                <div class="input-group">
+                  <input type="text" name="total_order_sale" value="{{ total_sub_total ? total_order_sale / total_sub_total * 100 % 1000 : 0 }}" id="input-total_order_sale" class="form-control">
+                  <div class="input-group-append">
+                    <button type="button" id="button-total_order_sale" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_apply }}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+        <div class="row">
+          <div class="col-sm-6 text-right">
+            <button type="button" id="button-refresh" data-toggle="tooltip" title="{{ button_refresh }}" data-loading-text="{{ text_loading }}" class="btn btn-warning"><i class="fas fa-sync"></i></button>
+            <button type="submit" form="form-order_total" class="btn btn-primary"><i class="fas fa-check-circle"></i> {{ button_save }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+        <div id="order_form_info">
+        </div>
+</div>
+
+<script type="text/javascript">
+var products = [];
+
+var calculate_cart = function(change = false, cart_id){
+  var product = $('#form-order_cart [data-cart_id=' + cart_id + ']'),
+      product_option_groups = products[cart_id];
+
+  if (product) {
+    var values_price = [],
+      values_size = [];
+
+    product.find('input[data-option]').each(function() {
+      if (this.tagName == 'select' || this.type == 'checkbox' || this.type == 'radio') {
+        var el = $(this);
+        if (el.data('option') == 'price') {
+          if (change && $(change).data('option') == 'color')
+            el.parents('.dropdown-item').find('input').prop('checked', 0);
+
+          values_price.push(Number(this.value));
+        }
+
+        if (el.data('option') == 'size') {
+          el.parents('.dropdown-item').addClass('d-none');
+
+          values_size.push(Number(this.value));
+        }
+      }
+    });
+
+    var options = product.find('input[data-option]').not('[type=checkbox]:not(:checked), [type=radio]:not(:checked)'),
+      group_values = [],
+      group_prices = [],
+      group_images = [],
+      values = [];
+
+    options.each(function() {
+      if (this.tagName == 'select' || this.type == 'checkbox' || this.type == 'radio') {
+        values.push(Number(this.value));
+      }
+    });
+
+    $.each(product_option_groups, function(i, pog){
+      var group = true,
+        group_price = true,
+        option_price = false
+        group_quantity = true,
+        option_quantity = false;
+
+      $.each(pog.product_option_value, function(i, pov){
+        if (values.indexOf(Number(pov.listing_item_id)) == -1) {
+          group = false;
+
+          if (values_price.indexOf(Number(pov.listing_item_id)) == -1) 
+            group_price = false;
+          if (values_size.indexOf(Number(pov.listing_item_id)) == -1)
+            group_quantity = false;
+        }
+
+        if (values_price.indexOf(Number(pov.listing_item_id)) != -1 && pog.price && pog.price_prefix == '=') {
+          option_price = pov.listing_item_id;
+        }
+
+        if (values_size.indexOf(Number(pov.listing_item_id)) != -1 && pog.stock && pog.stock.quantity > 0) {
+          option_quantity = pov.listing_item_id;
+        }
+      });
+
+      if (group) {
+        group_values = pog.product_option_value;
+
+        $.each(pog.product_image, function(){
+          group_images.push(Number(this));
+        });
+
+        if (pog.price)
+          group_prices.push({price: Number(pog.price), price_prefix: pog.price_prefix});
+      }
+
+      if (option_price && group_price) {
+        product.find('[data-option=price][value=' + option_price + ']').parents('.dropdown-item').find('[data-price]').text(pog.price_format);
+      }
+
+      if (option_quantity && group_quantity) {
+        product.find('[data-option=size][value=' + option_quantity + ']').parents('.dropdown-item').removeClass('d-none');
+      }
+
+      if (change && $(change).data('option') == 'color') {
+        product.find('.selectSize input:checked').prop('checked', 0);
+
+        clearTimeout(timeout);
+
+        timeout = setTimeout(function(){
+          $('#form-order_cart').submit();
+        }, 300);
+      }
+    });
+  }
+}
+</script>
+<script type="text/javascript"><!--
+var validate_refresh = false;
+
+// Cart
+var refresh_view = function() {
+      $('#button-refresh').button('loading');
+
+      fetch('{{ catalog }}index.php?route=api/cart/get_cart&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\']').val(), {
+        credentials: 'include',
+        cache: 'no-cache',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+      })
+      .then(function(r){
+        $('#button-refresh').button('reset');
+
+        return r.json();
+      })
+      .then(function(json){
+        validate_refresh = true;
+
+        $('.alert-dismissible').remove();
+
+        // Check for errors
+        if (json['error']) {
+          if (json['error']['warning']) {
+            $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          }
+
+          if (json['error']['stock']) {
+            $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['stock'] + '</div>');
+          }
+
+          if (json['error']['minimum']) {
+            for (i in json['error']['minimum']) {
+              $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['minimum'][i] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+          }
+        }
+
+        var shipping = false;
+
+        html = '';
+
+        products = [];
+
+        if (json['products'].length) {
+          $.each(json['products'], function(cart_row, product){
+            products[cart_row] = product['product_option_groups'];
+
+            html += '<tr data-cart_id="' + cart_row + '">';
+            html += '  <td class="text-left">' + product['name'] + ' ' + (!product['stock'] ? '<span class="text-danger">***</span>' : '') + '<br />';
+            html += '  <input type="hidden" name="product[' + cart_row + '][product_id]" value="' + product['product_id'] + '" />';
+
+            if (product['option_relations'] != '') {
+              $.each(product['option_relations'], function(j, option_relation){
+                if (option_relation['relation']['type'] == 'color') {
+                  html += '<div class="selectColor"><span class="title grey">{{ text_color }}:</span>';
+                } else {
+                  html += '<div class="selectSize"><span class="title grey">{{ text_size }}:</span>';
+                }
+                  html += '<div class="dropdown">';
+                    html += '<a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>';
+                    html += '<div class="dropdown-menu">';
+
+                    $.each(option_relation['values'], function(j, value){
+                      var checked2 = false;
+                      if (value['general']['listing_item_id'] == product['option'][option_relation['general']['product_option_id']])
+                        checked2 = true;
+
+                      $.each(value['relations'], function(j, relation){
+                        var checked1 = false;
+                        if (checked2 && relation['listing_item_id'] == product['option'][option_relation['relation']['product_option_id']])
+                          checked1 = true;
+
+                        html += '<div class="dropdown-item"><label><span class="wrapper">';
+
+                        if (option_relation['relation']['type'] == 'color') {
+                          html += '<input type="radio" name="product[' + cart_row + '][option][' + relation['product_option_id'] + ']" value="' + relation['listing_item_id'] + '"' + (checked1 ? ' checked' : '') + ' data-option_relation="' + relation['product_option_id'] + '" data-option="color" style="display:none">';
+                          html += '<input type="radio" name="product[' + cart_row + '][option][' + value['general']['product_option_id'] + ']" value="' + value['general']['listing_item_id'] + '"' + (checked1 && checked2 ? ' checked' : '') + ' data-option_general="' + value['general']['product_option_id'] + '" data-option="material" style="display:none">';
+                          if (relation['image'])
+                            html += '<span class="color" style="background-image: url(\'' + relation['icon_crop'] + '\')"></span>';
+                          else
+                            html += '<span class="color" style="background-color: ' + relation['value'] + '"></span>';
+                          html += '<span class="hidden">' + value['general']['description'] + '</span>';
+                        } else {
+                          html += '<input type="radio" name="product[' + cart_row + '][option][' + relation['product_option_id'] + ']" value="' + relation['listing_item_id'] + '"' + (checked1 ? ' checked' : '') + ' data-option_relation="' + relation['product_option_id'] + '" data-option="size" style="display:none">';
+                          html += '<input type="radio" name="product[' + cart_row + '][option][' + value['general']['product_option_id'] + ']" value="' + value['general']['listing_item_id'] + '"' + (checked1 && checked2 ? ' checked' : '') + ' data-option_general="' + value['general']['product_option_id'] + '" data-option="price" style="display:none">';
+                          html += '<span><span class="bold">' + relation['name'] + '</span> - <span data-price></span></span>';
+                        }
+
+                        html += '</span></label></div>';
+                      });
+                    });
+                    html += '</div>';
+                  html += '</div>';
+                html += '</div>';
+              });
+            }
+
+            // if (product['option_data']) {
+       //        $.each(product['option_data'], function(j, option){
+       //          html += '  - <small>' + option['name'] + ': ' + option['value'] + '</small><br />';
+
+       //          if (option['type'] == 'select' || option['type'] == 'radio' || option['type'] == 'image' || option['type'] == 'color' || option['type'] == 'size') {
+       //            html += '<input type="hidden" name="product[' + cart_row + '][option][' + option['product_option_id'] + ']" value="' + option['listing_item_id'] + '" />';
+       //          }
+
+       //          if (option['type'] == 'checkbox') {
+       //            html += '<input type="hidden" name="product[' + cart_row + '][option][' + option['product_option_id'] + '][]" value="' + option['listing_item_id'] + '" />';
+       //          }
+
+       //          if (option['type'] == 'text' || option['type'] == 'textarea' || option['type'] == 'file' || option['type'] == 'date' || option['type'] == 'datetime' || option['type'] == 'time') {
+       //            html += '<input type="hidden" name="product[' + cart_row + '][option][' + option['product_option_id'] + ']" value="' + option['value'] + '" />';
+       //          }
+       //        });
+            // }
+
+            html += '</td>';
+            html += '  <td class="text-left">' + product['model'] + '</td>';
+            html += '  <td class="text-right"><input type="number" name="product[' + cart_row + '][quantity]" value="' + product['quantity'] + '" class="form-control" min="1"/></td>';
+            html += '  <td class="text-right">' + product['price_format'] + '</td>';
+            html += '  <td class="text-right">' + product['total'] + '</td>';
+            html += '  <td class="text-center" style="width: 3px;"><button type="button" data-cart="remove" data-toggle="tooltip" title="{{ button_remove }}" data-loading-text="{{ text_loading }}" class="btn btn-danger"><i class="fas fa-minus-circle"></i></button></td>';
+            html += '</tr>';
+
+            if (product['shipping'] != 0) {
+              shipping = true;
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+          }
+
+          if (!shipping) {
+            $('select[name=\'shipping_method\'] option').removeAttr('selected');
+            $('select[name=\'shipping_method\']').prop('disabled', true);
+            $('#button-shipping-method').prop('disabled', true);
+          } else {
+            $('select[name=\'shipping_method\']').prop('disabled', false);
+            $('#button-shipping-method').prop('disabled', false);
+          }
+
+          if (!json['products'].length) {
+            html += '<tr>';
+            html += '  <td colspan="6" class="text-center">{{ text_no_results }}</td>';
+            html += '</tr>';
+          }
+
+          $('#form-order_cart tbody').html(html);
+
+          $('#form-order_cart [data-cart_id]').each(function(){
+            calculate_cart(false, $(this).data('cart_id'));
+          });
+
+          $('#form-order_cart .selectColor input').change(function(e){
+            calculate_cart(this, $(this).parents('[data-cart_id]').data('cart_id'));
+          });
+
+          $('#form-order_cart .selectSize input').change(function(e){
+            clearTimeout(timeout);
+
+            timeout = setTimeout(function(){
+              $('#form-order_cart').submit();
+            }, 300);
+          });
+
+          $('#form-order_cart input[data-option]:checked').each(function(){
+            var a = $(this).parents('.dropdown-item');
+            a.parents('.dropdown').find('.dropdown-toggle').html(a.clone().remove('input').html());
+          });
+
+          $('#form-order_cart .dropdown-item').click(function() {
+            var a = $(this);
+            a.find('input').prop('checked', 1).filter('[data-option=color], [data-option=size]').change();
+            a.parents('.dropdown').find('.dropdown-toggle').html(a.clone().remove('input').html());
+          });
+
+          // Totals
+          html = '';
+
+          if (json['products'].length) {
+            $.each(json['products'], function(i, product){
+              var name = product['name'];
+              if (product['option_data']) {
+                $.each(product['option_data'], function(j, option){
+                  if (option['name'] == 'Размер') {
+                    name += ', <strong>' + option['name'] + ': ' + option['value'] + '</strong>';
+                  }
+                });
+              }
+
+              html += '<tr>';
+              html += '  <td class="text-left">' + name + ' ' + (!product['stock'] ? '<span class="text-danger">***</span>' : '') + '<br />';
+
+              if (product['option_data']) {
+                $.each(product['option_data'], function(j, option){
+                  html += '  - <small>' + option['name'] + ': ' + option['value'] + '</small><br />';
+                });
+              }
+
+              html += '  </td>';
+              html += '  <td class="text-left">' + product['model'] + '</td>';
+              html += '  <td class="text-right">' + product['quantity'] + '</td>';
+              html += '  <td class="text-right">' + product['price'] + '</td>';
+              html += '  <td class="text-right">' + product['total'] + '</td>';
+              html += '</tr>';
+            });
+          }
+
+          if (json['totals'].length) {
+            $.each(json['totals'], function(i, total){
+              html += '<tr>';
+              html += '  <td class="text-right" colspan="4">' + total['title'] + ':</td>';
+              html += '  <td class="text-right">' + total['text'] + '</td>';
+              html += '</tr>';
+            });
+          }
+
+          if (!json['totals'].length && !json['products'].length) {
+            html += '<tr>';
+            html += '  <td colspan="5" class="text-center">{{ text_no_results }}</td>';
+            html += '</tr>';
+          }
+
+          $('#total').html(html);
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          console.error(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    };
+
+$('#form-add_product input[name=\'product_name\']').autocomplete({
+  'source': function(request, response) {
+    fetch('index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      response($.map(json, function(item) {
+        return {
+          label: (item['model'] ? item['model'] + ' ' : '') + item['name'],
+          value: item['product_id'],
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('#form-add_product input[name=\'product_name\']').val(item['label']);
+    $('#form-add_product input[name=\'product_id\']').val(item['value']);
+  }
+});
+
+$('#form-add_product').submit(function(e) {
+  e.preventDefault();
+
+  var form = $(this),
+      button = form.find('[type=submit]');
+
+  button.button('loading');
+
+  fetch(form.attr('action').replace(/&store_id=\d*/, {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Accept': 'application/json'
+    },
+    body: new FormData(form[0])
+  })
+  .then(function(r){
+    button.button('reset');
+
+    return r.json();
+  })
+  .then(function(json){
+    $('.alert-dismissible, .invalid-tooltip').remove();
+    $('.is-invalid').removeClass('is-invalid');
+
+    if (json['error']) {
+      if (json['error']['warning']) {
+        $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+      }
+
+      if (json['error']['option']) {
+        for (i in json['error']['option']) {
+          var element = $('#input-option' + i.replace('_', '-'));
+
+          // Highlight any found errors
+          $(element).addClass('is-invalid');
+
+          if (element.parent().hasClass('input-group')) {
+            $(element).parent().after('<div class="invalid-tooltip d-block">' + json['error']['option'][i] + '</div>');
+          } else {
+            $(element).after('<div class="invalid-tooltip d-block">' + json['error']['option'][i] + '</div>');
+          }
+        }
+      }
+
+      if (json['error']['store']) {
+        $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['store'] + '</div>');
+      }
+    } else {
+      if (validate_refresh)
+        refresh_view();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+$('#form-order_cart').submit(function(e) {
+  e.preventDefault();
+
+  var form = $(this),
+      button = $('[form="form-order_cart"]');
+
+  button.button('loading');
+
+  fetch(form.attr('action').replace(/&store_id=\d*/, {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Accept': 'application/json'
+    },
+    body: new FormData(form[0])
+  })
+  .then(function(r){
+    button.button('reset');
+
+    return r.json();
+  })
+  .then(function(json){
+    $('.alert-dismissible, .invalid-tooltip').remove();
+    $('.is-invalid').removeClass('is-invalid');
+
+    if (json['error'] && json['error']['warning']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+
+    if (json['success']) {
+      if (validate_refresh) {
+        $('#order_form_info').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+        refresh_view();
+      } else
+        $('#form-order_contact').submit();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+$('#form-order_cart').on('click', '[data-cart=remove]', function() {
+  $(this).parents('[data-cart_id]').remove();
+
+  $('#form-order_cart').submit();
+});
+
+var timeout;
+
+$('#form-order_cart').on('change', 'input:not([data-option])', function(){
+  clearTimeout(timeout);
+
+  timeout = setTimeout(function(){
+    $('#form-order_cart').submit();
+  }, 1000);
+});
+
+// Contact
+$('#form-order_contact').submit(function(e) {
+  e.preventDefault();
+
+  var form = $(this);
+
+  fetch(form.attr('action').replace(/&store_id=\d*/, {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Accept': 'application/json'
+    },
+    body: new FormData(form[0])
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(json){
+    $('.alert-dismissible, .invalid-tooltip').remove();
+    $('.is-invalid').removeClass('is-invalid');
+
+    if (json['error'] && json['error']['warning']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+
+    if (json['success']) {
+      if (validate_refresh) {
+        $('#order_form_info').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+        refresh_view();
+      } else {
+        $('#button-shipping-method').click();
+      }
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+var timeout;
+
+$('#form-order_contact').on('change', 'input, select', function(){
+  clearTimeout(timeout);
+
+  timeout = setTimeout(function(){
+    $('#form-order_contact').submit();
+  }, 1000);
+});
+
+// Shipping Method
+$('#button-shipping-method').on('click', function() {
+  fetch('{{ catalog }}index.php?route=api/shipping/methods&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\']').val(), {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json'
+    },
+    method: 'post',
+    body: 'shipping_method=' + $('select[name=\'shipping_method\']').val().serialize()
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(json){
+    $('select[name=\'shipping_method\'].is-invalid').removeClass('is-invalid');
+
+    if (json['error']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+      $('select[name=\'shipping_method\']').addClass('is-invalid');
+    } else {
+      html = '<option value="">{{ text_select }}</option>';
+
+      if (json['shipping_methods']) {
+        $.each(json['shipping_methods'], function(i, shipping_method){
+          html += '<optgroup label="' + shipping_method['title'] + '">';
+
+          if (!shipping_method['error']) {
+            $.each(shipping_method['quote'], function(j, quote){
+              if (json['shipping_method'] && quote['code'] == json['shipping_method']['code']) {
+                html += '<option value="' + quote['code'] + '" selected="selected">' + quote['title'] + ' - ' + quote['cost_format'] + '</option>';
+              } else {
+                html += '<option value="' + quote['code'] + '">' + quote['title'] + ' - ' + quote['cost_format'] + '</option>';
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+            } else {
+              html += '<option value="" style="color: #F00;" disabled="disabled">' + shipping_method['error'] + '</option>';
+            }
+
+            html += '</optgroup>';
+          });
+        }
+
+        $('select[name=\'shipping_method\']').html(html);
+      }
+
+      if (json['success']) {
+        $('#button-total_shipping').click();
+
+        $('#order_form_info').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+      }
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      console.error(thrownError, xhr.statusText, xhr.responseText);
+    }
+  });
+});
+
+// Payment Method
+$('#button-payment-method').on('click', function() {
+  fetch('{{ catalog }}index.php?route=api/payment/methods&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\']').val(), {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json'
+    },
+    method: 'post',
+    body: 'payment_method=' + $('select[name=\'payment_method\']').val().serialize()
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(json){
+    $('select[name=\'payment_method\'].is-invalid').removeClass('is-invalid');
+
+    if (json['error']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+      $('select[name=\'payment_method\']').addClass('is-invalid');
+    } else {
+      html = '<option value="">{{ text_select }}</option>';
+
+      if (json['payment_methods']) {
+        $.each(json['payment_methods'], function(i, payment_method){
+          if (json['payment_method'] && payment_method['code'] == json['payment_method']['code']) {
+            html += '<option value="' + payment_method['code'] + '" selected="selected">' + payment_method['title'] + '</option>';
+          } else {
+            html += '<option value="' + payment_method['code'] + '">' + payment_method['title'] + '</option>';
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+        }
+
+        $('select[name=\'payment_method\']').html(html);
+      }
+
+      if (json['success']) {
+        if (validate_refresh) {
+          $('#order_form_info').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+          refresh_view();
+        } else {
+          $('#button-total_order_sale').click();
+        }
+      }
+    },
+    error: function(xhr, ajaxOptions, thrownError) {
+      console.error(thrownError, xhr.statusText, xhr.responseText);
+    }
+  });
+});
+
+$('#button-total_shipping').on('click', function() {
+  $('#button-total_shipping').button('loading');
+
+  fetch('{{ catalog }}index.php?route=api/cart/edit_total&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\']').val(), {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json'
+    },
+    method: 'post',
+    body: 'code=shipping&value=' + $('#input-total_shipping').val().serialize()
+  })
+  .then(function(r){
+    $('#button-total_shipping').button('reset');
+
+    return r.json();
+  })
+  .then(function(json){
+    $('.alert-dismissible, .invalid-tooltip').remove();
+    $('.is-invalid').removeClass('is-invalid');
+
+    if (json['error']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+      // Highlight any found errors
+      $('select[name=\'currency\']').addClass('is-invalid');
+    } else {
+      if (validate_refresh)
+        refresh_view();
+      else {
+        $('#button-payment-method').click();
+      }
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+$('#button-total_order_sale').on('click', function() {
+  $('#button-total_order_sale').button('loading');
+
+  fetch('{{ catalog }}index.php?route=api/cart/edit_total&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\']').val(), {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json'
+    },
+    method: 'post',
+    body: 'code=order_sale&value=' + $('#input-total_order_sale').val().serialize()
+  })
+  .then(function(r){
+    $('#button-total_order_sale').button('reset');
+
+    return r.json();
+  })
+  .then(function(json){
+    $('.alert-dismissible, .invalid-tooltip').remove();
+    $('.is-invalid').removeClass('is-invalid');
+
+    if (json['error']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+      // Highlight any found errors
+      $('select[name=\'currency\']').addClass('is-invalid');
+    } else {
+      refresh_view();
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+// Currency
+fetch('{{ catalog }}index.php?route=api/currency&api_token={{ api_token }}&store_id=' + $('select[name=\'store_id\']').val(), {
+  credentials: 'include',
+  cache: 'no-cache',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Accept': 'application/json'
+  },
+  method: 'post',
+  body: 'currency=' + $('select[name=\'currency\']').val().serialize()
+})
+.then(function(r){
+  return r.json();
+})
+.then(function(json){
+  $('#form-order_cart').submit();
+
+  $('.alert-dismissible, .invalid-tooltip').remove();
+  $('.is-invalid').removeClass('is-invalid');
+
+  if (json['error']) {
+    $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+    // Highlight any found errors
+    $('select[name=\'currency\']').addClass('is-invalid');
+  }
+})
+.catch(function(error) {
+  console.error(error);
+});
+
+$('#form-order_total').submit(function(e){
+  e.preventDefault();
+
+  var form = $(this),
+      button = $('[form="form-order_total"]');
+
+  button.button('loading');
+
+  fetch(form.attr('action').replace(/&store_id=\d*/, {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {
+      'Accept': 'application/json'
+    },
+    body: new FormData(form[0])
+  })
+  .then(function(r){
+    button.button('reset');
+
+    return r.json();
+  })
+  .then(function(json){
+    $('.alert-dismissible, .invalid-tooltip').remove();
+    $('.is-invalid').removeClass('is-invalid');
+
+    if (json['error'] && json['error']['warning']) {
+      $('#order_form_info').prepend('<div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> ' + json['error']['warning'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+
+    if (json['success']) {
+      $('#order_form_info').prepend('<div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+//--></script>
+<style>
+#form-order_cart .grey {
+  color: #80848a;
+  font-size: 13px;
+}
+#form-order_cart .selectSize,
+#form-order_cart .selectColor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-top: 8px;
+}
+#form-order_cart .selectSize .title,
+#form-order_cart .selectColor .title {
+  width: 65px;
+}
+#form-order_cart .selectColor input {
+  display: none;
+}
+#form-order_cart .selectColor .color {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 6px;
+  background-size: cover;
+}
+#form-order_cart .selectColor .wrapper {
+  display: flex;
+  align-items: center;
+}
+#form-order_cart .selectColor .hidden {
+  width: 165px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#form-order_cart .dropdown {
+  border-radius: 3px;
+  border: 1px solid #d2d2d2;
+  width: 227px;
+  height: 28px;
+}
+#form-order_cart .dropdown .dropdown-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  width: 100%;
+  height: 100%;
+  color: #80848a;
+  font-size: 13px;
+}
+#form-order_cart .dropdown .info {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #d2d2d2;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+  margin-left: 30px;
+}
+#form-order_cart .dropdown-menu {
+  position: relative;
+  padding: 0;
+  left: -1px !important;
+}
+
+#form-order_cart .dropdown-item {
+  color: #80848a;
+  font-size: 13px;
+  width: 225px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #d2d2d2;
+}
+#form-order_cart .dropdown-item label {
+  cursor: pointer;
+}
+#form-order_cart .dropdown-toggle label {
+  margin-bottom: 0;
+}
+</style>

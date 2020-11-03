@@ -1,0 +1,33 @@
+<div class="modal fade code_phone">
+	<div class="modal-dialog" >
+		<div class="modal_form">
+			<div class="callback">
+				<div class="callback_title">{{ heading_title }}</div>
+				{% if error_warning %}
+				<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+				{% endif %}
+				<div class="callback_inputs">
+					<div class="callback_input">
+						<div>{{ entry_sms_code }}</div>
+						<input type="text" name="sms_code" value="{{ sms }}" form="{{ form_submit }}">
+					</div>
+				</div>
+				<div class="clearfix"></div>
+				<button class="other_btn js_success" type="submit" form="{{ form_submit }}">{{ button_continue }}</button>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+		<div class="close_button_popup" data-dismiss="modal"></div>
+	</div>
+</div>
+<script>
+	$('.code_phone').on('hide.bs.modal', function(){
+		$(this).find('[form]').attr('form', '');
+	});
+</script>
+{% if sms_action %}
+<script type="text/javascript">
+	$('.code_phone').load('{{ sms_action }} .code_phone > *');
+	$('.code_phone:not(.in)').modal('show');
+</script>
+{% endif %}

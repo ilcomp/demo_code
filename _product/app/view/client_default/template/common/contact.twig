@@ -1,0 +1,35 @@
+<section class="contacts_block">
+  <div class="container">
+    <div class="contacts_block_content">
+      <div class="row">
+        <div class="col-md-5 col-md-offset-1 col-xs-12">
+          {{ form }}
+        </div>
+        <div class="col-md-5 col-xs-12">
+          <div class="contacts_item">
+            <h4>{{ text_office }}</h4>
+            <p>{{ locations[1].address|replace({'\r\n':'<br>'}) }}</p>
+          </div>
+          <div class="contacts_item">
+            <h4>{{ text_office_contact }}</h4>
+            <p>{{ locations[1].comment ? locations[1].comment : locations[1].telephone }}
+              <a href="mailto:{{ locations[1].fax }}">{{ locations[1].fax }}</a>
+            </p>
+          </div>
+          <div class="contacts_item">
+            <h4>{{ text_med_contact }}</h4>
+            <p>{{ locations[2].comment ? locations[2].comment : locations[2].telephone }}
+              <a href="{{ locations[2].fax }}">{{ locations[2].fax }}</a>
+            </p>
+          </div>
+          <div class="contacts_item">
+            <h4>{{ text_med }}</h4>
+            <p>{{ locations[2].address|replace({'\r\n':'<br>'}) }}
+              <a href="{{ locations[2].fax }}">{{ locations[2].comment ? locations[2].comment : locations[2].telephone }}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,88 @@
+<div class="step-wrap__form">
+  <div class="h3">{{ text_address }}</div>
+{% for custom_field in custom_fields %}
+  {% if custom_field['type'] == 'country' %}
+    {% set country_name = '' %}
+    {% for country in custom_field.countries %}
+      {% if country.country_id == custom_field.value[-1] %}
+        {% set country_name = country.name %}
+      {% endif %}
+    {% endfor %}
+  <div class="callback-input">
+    <div>{{ custom_field.name }} {{ custom_field.help }}</div>
+    <input type="text" value="{{ country_name }}" data-autocomplete="{{ custom_field.code }}">
+    <input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}" data-address="{{ custom_field.code }}">
+    {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+  </div>
+  {% else %}
+  <div class="callback-input">
+    <div>{{ custom_field.name }} {{ custom_field.help }}</div>
+    <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}" data-address="{{ custom_field.code }}">
+    {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+  </div>
+  {% endif %}
+{% endfor %}
+</div>
+<script>
+$(function(){
+  $('#form_order_confirm input[data-address="city"]').autocomplete({
+      'source': function(request, response) {
+        fetch('{{ actions.location_autocomplete|replace({"&amp;": "&"}) }}&filter_name=' + encodeURIComponent(request), {
+          credentials: 'include',
+          cache: 'no-cache',
+          headers: {'Accept': 'application/json'},
+        })
+        .then(function(r){
+          return r.json();
+        })
+        .then(function(json){
+          response($.map(json, function(item) {
+            return {
+              label: item['fullname'] ? item['fullname'] : item['name'],
+              value: item['city_id']
+            }
+          }));
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      },
+      'select': function(item) {
+        $(this).val(item['label']);
+        $(this).parents('form').submit();
+      }
+  }).parents('.callback-input').css('z-index', 2);
+})
+</script>
+<script>
+$(function(){
+  $('#form_order_confirm input[data-autocomplete="country_id"]').autocomplete({
+      'source': function(request, response) {
+        fetch('{{ actions.country_autocomplete|replace({"&amp;": "&"}) }}&filter_name=' + encodeURIComponent(request), {
+          credentials: 'include',
+          cache: 'no-cache',
+          headers: {'Accept': 'application/json'},
+        })
+        .then(function(r){
+          return r.json();
+        })
+        .then(function(json){console.log(json);
+          response($.map(json, function(item) {
+            return {
+              label: item['name'],
+              value: item['country_id']
+            }
+          }));
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      },
+      'select': function(item) {
+        $(this).val(item['label']);
+        $('#form_order_confirm input[data-address="country_id"]').val(item['value']).change();
+      }
+  }).parents('.callback-input').css('z-index', 3);
+})
+</script>
+<hr>

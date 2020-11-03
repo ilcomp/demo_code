@@ -1,0 +1,47 @@
+<input type="hidden" name="code_confirm_id" value="{{ code_confirm_id }}">
+
+<div class="callback-input">
+	<div>{{ entry_code_confirm }}</div>
+	<input type="text" name="code_confirm" value="{{ code_confirm }}" id="account_code_confirm" autocomplete="off">
+	<div class="help-block form-text">{{ text_help }}</div>
+	<button type="button" class="btn btn-link float-right d-none" id="code_confirm">{{ button_send }}</button>
+</div>
+<script>
+var code_confirm = $('<button type="button" class="btn btn-link float-right">{{ button_send }}</button>'),
+	form = $('#code_confirm').parents('form'),
+	time = Number('{{ date_added }}'),
+	text = '{{ text_code_confirm }}',
+	timerId;
+
+clearInterval(timerId);
+
+code_confirm.click(function(){
+	form.append('<input type="hidden" name="code_confirm" value="1">');
+
+	form.submit();
+});
+
+if (time == 0) {
+	form.find('.alert-info').remove();
+	form.find('[type="submit"]').after(code_confirm);
+} else {
+	timerId = setInterval(function(){
+		time = Math.max(0, time - 1);
+		minutes = Math.floor(time / 60);
+		seconds = Math.ceil(time % 60);
+
+		if(minutes < 10) minutes = '0' + minutes;
+		if(seconds < 10) seconds = '0' + seconds;
+
+		form.find('.alert-info').text(text.replace('%s', minutes + ':' + seconds));
+
+		if (time == 0) {
+			form.find('.alert-info').remove();
+			form.find('[type="submit"]').after(code_confirm);
+			clearInterval(timerId);
+		}
+	}, 1000);
+}
+
+$('[name="code_confirm"]').focus();
+</script>

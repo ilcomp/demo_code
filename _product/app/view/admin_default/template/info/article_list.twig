@@ -1,0 +1,161 @@
+<div id="filter-general" class="d-none d-md-block mb-3">
+  <div class="card">
+    <div class="card-header"><i class="fas fa-filter"></i> {{ text_filter }}</div>
+    <div class="card-body">
+      <form method="get" enctype="multipart/form-data" id="form-filter" data-form="article">
+        <input type="hidden" name="route" value="info/article">
+        <input type="hidden" name="user_token" value="{{ user_token }}">
+        <div class="row">
+          <div class="form-group col-md-3">
+            <label class="col-form-label" for="input-name"><strong>{{ entry_name }}</strong></label>
+            <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          </div>
+          <div class="form-group col-md-3">
+            <label class="col-form-label" for="input-category"><strong>{{ entry_category }}</strong></label>
+            <input type="text" value="{{ filter_category }}" placeholder="{{ entry_category }}" id="input-category" class="form-control"/>
+            <input type="hidden" name="filter_category_id" value="{{ filter_category_id }}"/>
+          </div>
+          <div class="form-group col-md-3">
+            <label class="col-form-label" for="input-status"><strong>{{ entry_status }}</strong></label>
+            <select name="filter_status" id="input-status" class="form-control">
+              <option value="">{{ text_none }}</option>
+              {% if filter_status == '1' %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+              {% else %}
+                <option value="1">{{ text_enabled }}</option>
+              {% endif %}
+              {% if filter_status == '0' %}
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+              {% else %}
+                <option value="0">{{ text_disabled }}</option>
+              {% endif %}
+            </select>
+          </div>
+          <div class="form-group text-right col">
+            <button type="submit" id="button-filter" class="btn btn-light"><i class="fas fa-filter"></i> {{ button_filter }}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header"><i class="fas fa-list"></i> {{ text_list }}</div>
+  <div class="card-body">
+    <form action="{{ actions.delete }}" method="post" enctype="multipart/form-data" id="form-general" data-form="info-article">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+              <td class="text-left">{% if sort == 'name' %}<a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>{% else %}<a href="{{ sort_name }}">{{ column_name }}</a>{% endif %}</td>
+              <td class="text-left">{% if sort == 'category' %}<a href="{{ sort_category }}" class="{{ order|lower }}">{{ column_category }}</a>{% else %}<a href="{{ sort_category }}">{{ column_category }}</a>{% endif %}</td>
+              <td class="text-left">{% if sort == 'status' %}<a href="{{ sort_status }}" class="{{ order|lower }}">{{ column_status }}</a>{% else %}<a href="{{ sort_status }}">{{ column_status }}</a>{% endif %}</td>
+              <td class="text-left">{% if sort == 'date_available' %}<a href="{{ sort_date_available }}" class="{{ order|lower }}">{{ column_date_available }}</a>{% else %}<a href="{{ sort_date_available }}">{{ column_date_available }}</a>{% endif %}</td>
+              <td class="text-left">{% if sort == 'date_modified' %}<a href="{{ sort_date_modified }}" class="{{ order|lower }}">{{ column_date_modified }}</a>{% else %}<a href="{{ sort_date_modified }}">{{ column_date_modified }}</a>{% endif %}</td>
+              <td class="text-right">{{ column_action }}</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% if articles %}
+            {% for article in articles %}
+            <tr>
+              <td class="text-center"><input type="checkbox" name="selected[]" value="{{ article.article_id }}"{{ article.article_id in selected ? ' checked' }}/></td>
+              <td class="text-left">{{ article.name }}</td>
+              <td class="text-left">
+              {% for category in article.categories %}
+                {{ category }}{{ not loop.last ? '<br>'}}
+              {% endfor %}
+              </td>
+              <td class="text-left">{{ article.status }}</td>
+              <td class="text-left">{{ article.date_available }}</td>
+              <td class="text-left">{{ article.date_modified }}</td>
+              <td class="text-right" style="white-space: nowrap;"><a href="{{ article.view }}" target="_blank" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-secondary"><i class="fas fa-eye"></i></a> <a href="{{ article.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td class="text-center" colspan="8">{{ text_no_results }}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-sm-6 text-left">{{ pagination }}</div>
+      <div class="col-sm-6 text-right">{{ results }}</div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('input[name=\'filter_name\']').autocomplete({
+  'source': function(request, response) {
+    var filter_category_id = $('select[name=\'filter_category_id\']').val();
+
+    fetch(getURLPath() + '?route=info/article/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request) + (filter_category_id != '*' ? '&filter_category_id=' + encodeURIComponent(filter_category_id) : ''), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['article_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('input[name=\'filter_name\']').val(item['label']);
+  }
+});
+</script>
+<script>
+$('#input-category').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=info/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      json.unshift({
+        name: '{{ text_none }}',
+        category_id: 0,
+      });
+
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['category_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('#input-category').val(item['label']);
+    $('input[name=\'filter_category_id\']').val(item['value']);
+  }
+});
+</script>

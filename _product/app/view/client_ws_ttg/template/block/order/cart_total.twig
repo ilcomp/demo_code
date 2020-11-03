@@ -1,0 +1,13 @@
+<div class="promo-block d-md-flex">
+  {% for module in modules|reverse %}
+    {{ module }}
+  {% endfor %}
+</div>
+{% for total in totals %}
+  {% if total.code == 'sub_total' %}
+<div class="basket-end-step">
+  <div class="basket-total-price">{{ total.title }}: {{ total.text|replace({'₽': '<span>₽</span>'}) }}</div>
+  <button type="submit" class="main-btn main-btn-green">{{ button_submit }}</button>
+</div>
+  {% endif %}
+{% endfor %}

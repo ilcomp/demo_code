@@ -1,0 +1,253 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="info-article">
+      <ul class="nav nav-tabs">
+        <li class="nav-item"><a href="#tab-general" data-toggle="tab" class="nav-link active">{{ text_general }}</a></li>
+        <li class="nav-item"><a href="#tab-seo" data-toggle="tab" class="nav-link">{{ text_seo }}</a></li>
+        {% if custom_fields %}<li class="nav-item"><a href="#tab-content" data-toggle="tab" class="nav-link" >{{ text_content }}</a></li>{% endif %}
+        <li class="nav-item"><a href="#tab-data" data-toggle="tab" class="nav-link">{{ text_links }}</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="tab-general">
+          <div class="form-group row required">
+            <label class="col-sm-2 col-form-label">{{ entry_name }}</label>
+            <div class="col-sm-10"> {% for language in languages %}
+                <div class="input-group">
+                  <div class="input-group-prepend"><span class="input-group-text"><img src="image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+                  <input type="text" name="article_description[{{ language.language_id }}][name]" value="{{ article_description[language.language_id] is defined ? article_description[language.language_id].name }}" placeholder="{{ entry_name }}" class="form-control"/>
+                </div>
+                {% if error_name[language.language_id] %}
+                  <div class="invalid-tooltip">{{ error_name[language.language_id] }}</div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-date-available">{{ entry_date_available }}</label>
+            <div class="col-sm-3">
+              <div class="input-group date">
+                <input type="text" name="date_available" value="{{ date_available }}" placeholder="{{ entry_date_available }}" id="input-date-available" class="form-control"/>
+                <div class="input-group-append">
+                  <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="tab-seo">
+          <ul class="nav nav-tabs" id="language-seo">
+            {% for language in languages %}
+              <li class="nav-item"><a href="#language-seo{{ language.language_id }}" data-toggle="tab" class="nav-link"><img src="image/language/{{ language.code }}.png" title="{{ language.name }}"/> {{ language.name }}</a></li>
+            {% endfor %}
+          </ul>
+          <div class="tab-content">
+            {% for language in languages %}
+              <div class="tab-pane" id="language-seo{{ language.language_id }}">
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label" for="input-title{{ language.language_id }}">{{ entry_title }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="article_description[{{ language.language_id }}][title]" value="{{ article_description[language.language_id] ? article_description[language.language_id].title }}" placeholder="{{ entry_title }}" id="input-title{{ language.language_id }}" class="form-control"/>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label" for="input-meta-title{{ language.language_id }}">{{ entry_meta_title }}</label>
+                  <div class="col-sm-10">
+                    <input type="text" name="article_description[{{ language.language_id }}][meta_title]" value="{{ article_description[language.language_id] ? article_description[language.language_id].meta_title }}" placeholder="{{ entry_meta_title }}" id="input-meta-title{{ language.language_id }}" class="form-control"/>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label" for="input-meta-description{{ language.language_id }}">{{ entry_meta_description }}</label>
+                  <div class="col-sm-10">
+                    <textarea name="article_description[{{ language.language_id }}][meta_description]" rows="5" placeholder="{{ entry_meta_description }}" id="input-meta-description{{ language.language_id }}" class="form-control">{{ article_description[language.language_id] ? article_description[language.language_id].meta_description }}</textarea>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-2 col-form-label" for="input-tag{{ language.language_id }}"><span data-toggle="tooltip" title="{{ help_tag }}">{{ entry_tag }}</span></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="article_description[{{ language.language_id }}][tag]" value="{{ article_description[language.language_id] is defined ? article_description[language.language_id].tag }}" placeholder="{{ entry_tag }}" id="input-tag{{ language.language_id }}" class="form-control" />
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <td class="text-left">{{ entry_store }}</td>
+                        <td class="text-left">{{ entry_keyword }} <div class="alert alert-info"><i class="fas fa-info-circle"></i> {{ text_keyword }}</div></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for store in stores %}
+                        <tr>
+                          <td class="text-left">{{ store.name }}</td>
+                          <td class="text-left">
+                              <div class="input-group">
+                                <input type="text" name="article_seo_url[{{ store.store_id }}][{{ language.language_id }}]" value="{% if article_seo_url[store.store_id][language.language_id] %}{{ article_seo_url[store.store_id][language.language_id] }}{% endif %}" placeholder="{{ entry_keyword }}" class="form-control" data-language="{{ language.code }}"/>
+                              </div>
+                              {% if error_keyword[store.store_id][language.language_id] %}
+                                <div class="invalid-tooltip">{{ error_keyword[store.store_id][language.language_id] }}</div>
+                              {% endif %}
+                            </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% if custom_fields %}
+        <div class="tab-pane" id="tab-content">
+          {{ custom_fields }}
+        </div>
+        {% endif %}
+        <div class="tab-pane" id="tab-data">
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-category">{{ entry_main_category }}</label>
+            <div class="col-sm-10">
+              <select id="input-category" name="article_category[0][category_id]" class="form-control">
+                <option value="0" selected="selected">{{ text_none }}</option>
+              {% for category in categories %}
+                <option value="{{ category.category_id }}"{{ category.category_id == main_category_id ? ' selected' }}>{{ category.path_name }}</option>
+              {% endfor %}
+              </select>
+              <input type="hidden" name="article_category[0][main]" value="1"/>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-category">{{ entry_category }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="category" value="" placeholder="{{ entry_category }}" id="input-category" class="form-control" data-row="{{ article_categories|length }}"/>
+              <div id="article-category" class="form-control" style="height: 150px; overflow: auto;">
+              {% for article_category in article_categories %}
+                <div id="article-category{{ article_category.category_id }}"><i class="fas fa-minus-circle"></i> {{ article_category.name }}
+                  <input type="hidden" name="article_category[{{ loop.index }}][main]" value="0"/>
+                  <input type="hidden" name="article_category[{{ loop.index }}][category_id]" value="{{ article_category.category_id }}"/>
+                </div>
+              {% endfor %}
+              </div>
+              <small class="form-text text-muted">{{ help_category }}</small>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{ entry_store }}</label>
+            <div class="col-sm-10">
+              <div class="form-control" style="height: 150px; overflow: auto;">
+                {% for store in stores %}
+                  <label class="form-check">
+                    {% if store.store_id in article_store %}
+                      <input type="checkbox" name="article_store[]" value="{{ store.store_id }}" checked="checked" class="form-check-input"/>
+                      {{ store.name }}
+                    {% else %}
+                      <input type="checkbox" name="article_store[]" value="{{ store.store_id }}" class="form-check-input"/>
+                      {{ store.name }}
+                    {% endif %}
+                  </label>
+                {% endfor %}</div>
+            </div>
+          </div>
+
+          {{ additional_fields }}
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+$('#language li:first-child a').tab('show');
+$('#language-seo li:first-child a').tab('show');
+</script>
+<script>
+// Category
+var category = $('input[name=\'category\']');
+category.autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=info/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['category_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    var row = Number(category.data('row') + 1);
+    category.val('');
+
+    $('#article-category' + item['value']).remove();
+
+    $('#article-category').append('<div id="article-category' + item['value'] + '"><i class="fas fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="article_category[' + row + '][main]" value="0"/><input type="hidden" name="article_category[' + row + '][category_id]" value="' + item['value'] + '" /></div>');
+
+    category.data('row', row);
+  }
+});
+
+$('#article-category').on('click', '.fa-minus-circle', function() {
+  $(this).parent().remove();
+});
+</script>
+<script>
+// SEO URL
+$('input[type=text][name*=_seo_url]').each(function(){
+  var seo = $(this),
+    result = seo.attr('name').match(/^(.+)_seo_url\[\d*\]\[(\d*)\]$/);
+
+  if (result.length == 3) {
+    var name = result[1],
+        language_id = result[2],
+        description = 'input[name="'+name+'_description\\['+language_id+'\\]\\[name\\]"]';
+
+    $('<br><a href="javascript:void(0);">{{ text_seo_url_auto }}</a>').insertAfter(seo.parent()).click(function(e){
+      seo.val('');
+      var path = String($('input[name=path]').val() || '');
+
+      setKeyword((path ? path + ' ' : '')+ $(description).val(), seo);
+    });
+
+    $(description).on('change focusout', function(){
+      var input = $(this);
+
+      if (seo.val() == '') {
+        setKeyword(input.val(), seo);
+      }
+    });
+  }
+});
+</script>

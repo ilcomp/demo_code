@@ -1,0 +1,91 @@
+{% import "admin_default/template/macro/form_group.twig" as macros %}
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="location">
+      <div class="form-group row required">
+        <label class="col-sm-2 col-form-label">{{ entry_name }}</label>
+        <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+              <input type="text" name="location_description[{{ language.language_id }}][name]" value="{{ location_description[language.language_id] ? location_description[language.language_id].name }}" placeholder="{{ entry_name }}" class="form-control"/>
+            </div>
+            {% if error_name[language.language_id] %}
+              <div class="invalid-tooltip">{{ error_name[language.language_id] }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_address }}</label>
+        <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.address }}"/></span></div>
+              <textarea type="text" name="location_description[{{ language.language_id }}][address]" placeholder="{{ entry_address }}" rows="5" class="form-control">{{ location_description[language.language_id] ? location_description[language.language_id].address }}</textarea>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_telephone }}</label>
+        <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+              <input type="text" name="location_description[{{ language.language_id }}][telephone]" value="{{ location_description[language.language_id] ? location_description[language.language_id].telephone }}" placeholder="{{ entry_telephone }}" class="form-control"/>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {{ macros.text(
+        {'id': 'geocode', 'name' : 'geocode', 'value' : geocode},
+        {'label' : entry_geocode, 'placeholder' : entry_geocode, 'help' : help_geocode}
+      ) }}
+      {{ macros.enable(
+        {'id': 'issue', 'name' : 'issue', 'value' : issue},
+        {'label' : entry_issue},
+        {'enabled' : text_enabled, 'disabled' : text_disabled}
+      ) }}
+      {{ macros.enable(
+        {'id': 'status', 'name' : 'status', 'value' : status},
+        {'label' : entry_status},
+        {'enabled' : text_enabled, 'disabled' : text_disabled}
+      ) }}
+      {{ macros.image(
+        {'id': 'image', 'name' : 'image', 'value' : image},
+        {'label' : entry_image, 'placeholder' : placeholder, 'edit' : button_edit, 'clear' : button_clear},
+        {'thumb' : thumb}
+      ) }}
+      {{ macros.text(
+        {'id': 'sort_order', 'name' : 'sort_order', 'value' : sort_order},
+        {'label' : entry_sort_order, 'placeholder' : entry_sort_order, 'help' : help_sort_order}
+      ) }}
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_open }}</label>
+        <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.address }}"/></span></div>
+              <textarea type="text" name="location_description[{{ language.language_id }}][open]" placeholder="{{ entry_open }}" rows="5" class="form-control">{{ location_description[language.language_id] ? location_description[language.language_id].open }}</textarea>
+            </div>
+          {% endfor %}
+          <small class="form-text text-muted">{{ help_open }}</small>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_comment }}</label>
+        <div class="col-sm-10">
+          {% for language in languages %}
+            <div class="input-group">
+              <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.address }}"/></span></div>
+              <textarea type="text" name="location_description[{{ language.language_id }}][comment]" placeholder="{{ entry_comment }}" rows="5" class="form-control">{{ location_description[language.language_id] ? location_description[language.language_id].comment }}</textarea>
+            </div>
+          {% endfor %}
+          <small class="form-text text-muted">{{ help_comment }}</small>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

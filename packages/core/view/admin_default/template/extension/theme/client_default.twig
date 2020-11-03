@@ -1,0 +1,42 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-theme" data-form="theme">
+      <fieldset>
+        <legend>{{ text_general }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+          <div class="col-sm-10">
+            <select name="theme_client_default_status" id="input-status" class="form-control">
+              {% if theme_client_default_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+              {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+              {% endif %}
+            </select>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in theme_client_default_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="theme_client_default_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="theme_client_default_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>

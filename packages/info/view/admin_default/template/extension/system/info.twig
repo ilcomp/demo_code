@@ -1,0 +1,41 @@
+{% import "admin_default/template/macro/form_group.twig" as macros %}
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="info">
+      {{ macros.enable(
+        {'id': 'info_status', 'name' : 'info_status', 'value' : info_status},
+        {'label' : entry_status},
+        {'enabled' : text_enabled, 'disabled' : text_disabled}
+      ) }}
+      {{ macros.select(
+        {'id': 'info_home_page', 'name' : 'info_home_page', 'value' : info_home_page},
+        {'label' : entry_home_page},
+        {'options' : articles, 'key' : 'article_id', 'title' : 'name', 'default' : text_none}
+      ) }}
+      {{ macros.select(
+        {'id': 'info_contact_page', 'name' : 'info_contact_page', 'value' : info_contact_page},
+        {'label' : entry_contact_page},
+        {'options' : articles, 'key' : 'article_id', 'title' : 'name', 'default' : text_none}
+      ) }}
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in info_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="info_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="info_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>

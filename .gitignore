@@ -1,0 +1,8 @@
+composer.phar
+/.vscode
+/_site/
+/_import/
+/_parser/
+test/
+storage/
+assets/

@@ -1,0 +1,35 @@
+<div id="account-order">
+  <span class="profile__myOrders">{{ heading_title }}</span>
+{% if orders %}
+  {% for order in orders %}
+  <div class="order">
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <span class="order__heading">{{ column_order_id }}{{ order.order_id }}</span>
+        <span class="order__date">{{ order.date_added }}</span>
+      </div>
+      <div>
+        <span class="order__status order__status_grey">{{ order.status }}</span>
+      </div>
+    </div>
+    <div class="mainLine mainLine_order"></div>
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        <span class="order__positions">{{ order.products|length() }}</span>
+        <span class="order__amount">{{ order.total }}</span>
+      </div>
+      <div>
+        <a href="{{ order.view }}" class="order__detail">{{ button_view }}</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p>{{ text_no_results }}</p>
+{% endif %}
+{% if pagination %}
+  <div class="allOrders">
+    <a href="#" class="allOrders__link">Все заказы (архив)</a>
+  </div>
+{% endif %}
+</div>

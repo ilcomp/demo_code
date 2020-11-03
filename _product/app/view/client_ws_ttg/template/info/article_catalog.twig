@@ -1,0 +1,21 @@
+{% for module in custom_fields.module_top %}
+  {{ module }}
+{% endfor %}
+{{ custom_fields.content_top }}
+{% for module in custom_fields.modules %}
+  {{ module }}
+{% endfor %}
+{% if custom_fields.content %}
+<section class="info-block info-block-center">
+  <div class="container">
+  {% if custom_fields.content|striptags|length > 700 %}
+    <div class="info-block__spoiler">
+      {{ custom_fields.content }}
+    </div>
+    <a href="#" class="js-spoiler d-block d-md-none">{{ button_continue }}</a>
+  {% else %}
+    {{ custom_fields.content }}
+  {% endif %}
+  </div>
+</section>
+{% endif %}

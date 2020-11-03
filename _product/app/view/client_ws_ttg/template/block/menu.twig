@@ -1,0 +1,115 @@
+{% if position == 'general' %}
+<ul class="list-inline main-menu__menu">
+  {% for menu_item in menu_items %}
+    {% set class = [] %}
+    {% if menu_item.submenu %}
+      {% set class = class|merge(['menu-item-has-children']) %}
+    {% endif %}
+    {% if menu_item.active %}
+      {% set class = class|merge(['active']) %}
+    {% endif %}
+  <li{{ class is empty ? '' : ' class="' ~ class|join(' ') ~ '"' }}><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+    {% if not loop.last %}
+  <li class="separ-li"></li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+{% elseif position == 'tabs' %}
+<div class="nav d-flex nav-pills">
+  {% for menu_item in menu_items %}
+  <a href="#header_menu-{{ menu_item.href }}" class="nav-link{{ loop.first ? ' active'}}" data-toggle="tab" role="tab">{{ menu_item.title }}</a>
+  {% endfor %}
+</div>
+<div class="tab-content">
+  {% for menu_item in menu_items %}
+  <div class="tab-pane fade show{{ loop.first ? ' active'}}" id="header_menu-{{ menu_item.href }}" role="tabpanel">
+    {{ menu_item.submenu }}
+  </div>
+  {% endfor %}
+</div>
+
+{% elseif position == 'catalog' %}
+  <div class="row">
+  {% for menu_item in menu_items %}
+    <div class="col-6 col-md-3 col-lg-2">
+      <a href="{{ menu_item.href }}" class="take-care__item">
+        {% if menu_item.icon.image %}<span class="take-care__img"><img src="{{ menu_item.icon.thumb }}" class="img-fluid"></span>{% endif %}
+        <span class="take-care__title">{{ menu_item.title }}</span>
+        <span class="take-care__text">Перейти в каталог</span>
+      </a>
+    </div>
+  {% endfor %}
+  </div>
+
+{% elseif position == 'category' %}
+  <ul class="menu-sidebar__collapse list-inline js-spoiler-content">
+  {% for menu_item in menu_items %}
+    <li><a href="{{ menu_item.href }}"{{ menu_item.active ? ' class="active"' }}><span>{% if menu_item.icon.image %}<img src="{{ menu_item.icon.thumb }}" class="img-fluid">{% endif %}</span>{{ menu_item.title }}</a></li>
+  {% endfor %}
+  </ul>
+
+{% elseif 'info' in position %}
+  <ul class="menu-sidebar__collapse list-inline js-spoiler-content">
+  {% for menu_item in menu_items %}
+    <li><a href="{{ menu_item.href }}"{{ menu_item.active ? ' class="active"' }}><span>{% if menu_item.icon.image %}<i class="sidebar_svg"><svg><use xlink:href="{{ menu_item.icon.image ? menu_item.icon.thumb : 'theme/client_ws_ttg/images/default.svg' }}#sidebar"></use></svg></i>{% endif %}</span>{{ menu_item.title }}</a></li>
+  {% endfor %}
+  </ul>
+
+{% elseif position == 'category_sub' %}
+  <ul class="sub-menu">
+  {% for menu_item in menu_items %}
+    {% set class = [] %}
+    {% if menu_item.submenu %}
+      {% set class = class|merge(['menu-item-has-children']) %}
+    {% endif %}
+    {% if menu_item.active %}
+      {% set class = class|merge(['active']) %}
+    {% endif %}
+    <li{{ class is empty ? '' : ' class="' ~ class|join(' ') ~ '"' }}><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+  {% endfor %}
+  </ul>
+
+{% elseif position == 'submenu' %}
+  <ul class="sub-menu">
+  {% for menu_item in menu_items %}
+    <li{{ menu_item.submenu ? ' class="submenu"' }}><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+  {% endfor %}
+  </ul>
+
+{% elseif position == 'social' %}
+  <div class="soc-block">
+  {% for menu_item in menu_items %}
+    <a href="{{ menu_item.href }}"><i class="soc_svg"><svg><use xlink:href="theme/client_ws_ttg/images/{{ menu_item.title }}.svg#soc_svg"></use></svg></i></a>
+  {% endfor %}
+  </div>
+
+{% elseif position == 'account' %}
+  <div class="lk-menu">
+  {% for menu_item in menu_items %}
+    {% if loop.last %}
+      {% set class = 'lk-menu__exit' %}
+    {% elseif menu_item.active %}
+      {% set class = 'active' %}
+    {% else %}
+      {% set class = '' %}
+    {% endif %}
+    <a href="{{ menu_item.href }}"{{ class ? ' class="' ~ class ~ '"' }}>{{ menu_item.title }}</a>
+  {% endfor %}
+  </div>
+
+{% else %}
+  <ul class="list-inline main-menu__menu">
+  {% for menu_item in menu_items %}
+    {% set class = [] %}
+    {% if menu_item.submenu %}
+      {% set class = class|merge(['menu-item-has-children']) %}
+    {% endif %}
+    {% if menu_item.active %}
+      {% set class = class|merge(['active']) %}
+    {% endif %}
+    <li{{ class is empty ? '' : ' class="' ~ class|join(' ') ~ '"' }}><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+  {% endfor %}
+  </ul>
+
+{% endif %}

@@ -1,0 +1,53 @@
+<div class="form-group row">
+  <label class="col-sm-2 col-form-label" for="input-order_id">{{ button_export_order }} № </label>
+  <div class="col-sm-10">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <input type="text" name="order_id" class="form-control" id="input-order_id">
+      </div>
+      <div class="col-lg-3 col-md-4 col-sm-6">
+        <button type="button" id="export_order" data-toggle="tooltip" title="{{ button_export_order }}" class="btn btn-success"><i class="fa fa-upload"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+$('#export_order').on('click', function(e) {
+  e.preventDefault();
+
+  var order_id = $('#input-order_id').val(),
+      btn = $(this);
+
+  btn.button('loading');
+  $('.alert-danger, .alert-success').remove();
+
+  if (order_id && order_id > 0) {
+    fetch(getURLPath() + '?route=extension/system/retailcrm/export_order&user_token={{ user_token }}&order_id=' + order_id, {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      btn.button('reset');
+
+      return r.json();
+    })
+    .then(function(json){
+      if (json['status_code'] == '400' || json['error_msg']) {
+        $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i>' + json['error_msg'] + '</div>');
+      } else {
+        $('#content > .container-fluid').prepend('<div class="alert alert-success"><i class="fa fa-exclamation-circle"></i>{{ text_success_export_order }}</div>');
+        $('#input-order_id').val('');
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  } else {
+    $('#content > .container-fluid').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_order_id }}</div>');
+    btn.button('reset');
+  }
+});
+</script>

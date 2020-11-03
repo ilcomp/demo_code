@@ -1,0 +1,5 @@
+{% for product_stock_group in product_stock_groups %}
+<script type="text/javascript">
+var product_stock_groups = {{product_stock_groups|json_encode()}};
+</script>
+{% endfor %}

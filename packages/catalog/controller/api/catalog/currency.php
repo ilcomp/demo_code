@@ -1,0 +1,29 @@
+<?php
+namespace Controller\Catalog;
+
+class Currency extends \Controller {
+	public function index() {
+		$this->load->language('api/currency');
+
+		$json = array();
+
+		if (!isset($this->session->data['api_id'])) {
+			$json['error'] = $this->language->get('error_permission');
+		} else {
+			$this->load->model('localisation/currency');
+
+			$currency_info = $this->model_localisation_currency->getCurrencyByCode($this->request->post['currency']);
+
+			if ($currency_info) {
+				$this->session->data['currency'] = $this->request->post['currency'];
+
+				$json['success'] = $this->language->get('text_success');
+			} else {
+				$json['error'] = $this->language->get('error_currency');
+			}
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput($json);
+	}
+}

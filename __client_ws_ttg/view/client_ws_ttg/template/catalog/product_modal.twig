@@ -1,0 +1,210 @@
+<div class="modal-product__left">
+{% if manufacturer %}
+  <h3>{{ manufacturer.name }}</h3>
+{% endif %}
+  <div class="short-text-product">{{ heading_title }}</div>
+  <div class="wrap-padding">
+    <div class="price-wrap" id="product_price_modal">
+  {% if price %}
+    {% if special %}
+      <div class="product-price">{{ special_format }}</div>
+      <div class="product-price__old">{{ price_format }}</div>
+    {% else %}
+      <div class="product-price">{{ price_format }}</div>
+    {% endif %}
+  {% endif %}
+    {% if special %}
+      <div class="badge badge__sale badge-sale">{{ special }}</div>
+    {% endif %}
+    </div>
+    <form method="post" data-form="cart_add" id="form_product_modal">
+      <input type="hidden" name="form_method" value="order/cart/add">
+      <input type="hidden" name="product_id" value="{{ product_id }}">
+
+      <div class="product-size">
+        {{ options }}
+        <a href="{{ actions.wishlist }}" data-wishlist="{{ product_id }}" class="favorit-product{{ product_id in wishlist ? ' active' }}">
+          <i class="favorites_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/favorites.svg#favorites_svg"></use></svg></i>
+        </a>
+      </div>
+    
+      <a href="#tablesize" class="table-size" data-toggle="modal" data-target="#tablesize">Таблица соответствий размеров</a>
+    {% if maximum %}
+      <button type="submit" class="main-btn btn-basket" data-btn="cart">{{ button_cart }}<i class="basket_btn"><svg><use xlink:href="/theme/client_ws_ttg/images/basket_svg.svg#basket_svg"></use></svg></i></button>
+    {% else %}
+      <button type="submit" class="main-btn btn-basket" data-btn="wishlist">{{ button_wishlist }}<i class="basket_btn"><svg><use xlink:href="/theme/client_ws_ttg/images/basket_svg.svg#basket_svg"></use></svg></i></button>
+    {% endif %}
+      <div class="text-product">{{ custom_fields.description }}</div>
+    {% if review_rating %}
+      {% for i in 0..4%}
+        <div class="star-check{{ review_rating > i ? ' active' }}"></div>
+      {% endfor %}
+    {% endif %}
+    </form>
+  </div>
+</div>
+<div class="modal-product__right js-slider-product">
+  <div class="wrap-badge-product">
+  {% for flag in attributes.flags %}
+    <div class="badge badge__{{ flag.value }}">{{ flag.name }}</div>
+  {% endfor %}
+  </div>
+  <div class="slider-product-img">
+  {% for image in images %}
+    <div>
+      <div class="relative">
+        <img src="{{ image.thumb }}" alt="{{ name|e }} thumb" class="img-fluid">
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+  <div class="wrap-modal-slider">
+    <div class="list-slider">
+    {% for image in images %}
+      <div>
+        <img src="{{ image.additional }}" alt="{{ name|e }} additional" class="img-fluid">
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+var form_product_modal = $('#form_product_modal'),
+    product_modal_review = function(){
+      var data = new FormData(form_product_modal[0]);
+
+      data.set('form_method', 'catalog/product/calculate');
+
+      fetch(location, {
+        credentials: 'include',
+        headers: {'Accept': 'application/json'},
+        cache: 'no-cache',
+        method: 'post',
+        body: data
+      })
+      .then(function(r){
+        return r.json();
+      })
+      .then(function(json) {
+        $('#product_price_modal').find('.product-price, .product-price__old').remove();
+
+        if (json['price']) {
+          var html = '<div class="product-price">';
+
+          if (json['specia'])
+            html += json['total_special_format'] + '</div><div class="product-price__old">';
+
+          html += json['total_format'] + '</div>';
+
+          $('#product_price_modal').prepend(html);
+        }
+
+        if (json['maximum'] > 0) {
+          form_product.find('button[type=submit]').html('{{ button_cart }}<i class="basket_btn"><svg><use xlink:href="/theme/client_ws_ttg/images/basket_svg.svg#basket_svg"></use></svg>').data('btn', 'cart').attr('data-btn', 'cart');
+        } else {
+          form_product.find('button[type=submit]').html('{{ button_wishlist }}<i class="basket_btn"><svg><use xlink:href="/theme/client_ws_ttg/images/basket_svg.svg#basket_svg"></use></svg>').data('btn', 'wishlist').attr('data-btn', 'wishlist');
+        }
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+    };
+
+form_product_modal.find('input, select').change(function(){
+  product_modal_review();
+});
+</script>
+<script type="text/javascript">
+form_product_modal.find('[data-list=option_variant] input').change(function(){
+  form_product_modal.find('[data-btn="option_variant"]').text(this.parentNode.textContent);
+});
+
+form_product_modal.submit(function(e){
+  e.preventDefault();
+
+  var variants = form_product_modal.find('[data-list=option_variant] input');
+  if (variants.length > 0 && variants.filter(':checked').length == 0) {
+    form_product_modal.find('[data-btn=option_variant]').click();
+
+    return;
+  }
+
+  $(document).trigger('cart_load');
+
+  var data = new FormData(this);
+
+  if (form_product_modal.find('button[data-btn="cart"]').length > 0)
+    data.set('form_method', 'order/cart/add');
+  else if (form_product_modal.find('button[data-btn="wishlist"]').length > 0)
+    data.set('form_method', 'account/wishlist/add');
+
+  fetch(location, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    $(document).trigger('cart_loaded');
+
+    if (r.status == 401) {
+      $('#modal_account').modal('show');
+
+      return [];
+    } else
+      return r.json();
+  })
+  .then(function(json) {
+    if (json['error']) {
+      form_product_modal.append('<div class="alert alert-warning" role="alert">' + json['error'] + '</div>');
+    }
+
+    if (json['success']) {
+      toast_message(json['success'], '<a href="' + json['link_cart'] + '" class="main-btn" data-toast="cart">' + json['button_to_cart'] + '</a>', 5000);
+    }
+
+    $(document).trigger('cart_add', json);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script>
+$('.modal-product__left').on('click', 'a[data-wishlist]', function(e){
+  e.preventDefault();
+
+  var el = $(this);
+
+  el.blur();
+
+  fetch(this.href, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache',
+  })
+  .then(function(r){
+    if (r.status == 401) {
+      $('#modal_account').modal('show');
+
+      return [];
+    } else
+      return r.json();
+  })
+  .then(function(json) {
+    if (json['wishlist']) {
+      $('a[data-wishlist]').each(function(){
+        if (json['wishlist'].indexOf(this.dataset.wishlist) > -1)
+          this.classList.add('active');
+        else
+          this.classList.remove('active');
+      });
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>

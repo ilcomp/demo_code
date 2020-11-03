@@ -1,0 +1,8 @@
+{% if not redirect %}
+	<button type="submit" class="other_btn">{{ button_confirm }}<i class="download_arr"></i></button>
+	{{ payment }}
+{% else %}
+	<script type="text/javascript"><!--
+	//location = '{{ redirect }}';
+	//--></script>
+{% endif %}

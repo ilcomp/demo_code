@@ -1,0 +1,15 @@
+<p>{{ text_welcome }}</p>
+<p>
+{% if not approval %}
+{{ text_link_login }}
+{% else %}
+{{ text_approval }}
+{% endif %}
+</p>
+<p>{{ text_login }}{{ login }}</p>
+<p>{{ link_login }}</p>
+{% if not approval %}
+<p>{{ text_service }}</p>
+{% endif %}
+<p>{{ text_thanks }}</p>
+<p>{{ store }}</p>

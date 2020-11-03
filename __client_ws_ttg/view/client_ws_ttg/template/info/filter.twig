@@ -1,0 +1,7 @@
+{% for filter in filters %}
+  <div class="tegs-block">
+  {% for value in filter.values %}
+    <a href="{{ value.href }}" class="main-btn{{ value.active ? ' active' }}">{{ value.name }}</a>
+  {% endfor %}
+  </div>
+{% endfor %}

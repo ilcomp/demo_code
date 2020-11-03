@@ -1,0 +1,75 @@
+{% if position == 'header_catalog' %}
+<div class="nav d-flex nav-pills">
+	{% for menu_item in menu_items %}
+	<a href="#header_menu-{{ menu_item.href }}" class="nav-link{{ loop.first ? ' active'}}" data-toggle="tab" role="tab">{{ menu_item.title }}</a>
+	{% endfor %}
+</div>
+<div class="tab-content">
+	{% for menu_item in menu_items %}
+	<div class="tab-pane fade show{{ loop.first ? ' active'}}" id="header_menu-{{ menu_item.href }}" role="tabpanel">
+		{{ menu_item.submenu }}
+	</div>
+	{% endfor %}
+</div>
+
+{% elseif position == 'footer_catalog' %}
+<div class="row auto-clear">
+	{% for menu_item in menu_items %}
+	<div class="col-sm-4 col-md-4 col-lg-2">
+		<div class="footer_title">{{ menu_item.title }}</div>
+		{{ menu_item.submenu }}
+	</div>
+	{% endfor %}
+</div>
+
+{% elseif position == 'tabs' %}
+<div class="row auto-clear">
+	{% for menu_item in menu_items %}
+	<div class="col-sm-4 col-md-4 col-lg-2">
+		<div class="footer_title">{{ menu_item.title }}</div>
+		{{ menu_item.submenu }}
+	</div>
+	{% endfor %}
+</div>
+
+{% elseif position == 'submenu' %}
+	<ul class="list-unstyled">
+	{% for menu_item in menu_items %}
+		<li{{ menu_item.submenu ? ' class="submenu"' }}><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+	{% endfor %}
+	</ul>
+
+{% elseif position == 'top' %}
+	<div class="dropdown navbar-light">
+		<button class="navbar-toggler" type="button" id="dropdownMenuButton" data-toggle="dropdown"><span class="navbar-toggler-icon"></span></button>
+		<div class="dropdown-menu">
+		{% for menu_item in menu_items %}
+			<a class="dropdown-item" href="{{ menu_item.href }}">{{ menu_item.title }}{{ menu_item.submenu }}</a>
+		{% endfor %}
+		</div>
+	</div>
+
+{% elseif position == 'mobile' %}
+	<div class="main-menu__but hid_menu">
+		<span></span>
+		<span></span>
+		<span></span>
+	</div>
+	<div class="main-menu__menu2">
+		<div class="container">
+			<ul class="s_menu2 list-inline">
+			{% for menu_item in menu_items %}
+				<li{{ menu_item.submenu ? ' class="submenu"' }}><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+			{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+{% else %}
+	<ul class="list-inline">
+	{% for menu_item in menu_items %}
+		<li class="list-inline-item"><a href="{{ menu_item.href }}">{{ menu_item.title }}</a>{{ menu_item.submenu }}</li>
+	{% endfor %}
+	</ul>
+
+{% endif %}

@@ -1,0 +1,38 @@
+{% import "admin_default/template/macro/button.twig" as macro_button %}
+<div class="card">
+  <div class="card-header"><i class="fas fa-list"></i> {{ text_list }}</div>
+  <div class="card-body">
+    <form action="{{ actions.delete }}" method="post" enctype="multipart/form-data" id="form-general" data-form="form">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+              <td class="text-left">{{ column_form_id }}</td>
+              <td class="text-left">{{ column_name }}</td>
+              <td class="text-left">{{ column_status }}</td>
+              <td class="text-right">{{ column_action }}</td>
+            </tr>
+          </thead>
+          <tbody>
+          {% if forms %}
+            {% for form in forms %}
+            <tr>
+              <td class="text-center"><input type="checkbox" name="selected[]" value="{{ form.form_id }}"{{ form.form_id in selected ? ' selected' }}/></td>
+              <td class="text-left">{{ form.form_id }}</td>
+              <td class="text-left">{{ form.name }}</td>
+              <td class="text-left">{{ form.status }}</td>
+              <td class="text-right">{{ macro_button.link_edit(form.edit, button_edit) }}</td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td class="text-center" colspan="7">{{ text_no_results }}</td>
+            </tr>
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+</div>

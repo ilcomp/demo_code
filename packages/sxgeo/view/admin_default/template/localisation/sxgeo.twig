@@ -1,0 +1,70 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-list"></i> {{ text_list }}</div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <td class="text-left" width="40%">{% if sort == 's.name' %}
+                <a href="{{ sort_name }}" class="{{ order|lower }}">{{ text_city }}</a>
+              {% else %}
+                <a href="{{ sort_name }}">{{ text_city }}</a>
+              {% endif %} / {% if sort == 'region' %}
+                <a href="{{ sort_region }}" class="{{ order|lower }}">{{ text_region }}</a>
+              {% else %}
+                <a href="{{ sort_region }}">{{ text_region }}</a>
+              {% endif %}</td>
+            <td class="text-right">{{ entry_sort_order }}</td>
+            <td class="text-right" width="10%">{{ entry_auto_update }}</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          {% if sxgeos %}
+            {% for sxgeo in sxgeos %}
+              <tr>
+                <td class="text-left">{{ sxgeo.region ? sxgeo.region }}<input type="text" name="name" value="{{ sxgeo.name }}" form="sxgeo{{ sxgeo.sxgeo_id }}" class="form-control"></td>
+                <td class="text-right"><input type="number" name="sort_order" value="{{ sxgeo.sort_order }}" form="sxgeo{{ sxgeo.sxgeo_id }}" class="form-control"></td>
+                <td class="text-center"><input type="checkbox" name="auto_update" value="1" form="sxgeo{{ sxgeo.sxgeo_id }}" {{ sxgeo.auto_update ? 'checked' }}></td>
+                <td class="text-right"><form action="{{ sxgeo.edit }}" method="post" id="sxgeo{{ sxgeo.sxgeo_id }}"><button type="submit" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fas fa-save"></i></button></form></td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td class="text-center" colspan="6">{{ text_no_results }}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 text-left">{{ pagination }}</div>
+      <div class="col-sm-6 text-right">{{ results }}</div>
+    </div>
+  </div>
+</div>
+<script>
+  $('form').submit(function(e){
+    e.preventDefault();
+    $('.alert-danger, .alert-success').remove();
+    var form = $(this);
+    $.ajax({
+      url: form.attr('action'),
+      type: form.attr('method'),
+      data: form.serialize(),
+      dataType: 'json',
+      success: function(json) {
+        if (json['error'].length > 0)
+          form.parents('tr').after('<tr class="alert alert-danger"><td colspan="5">' + json['error'].join('<br>') + ' <button type="button" class="close" data-dismiss="alert">&times;</button></td></tr>');
+
+        if (json['success'])
+          form.parents('tr').after('<tr class="alert alert-success"><td colspan="5">' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></td></tr>');
+
+        form.parents('tr').find('[name=sort_order]').val(json['sort_order']);;
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        console.error(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  });
+</script>

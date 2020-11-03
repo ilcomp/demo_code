@@ -1,0 +1,39 @@
+<div class="promo-block__left">
+  <div class="d-flex align-items-center">
+    <input type="text" name="coupon_code" value="{{ coupon_code }}" placeholder="{{ entry_coupon }}" id="input-coupon_code"/>
+    <button type="button" class="main-btn" id="btn-coupon_code">Применить</button>
+  </div>
+</div>
+
+<script>
+$('#btn-coupon_code').click(function() {
+  var el = $(this);
+
+  fetch('{{ action|replace({"&amp;":"&"}) }}', {
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    body: JSON.stringify({coupon_code: $('#input-coupon_code').val()})
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(json){
+    el.parent().next('.error-input').remove();
+
+    if (json['error']) {
+      el.parent().after('<div class="error-input">' + json['error'] + '</div>');
+    }
+
+    if (json['success']) {
+      $('#form_order_cart').submit();
+    }
+  })
+  .catch(function(e){
+    console.error(e);
+  });
+});
+</script>

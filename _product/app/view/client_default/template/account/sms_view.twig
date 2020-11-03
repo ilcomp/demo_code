@@ -1,0 +1,9 @@
+<div class="form-group">
+	<label for="account_sms_code">{{ entry_sms_code }}</label>
+	<input type="text" name="sms_code" value="{{ sms_code }}" placeholder="{{ entry_sms_code }}" class="form-control" id="account_sms_code">
+	<div class="pre-icon os-icon os-icon-fingerprint"></div>
+	<div class="help-block form-text">{{ text_help }}</div>
+	{% if error_sms_code %}
+	<div class="help-block form-text with-errors form-control-feedback">{{ error_sms_code }}</div>
+	{% endif %}
+</div>

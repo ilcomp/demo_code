@@ -1,0 +1,135 @@
+{% if filter or heading_title %}
+<section class="{{ heading_title ? 'other-products-slider blue-bg' : 'products-slider' }}">
+  <div class="container">
+    {% if heading_title %}<h2>{{ heading_title }}</h2>{% endif %}
+    <div class="slider owl-carousel">
+{% else %}
+<div class="row product-list">
+{% endif %}
+{% for product in products %}
+  {% if not(filter or heading_title) %}
+  <div class="col-12 col-sm-6 col-xl-4">
+  {% endif %}
+    <div class="small-cart">
+      <div>
+        {% if filter %}
+        <a href="{{ product.href }}"><img data-src="{{ product.thumb }}" class="img-fluid owl-lazy"></a>
+        {% else %}
+        <a href="{{ product.href }}"><img src="{{ product.thumb }}" class="img-fluid"></a>
+        {% endif %}
+        <a href="{{ product.href }}"><div class="small-cart__text">{{ product.title }}</div></a>
+      {% if product.price %}
+        <div class="wrap-all-price">
+        {% if product.special %}
+          <div class="small-cart__price">{{ product.special_format|replace({'₽': '<span>₽</span>'}) }}</div>
+          <div class="small-cart__old-price">{{ product.price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+        {% else %}
+          <div class="small-cart__price">{{ product.price_format|replace({'₽': '<span>₽</span>'}) }}</div>
+        {% endif %}
+        </div>
+        {% if product.reward %}<div class="small-cart__point">+{{ product.reward }} бонусных баллов</div>{% endif %}
+      {% else %}
+        <div class="small-cart__point">Товар продаётся  только специалистам</div>
+      {% endif %}
+      </div>
+      {% if product.attributes.missing %}
+        <div>{{ text_missing }}</div>
+      {% else %}
+        {% if product.price %}
+        <form method="post" data-form="product">
+          <div class="wrap-card-price">
+            <input type="hidden" name="form_method" value="order/cart/add">
+            <input type="hidden" name="product_id" value="{{ product.product_id }}">
+
+            <div class="quantity count-item">
+              <input type="hidden" name="quantity" value="1" size="2" class="form-control">
+            </div>
+            <button type="submit" class="main-btn">{{ button_cart }}</button>
+          </div>
+        </form>
+        {% else %}
+        <div class="wrap-card-price justify-content-end">
+          <a href="#modal-form" data-toggle="modal" data-form_id="1" data-form_value="{{ {product: product.title}|json_encode(constant('JSON_UNESCAPED_UNICODE'))|e }}" class="main-btn">Запросить цену</a>
+        </div>
+        {% endif %}
+      {% endif %}
+      <div class="small-cart__badge">
+      {% for flag in product.attributes.flags %}
+        <div class="badge badge__{{ flag.value == 'discount' ? 'green' : flag.value }}">{{ flag.name }}</div>
+      {% endfor %}
+      </div>
+    </div>
+  {% if not(filter or heading_title) %}
+  </div>
+  {% endif %}
+{% endfor %}
+{% if not(filter or heading_title) %}
+</div>
+{% else %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<script type="text/javascript">
+$('form[data-form="product"]').submit(function(e){
+  if (this.proccessed_form)
+    return;
+
+  this.proccessed_form = true;
+
+  e.preventDefault();
+
+  var form_product = $(this);
+
+  var variants = form_product.find('[data-list=option_variant] input');
+  if (variants.length > 0 && variants.filter(':checked').length == 0) {
+    form_product.find('[data-btn=option_variant]').click();
+
+    return;
+  }
+
+  $(document).trigger('cart_load');
+
+  var data = new FormData(this);
+
+  if (form_product.find('button[data-btn="cart"]').length > 0)
+    data.set('form_method', 'order/cart/add');
+  else if (form_product.find('button[data-btn="wishlist"]').length > 0)
+    data.set('form_method', 'account/wishlist/add');
+
+  fetch(location, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    $(document).trigger('cart_loaded');
+
+    if (r.status == 401) {
+      $('#modal_account').modal('show');
+
+      return [];
+    } else
+      return r.json();
+  })
+  .then(function(json) {
+    if (json['error']) {
+      form_product.append('<div class="alert alert-warning" role="alert">' + json['error'] + '</div>');
+    }
+
+    if (json['success']) {
+      ym(45332331,'reachGoal','Cart_add');
+
+      toast_message(json['success'], '<a href="' + json['link_cart'] + '" class="main-btn" data-toast="cart">' + json['button_to_cart'] + '</a>', 5000);
+    }
+
+    $(document).trigger('cart_add', json);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>

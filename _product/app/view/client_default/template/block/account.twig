@@ -1,0 +1,62 @@
+<script type="text/javascript">
+var block_account_refresh = function(){
+  var block_account = $('[data-block=account]');
+
+  $('body').find('#modal_account').remove();
+
+  fetch('{{ action_block }}', {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'application/json'}
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(json) {
+    if (json) {
+      var a = document.createElement('a');
+
+      if (json['logged']) {
+        a.href = json['account_account'];
+        a.innerHTML = json['text_account'];
+      } else {
+        a.href = json['account_login'];
+        a.innerHTML = json['text_login'];
+      }
+
+      block_account.html(a);
+
+      if (!json['logged']) {
+        fetch('{{ action_modal }}', {
+          credentials: 'include',
+          cache: 'no-cache',
+          headers: {'Accept': 'application/json'}
+        })
+        .then(function(r){
+          return r.text();
+        })
+        .then(function(html) {
+          $('body').append(html);
+
+          a.dataset.toggle = 'modal';
+          a.dataset.target = '#modal_account';
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      }
+    } else {
+      block_account.html('');
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+};
+
+$(document).on('visibilitychange', function(e) {
+  if (!this.hidden) block_account_refresh();
+});
+
+block_account_refresh();
+</script>

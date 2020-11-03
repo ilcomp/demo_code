@@ -1,0 +1,64 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="country">
+      <div class="form-group row required">
+        <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+        <div class="col-sm-10">
+        {% for language in languages %}
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+            <input type="text" name="country_description[{{ language.language_id }}][name]" value="{{ country_description[language.language_id] ? country_description[language.language_id].name }}" placeholder="{{ entry_name }}" class="form-control"/>
+          </div>
+          {% if error_name[language.language_id] %}
+            <div class="invalid-tooltip">{{ error_name[language.language_id] }}</div>
+          {% endif %}
+        {% endfor %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-full_name">{{ entry_full_name }}</label>
+        <div class="col-sm-10">
+        {% for language in languages %}
+          <div class="input-group">
+            <div class="input-group-prepend"><span class="input-group-text"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}"/></span></div>
+            <input type="text" name="country_description[{{ language.language_id }}][full_name]" value="{{ country_description[language.language_id] ? country_description[language.language_id].full_name }}" placeholder="{{ entry_full_name }}" class="form-control"/>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-iso-code-2">{{ entry_iso_code_2 }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="iso_code_2" value="{{ iso_code_2 }}" placeholder="{{ entry_iso_code_2 }}" id="input-iso-code-2" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-iso-code-3">{{ entry_iso_code_3 }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="iso_code_3" value="{{ iso_code_3 }}" placeholder="{{ entry_iso_code_3 }}" id="input-iso-code-3" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-iso-number">{{ entry_iso_number }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="iso_number" value="{{ iso_number }}" placeholder="{{ entry_iso_number }}" id="input-iso-number" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="status" id="input-status" class="form-control">
+            {% if status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

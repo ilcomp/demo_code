@@ -1,0 +1,36 @@
+<div class="main-bg{{ custom_fields.menu ? ' padding-wrap' }}">
+{% if not custom_fields.menu %}<div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>{% endif %}
+  <div class="container{{ not custom_fields.menu ? ' text-center text-md-left' }}">
+{% if custom_fields.menu or modules.column or custom_fields.module_center  %}
+    <div class="row">
+      <div class="col-12 col-lg-4 col-xl-3">
+        <div class="pos-sticky">
+          <div class="menu-sidebar">
+            <a href="#" class="d-lg-none js-spoiler-partners">{{ custom_fields.menu.name }}</a>
+            {{ custom_fields.menu.view }}
+            {% for module in custom_fields.module_center %}
+              {{ module }}
+            {% endfor %}
+            {{ modules.column }}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8 col-xl-9">
+        {% include "client_ws_ttg/template/block/breadcrumb.twig" %}
+{% endif %}
+        <h1>{{ heading_title }}</h1>
+        {{ custom_fields.content }}
+        <div class="pos-sticky">
+          {{ info_filter }}
+          {{ article_list }}
+        </div>
+        {{ pagination }}
+{% if custom_fields.menu %}
+      </div>
+    </div>
+{% endif %}
+  </div>
+</div>
+{% for module in custom_fields.module_bottom %}
+<hr>{{ module }}
+{% endfor %}

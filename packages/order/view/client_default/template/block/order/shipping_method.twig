@@ -1,0 +1,76 @@
+{% for code, method in shipping_methods %}
+  {% if code == 'pickup' and not method.error %}
+<ul class="nav nav-tabs" role="tablist" id="shipping_method_tab">
+    <li class="nav-item">
+      <a class="nav-link{{ not (shipping_method starts with 'pickup') ? ' active show'}}" id="dost" data-toggle="tab" href="#dost_t" role="tab" aria-controls="home" aria-selected="true">{{ text_shipping_method }}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link{{ shipping_method starts with 'pickup' ? ' active show'}}" id="samoviv" data-toggle="tab" href="#samoviv_t" role="tab" aria-controls="profile" aria-selected="false">{{ method.title }}</a>
+    </li>
+</ul>
+  {% endif %}
+{% endfor %}
+{% if error_warning %}
+  <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+{% endif %}
+{% if shipping_methods %}
+<div class="tab-content" id="tabs">
+  <div class="tab-pane order_block fade{{ not (shipping_method starts with 'pickup') ? ' active show'}}" id="dost_t">
+    <div class="order_block_top">
+      <div class="order_title">{{ text_shipping_method }}</div>
+      <div class="order_block_price"></div>
+    </div>
+    <div class="order_block_content">
+  {% for code, method in shipping_methods %}
+    {% if code != 'pickup' and not method.error %}
+      {% for quote in method.quote %}
+        {% if not shipping_method %}
+          {% set  shipping_method = quote.code %}
+        {% endif %}
+        <input type="radio" name="shipping_method" value="{{ quote.code }}" id="shipping_method_{{ quote.code }}" {{ quote.code == shipping_method ? ' checked'}}>
+        <label for="shipping_method_{{ quote.code }}">
+          {% if quote.image %}<img src="{{ quote.image }}" alt="" class="img-fluid">{% endif %}
+          <div class="name_sent">{{ quote.title }}</div>
+          <div class="order_block_price">{{ quote.cost ? quote.cost_format|replace({'₽':'<span>₽</span>'}) }}</div>
+        </label>
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+    </div>
+  </div>
+  {% for code, method in shipping_methods %}
+    {% if code == 'pickup' and not method.error %}
+  <div class="tab-pane order_block fade{{ shipping_method starts with 'pickup' ? ' active show'}}" id="samoviv_t">
+    <div class="order_title">{{ method.title }}</div>
+    <div class="scroll_room">
+    {% set city = '' %}
+    {% for quote in method.quote %}
+      {% set city_for = quote.description|split(',')|first() %}
+      {% if city_for != city %}
+      <div class="name_showroom">{{ city_for }}</div>
+      <ul class="showroom_ul">
+      {% endif %}
+        <li>
+          <input type="radio" name="shipping_method" value="{{ quote.code }}" id="shipping_method_{{ quote.code }}" {{ quote.code == shipping_method ? ' checked'}}>
+          <label for="shipping_method_{{ quote.code }}">
+            <span>{{ quote.title }}</span>
+            {{ quote.description }}
+          </label>
+        </li>
+      {% if city_for != city %}
+      </ul>
+        {% set city = city_for %}
+      {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+<script type="text/javascript">
+  $('#shipping_method_tab a').on('show.bs.tab', function(){
+    $($(this).attr('href')).find('[name="shipping_method"]').prop('checked', 0).eq(0).prop('checked', 1).change();
+  });
+</script>

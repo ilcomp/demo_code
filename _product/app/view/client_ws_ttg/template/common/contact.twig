@@ -1,0 +1,57 @@
+<div class="main-bg{{ menu_info ? ' padding-wrap' }}">
+{% if not custom_fields.menu %}<div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>{% endif %}
+  <div class="container">
+{% if custom_fields.menu %}
+    <div class="row">
+      <div class="col-12 col-lg-4 col-xl-3">
+        <div class="pos-sticky">
+          <div class="menu-sidebar">
+            <a href="#" class="d-lg-none js-spoiler-partners">{{ custom_fields.menu.name }}</a>
+            {{ custom_fields.menu.view }}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8 col-xl-9">
+        {% include "client_ws_ttg/template/block/breadcrumb.twig" %}
+{% endif %}
+        <h1>{{ heading_title }}</h1>
+        <div class="col-12 col-md-6 text-md-right" style="display: none;">
+          <div class="dropdown dropdown-city">
+            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="#" data-city="1">Москва</a>
+<!--               <a class="dropdown-item" href="#" data-city="2">Пермь</a>
+              <a class="dropdown-item" href="#" data-city="3">Рязань</a> -->
+            </div>
+          </div>
+        </div>
+        {% if custom_fields.content %}<div class="content-block">{{ custom_fields.content }}</div>{% endif %}
+        <div class="information-contacts">
+          <div class="row">
+            <div class="col-12 col-md-6 col-xl-5">
+              <div class="information-contacts__content js-information-ur">
+                <div class="h3">Для юридических лиц:</div>
+                <div class="content-block"></div>
+                <a href="#modal-form" data-toggle="modal" data-form_id="3" class="main-btn">Оставить заявку на сотрудничество</a>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-5">
+              <div class="information-contacts__content js-information-phis">
+                <div class="h3">Для физических лиц:</div>
+                <div class="content-block"></div>
+                <a href="#modal-form" data-toggle="modal" data-form_id="5" class="main-btn">Получить бесплатную консультацию</a>
+              </div>
+            </div>
+          </div>
+          <div class="information-contacts__content js-information-recvis">
+            <div class="h3">Реквизиты:</div>
+            <div class="content-block"></div>
+          </div>
+        </div>
+        {{ info_content }}
+{% if custom_fields.menu %}
+      </div>
+    </div>
+{% endif %}
+  </div>
+</div>

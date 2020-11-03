@@ -1,0 +1,45 @@
+.breadcrumbs{
+	padding: 31px 0 20px;
+	align-items: center;
+	flex-wrap: wrap;
+	.container{
+		display: flex;
+		align-items: center;
+	}
+	a{
+		display: block;
+		text-decoration: none;
+		font-size: 13px;
+		position: relative;
+		color: #55638f;
+		&:before{
+			content: "";
+			display: block;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 1px;
+			background-color: #b9b9b9;
+		}
+		&:not(:first-child){
+			margin-left: 24px;
+			&:after{
+				content: "/";
+				color: #b9b9b9;
+				display: block;
+				position: absolute;
+				left: -15px;
+				top: 0;
+			}
+		}
+		&.disable{
+			color: #b9b9b9;
+			margin-right: 0;
+			pointer-events: none;
+			&:before{
+				content: none;
+			}
+		}
+	}
+}

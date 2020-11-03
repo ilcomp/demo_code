@@ -1,0 +1,259 @@
+.modal-dialog{
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 15px 59px 0px rgba(0, 0, 0, 0.36);
+  width: 445px;
+  margin: 0 auto;
+  top: 50px;
+  max-width: none;
+  height: auto;
+  border-radius: 6px;
+  background: #fff;
+  z-index: 1072;
+  pointer-events: visible;
+  padding: 50px;
+  // input::placeholder{
+  //   color:#282828;
+  // }
+  .main-btn{
+    margin-top: 15px;
+    cursor: pointer;
+  }
+  .polit-confid{
+    margin-top: 28px;
+    padding-top: 28px;
+    position: relative;
+    &:before{
+      content: "";
+      position: absolute;
+      height: 1px;
+      width: 48px;
+      background-color: rgb(235, 235, 235);
+      left: calc(50% - 24px);
+      top: 0;
+    }
+  }
+  .callback-input{
+    flex-direction: row-reverse;
+  }
+  .login-link{
+      justify-content: center;
+      margin-top: 25px;
+  }
+}
+
+  .callback{
+    padding: 0 14px;
+    text-align: center;
+    .h4{
+      text-align: center;
+    }
+    > span{
+      font-size: 17px;
+      color: rgb(97, 97, 97);
+      line-height: 1.294;
+      text-align: center;
+      display: block;
+      margin-bottom: 30px;
+    }
+    &-input{
+      position: relative;
+      width: 100%;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      border: 1px solid #e9e9e9;
+      border-radius: 2px;
+      background-color: #fff;
+      padding-left: 15px !important;
+      z-index: 1;
+      div:not(.error-input):not(.dropdown):not(.dropdown-menu):not(.visible-password){
+        font-size: 16px;
+        position: absolute;
+        top: 19px;
+        left: 46px;
+        margin: 0;
+        color: rgb(143, 143, 143);
+        font-weight: normal;
+        font-weight: 100;
+        z-index: -1;
+        @include transition(0.3s);
+        span{
+          color: red;
+        }
+        &.active{
+          top: 10px;
+          font-size: 11px;
+          color: rgb(190, 190, 190);
+          font-weight: 100;
+          span{
+            display: none;
+          }
+        }
+      }
+      .form_svg{
+        margin-right: 13px;
+      }
+      input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]), textarea, select{        
+        border: none;
+        &::placeholder{
+          font-size: 16px;
+          color: rgb(51, 51, 51);
+        }
+      }
+      input:not([type=checkbox]):not([type=radio]):not([type=file]):not([type=hidden]), textarea{
+        padding: 20px 15px 10px 0 !important;
+      }
+      select{
+        padding: 15px 30px 15px 0 !important;
+      }
+      textarea{
+        resize: none;
+      }
+      &.active{
+        border-color: #5ecacc;
+      }
+      .dropdown{
+        width: 100%;
+      }
+    }
+  }
+.close_button_popup {
+    background: url(../images/close-button.svg) no-repeat center;
+    background-size: 14px;
+    content: "";
+    display: block;
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
+    line-height: 30px;
+    top: 20px;
+    right: 20px;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.6s ease;
+    &:hover, &:focus{
+      -webkit-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+}
+.js_video .modal-dialog {
+    height: 700px;
+    max-width: 1200px;
+    background: transparent;
+    box-shadow: none;
+}
+  .modal_confid{
+    font-size: 12px;
+    color: #cccccc;
+    margin-bottom: 0 !important;
+    margin-top: 20px !important;
+    a{
+      color: #cccccc;
+    }
+  }
+.text_form{
+  h2{
+    font-size: 18px;
+    color: rgb(0, 0, 0);
+    font-family: "OpenSans bold";
+    margin-bottom: 23px;
+  }
+  p, li{
+    font-size: 16px !important;
+    text-align: left !important;
+    color: rgb(0, 0, 0);
+    line-height: 1.2;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  ol, ul{
+    margin-bottom: 30px;
+    padding-left: 15px;
+  }
+}
+.modal:not(.modal-clinic){
+  .modal-dialog{
+    p{
+      text-align: center;
+      margin: 0 30px 30px;
+      font-size: 12px;
+    }
+  }
+}
+.modal-clinic{
+  .modal-dialog{
+    width: 601px;
+    text-align: left;
+  }
+}
+.modal-clinic-img{
+  text-align: center;
+  .content-img{
+    margin-bottom: 20px;
+  }
+}
+.modal-choose-city{
+  &__list{
+    padding-top: 20px;    
+    >a{
+        display: block;
+        margin-bottom: 15px;
+        font-size: 16px;
+        text-align: left;
+    }
+  }
+  
+}
+@media (min-width: 768px){
+  .modal-choose-city{
+      &__list{
+        column-count: 3;
+        column-gap: 15px;
+      }
+      .modal-dialog{
+        width: 800px;
+      }
+  }
+}
+@media (max-width: 991px){
+  .modal-dialog{
+    height: auto;
+  }
+}
+@media (max-width: 767px){
+  .modal-dialog{
+      width: 100% !important; 
+      padding: 50px 0;
+      top: 50px;
+      margin: 0;
+  }
+  .js_video .close_button_popup{
+      top: -30px;
+      right: 10px;
+  }
+  .modal{
+    padding: 0 !important;
+  }
+  .success_form{
+      overflow-x: hidden;
+      overflow-y: auto;
+      .callback_title{
+        font-size: 29px;
+      }
+      p{
+         margin: 0 0 49px;
+      }
+  }
+  .modal-clinic{
+    .modal-dialog{
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+}

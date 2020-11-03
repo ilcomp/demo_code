@@ -1,0 +1,53 @@
+<section class="content grey_bg">
+  <div class="container">
+    {% if thumb or description %}
+    <div class="row">
+      {% if thumb %}
+      <div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
+      {% endif %}
+      {% if description %}
+      <div class="col-sm-10">{{ description }}</div>
+      {% endif %}
+    </div>
+    <hr>
+    {% endif %}
+    {% if categories %}
+    <ul class="list-inline life_cat">
+    {% for category in categories %}
+      {% if category.total_article %}
+      {% if category.category_id == category_id %}
+      <li class="active"><a href="{{ category.href }}">{{ category.name }}<span>{{ category.total_article }}</span></a></li>
+      {% else %}
+      <li><a href="{{ category.href }}">{{ category.name }}<span>{{ category.total_article }}</span></a></li>
+      {% endif %}
+      {% endif %}
+     {% endfor %}
+    </ul>
+    {% endif %}
+    {% if articles %}
+    <div id="category-articles">
+      {% for article in articles %}
+      <a href="{{ article.href }}" class="life_item">
+        {% if article.thumb %}<img src="{{ article.thumb }}" class="img-responsive" alt="{{ article.name }}" title="{{ article.name }}">{% endif %}
+        <div class="life_item_text">
+          <h3>{{ article.name }}</h3>
+          {{ article.preview }}
+        </div>
+        <div class="clearfix"></div>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% if not(categories or articles) %}
+    <p>{{ text_empty }}</p>
+    <div class="buttons">
+      <div class="pull-right"><a href="{{ continue }}" class="next_step">{{ button_continue }}</a></div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% if pagination %}
+<div class="container">
+  <div class="pagination_block">{{ pagination }}</div>
+</div>
+{% endif %}

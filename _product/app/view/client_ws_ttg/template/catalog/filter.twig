@@ -1,0 +1,319 @@
+<div class="wrap-filter">
+  <section class="page-title d-block d-md-none">
+    <div class="container">
+      <a href="#" class="page-title__back"></a>
+      <div class="h1" data-text="{{ heading_title }}">{{ text_filter }}</div>
+      <a href="#" class="close-menu close-filter"></a>
+    </div>
+  </section>
+  {% set params = action|split('?') %}
+  <form action="{{ params[0] }}" id="form_catalog_filter">
+    {% set params = params[1] is defined ? params[1]|replace({'&amp;':'&'})|split('&') %}
+    {% for param in params %}
+      {% set k_v = param|split('=') %}
+    <input type="hidden" name="{{ k_v[0] }}" value="{{ k_v[1] }}">
+    {% endfor %}
+
+    <div class="filter-list">
+    {% if filter_price is iterable %}
+      <div class="filter-list__item">
+        <div class="trigger"><span>{{ entry_price }}</span></div>
+        <div class="clear-filter js-clear-path-filter"></div>
+        <div class="filter-elements">
+          <div class="overflow-filter">
+            <div class="half-filter">
+              <div class="half-filter__item">
+                <span>{{ entry_from }}</span>
+                <input type="text" name="filter_price[from]" value="{{ filter_price.from }}">
+              </div>
+              <div class="half-filter__item">
+                <span>{{ entry_to }}</span>
+                <input type="text" name="filter_price[to]" value="{{ filter_price.to }}">
+              </div>
+            </div>
+          </div>
+          <div class="d-flex filter-list__bottom">
+            <button type="submit" class="main-btn">{{ button_submit }}</button>
+            <button type="button" class="main-btn reverse-btn js-clear-path-filter">{{ button_clear }}</button>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    {% for filter in filters %}
+      <div class="filter-list__item">
+        <div class="trigger"><span>{{ filter.name }}</span></div>
+        <div class="clear-filter js-clear-path-filter"></div>
+        <div class="filter-elements">
+          <div class="overflow-filter padding-delete">
+          {% for value in filter.values %}
+            {% if filter.type == 'option' %}
+            <input type="checkbox" name="filter_option[{{ value.option_id }}][]" value="{{ value.listing_item_id }}" id="filter{{ filter.filter_id }}_{{ loop.index }}" {{ filter_option[value.option_id] is defined and value.listing_item_id in filter_option[value.option_id] ? ' checked' }}>
+            {% else %}
+            <input type="checkbox" name="filter_attribute[{{ filter.filter_id }}][]" value="{{ value.listing_item_id }}" id="filter{{ filter.filter_id }}_{{ loop.index }}" {{ filter_attribute[filter.filter_id] is defined and value.listing_item_id in filter_attribute[filter.filter_id] ? ' checked' }}>
+            {% endif %}
+            {% if filter.view == 'color' %}
+            <label class="checkbox-label" for="filter{{ filter.filter_id }}_{{ loop.index }}"><div class="color-filter" style="background-color: {{ value.value }};"></div>{{ value.name }}</label>
+            {% else %}
+            <label class="checkbox-label" for="filter{{ filter.filter_id }}_{{ loop.index }}">{{ value.name }}</label>
+            {% endif %}
+          {% endfor %}
+          </div>
+          <div class="d-flex filter-list__bottom">
+            <button type="submit" class="main-btn">{{ button_submit }}</button>
+            <button type="button" class="main-btn reverse-btn js-clear-path-filter">{{ button_clear }}</button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+      <div class="filter-list__bottom">
+        <a href="#" class="main-btn js-show-filter">{{ button_view }}</a>
+        <button type="reset" class="main-btn reverse-btn js-reset-filter">{{ button_clear }}</button>
+      </div>
+    </div>
+  </form>
+</div>
+<a href="javascript:void(0);" class="main-btn filter-btn d-flex d-md-none">{{ text_filter }}<i class="filter_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/filter_svg.svg#filter_svg"></use></svg></i></a>
+
+<script>
+var filterHeight = $('.wrap-filter').outerHeight(true),
+    form_catalog_filter = $('#form_catalog_filter'),
+    filter_review = function(filter){
+      var flag = 0;
+        //trigger = parent.find(".trigger");
+      $(filter).find("input[type='checkbox']").each(function (el){
+        if($(this).prop("checked")){
+          flag = 1;
+
+          filter.classList.add('active');
+        } else if(flag == 0) {
+            filter.classList.remove('active');
+        }
+      });
+
+      // забираем значения lable для активного фильтра
+      var check_input = $(filter).find("input[type='checkbox']:checked");
+      var text;
+
+      if (check_input.length > 1) {
+        text = check_input.length;
+      } else if (check_input.length > 0){
+        text = check_input.next(".checkbox-label").text();
+      }
+
+      if (text) {
+        var trigger = $(filter).find(".trigger");
+        var trigger_text = trigger.find('span').text();
+        trigger.html('<span>' + trigger_text + '</span>: ' + text);
+      }
+
+      // забираем значения lable для активного фильтра цен
+      if($(filter).find(".half-filter").length > 0){
+        var text_price = [],
+            text_price2 = '',
+            trig = $(filter).find(".trigger"),
+            trig_text = trig.find('span').text(),
+            flag_void_mass = 0;
+
+        $(filter).find(".half-filter__item").each(function (e){
+          var price = $(this).find('input').val();
+          //console.log(price);
+          text_price.push(price);
+          if(price != ''){
+            var span = $(this).find('span').text();
+            //text_price.push(span);          
+            text_price2 += span+" "+price+" ";
+            flag_void_mass = 1;
+          }
+        });
+        //console.log(text_price);
+        var flag_price = 0;
+        text_price.forEach(function(item, i, arr) {
+          // console.log(item);
+          if(item == ''){
+            //console.log("пустое");
+            flag_price = 1;
+          }
+        });
+
+        if(flag_void_mass == 1){
+          if(flag_price == 1){
+            trig.html('<span>'+trig_text+'</span>: '+text_price2);
+
+            filter.classList.add('active');
+          } else{
+            trig.html('<span>'+trig_text+'</span>: '+text_price[0]+' - '+text_price[1]);
+
+            filter.classList.remove('active');
+          }
+        }
+      }
+
+      $(".filter-list .filter-elements").removeClass("active");
+
+      // возвращаем заголовок фильтра на дефолтный
+      if($(window).width() < 768) {
+        var t = $(".wrap-filter .h1").data("text");
+
+        $(".wrap-filter .h1").text(t);
+      }
+
+      // возвращаем высоту body при раскрытом фильтре
+      $("body").css('height', filterHeight);
+
+      // скрываем кнопку "назад"
+      $(".page-title__back").removeClass("active");
+    };
+
+form_catalog_filter.find('.filter-list__item').each(function(){
+  filter_review(this);
+});
+</script>
+<script>
+// form_catalog_filter.submit(function(e){
+//   e.preventDefault();
+// });
+</script>
+<script>
+$(window).resize(function() {
+  filterHeight = $('.wrap-filter').outerHeight(true);
+
+  if($(window).width() < 768){
+    $('.filter-list .dropdown-toggle').dropdown('dispose');
+  } else {
+    $('.filter-list .dropdown-toggle').dropdown();
+
+    $(".close-filter").click();
+  }
+});
+
+$(function(){
+  //открытие фильтра на мобильнике
+  $(".filter-btn").on('click',function(e) {
+    e.preventDefault();
+    $(".wrap-filter").addClass("active");
+
+    if ($(window).width() < 768) {
+      $("html").addClass("active");
+      $("body").addClass("body-hide");
+      if($("body").hasClass('body-hide')){
+        $("body").css('height', filterHeight);
+      }
+    }
+  });
+
+  $(".close-filter, .js-show-filter").on('click', function (e) {
+    e.preventDefault();
+
+    // возвращаем высоту body при закрытие фильтра
+    $(".wrap-filter").removeClass("active");
+    $("html").removeClass("active");
+    $("body").removeClass("body-hide");
+    $("body").css('height', 'auto');
+
+    // закрываем подменю фильтра
+    $(".filter-elements").removeClass("active");
+
+    // возвращаем заголовок фильтра на дефолтный
+    var h1 = $(".wrap-filter .h1");
+
+    h1.text(h1.data("text"));
+  });
+
+  $(".filter-list__item .trigger").on('click',function(e) {
+    if($(this).siblings(".filter-elements").hasClass("active")){
+      $(this).siblings(".filter-elements").removeClass("active");
+      $(".wrap-filter .page-title__back").removeClass("active");
+    } else{
+      $(".filter-list .filter-elements").removeClass("active");
+      $(this).siblings(".filter-elements").addClass("active");
+      $(".wrap-filter .page-title__back").addClass("active");
+    }
+
+    if($(window).width() < 768) {
+      var t = $(this).find("span").text();
+      $(".wrap-filter .h1").text(t);
+
+      // расчет высоты body при открытие подфильтра
+      var h_filter = $(this).siblings(".filter-elements").outerHeight();
+      var h_top = $(".wrap-filter .page-title").outerHeight();
+      var count_h = h_filter + h_top;
+      $("body").css('height', count_h);
+    } else {
+      var position_r = $(this).siblings(".filter-elements").offset().left,
+        w_block = $(this).siblings(".filter-elements").outerWidth(true);
+        position_r += w_block;
+      if($(window).width() < position_r){
+        var offset = position_r - $(window).width();
+        $(this).siblings(".filter-elements").css('left', '-'+offset+'px');
+      }
+    }
+  });
+
+  // изменяем заголовок фильтра при раскрытие подфильтра
+  $(".wrap-filter .page-title__back").on('click', function (e) {
+    e.preventDefault();
+
+    $(this).removeClass("active");
+    $(".wrap-filter .filter-elements").removeClass("active");
+    var t = $(".wrap-filter .h1").data("text");
+    $(".wrap-filter .h1").text(t);
+
+    // возвращаем высоту body при раскрытом фильтре
+    $("body").css('height', filterHeight);
+  });  
+
+  // закрытие окна фильтра по нажатию на body
+  $(document).click(function (e){
+    if ($(e.target).parents('.filter-list').length == 0 && $(window).width() > 767) {
+      $(".filter-list .filter-elements").removeClass("active");
+    }
+  });
+
+  // активный фильтр
+  
+  $(".filter-elements .main-btn:not(.reverse-btn)").on('click',function(e) {
+    filter_review($(this).parents(".filter-list__item")[0]);
+  });
+
+  // сброс фильтра
+  $(".filter-list__item .js-clear-path-filter").on('click',function(e) {
+    var parent = $(this).parents(".filter-list__item"),
+      trigger = parent.find(".trigger");
+      trigger_text = trigger.find('span').text();
+
+    parent.removeClass("active");
+    parent.find("input[type='checkbox'], input[type='radio']").prop("checked",0);
+    parent.find("input[type='text'], input[type='number'], input[type='tel']").val("");
+
+    trigger.html('<span>'+trigger_text+'</span>');
+
+    form_catalog_filter.submit();
+  });
+
+  // сброс всего фильтра
+  $(".js-reset-filter").on('click', function () {
+    $(".filter-list .filter-list__item.active .js-clear-path-filter").click();
+
+    form_catalog_filter.submit();
+  });
+
+  // покрасить кнопку фильтра если он применен
+  $(".js-show-filter, .js-reset-filter").on('click', function () {
+    if($(".wrap-filter .filter-list__item.active").length > 0){
+      $(".wrap-filter").siblings(".filter-btn").addClass("active");
+    } else{
+      $(".wrap-filter").siblings(".filter-btn").removeClass("active");
+    }
+  });
+
+  // scroll к верху сайта при раскрытие/закрытие фильтра
+  $(".js-show-filter, .js-reset-filter, .filter-elements .main-btn:not(.reverse-btn)").on('click', function () {
+    if($(window).width() < 768) {
+      var destination = $('body').offset().top;
+      $("html:not(:animated),body:not(:animated)").animate({
+        scrollTop: destination
+      }, 800);
+    }
+  });
+});
+</script>

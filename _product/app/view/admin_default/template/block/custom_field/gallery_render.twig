@@ -1,0 +1,53 @@
+<fieldset class="custom-field" data-sort="{{ custom_field.sort_order }}">
+  <legend>{{ custom_field.name }}</legend>
+  <table id="gallery_row{{ custom_field.custom_field_id }}" class="table table-striped table-bordered table-hover">
+    <tbody>
+      {% set gallery_row = 0 %}
+      {% for row in custom_field.value[-1] %}
+        <tr data-row="gallery{{ gallery_row }}">
+          <td class="text-center">
+            <div class="card">
+              <img src="{{ row.thumb }}" alt="" title="" id="custom_field-thumb{{ custom_field.custom_field_id }}_{{ gallery_row }}" data-placeholder="{{ placeholder }}" class="card-img-top"/> <input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1][{{ gallery_row }}]" value="{{ row.image }}" id="custom_field-input{{ custom_field.custom_field_id }}_{{ gallery_row }}"/>
+              <div class="card-body">
+                <button type="button" data-toggle="image" data-target="#custom_field-input{{ custom_field.custom_field_id }}_{{ gallery_row }}" data-thumb="#custom_field-thumb{{ custom_field.custom_field_id }}_{{ gallery_row }}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>
+                <button type="button" data-toggle="clear" data-target="#custom_field-input{{ custom_field.custom_field_id }}_{{ gallery_row }}" data-thumb="#custom_field-thumb{{ custom_field.custom_field_id }}_{{ gallery_row }}" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>
+              </div>
+            </div>
+          </td>
+          <td class="text-right"><button type="button" onclick="$(this).parents('[data-row^=gallery]').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>
+        </tr>
+        {% set gallery_row = gallery_row + 1 %}
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td></td>
+        <td class="text-right"><button type="button" data-add_template="gallery" data-row="{{ gallery_row }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary btn-sm"><i class="fas fa-plus-circle"></i></button></td>
+      </tr>
+    </tfoot>
+  </table>
+
+<script>
+$('#gallery_row{{ custom_field.custom_field_id }} [data-add_template=gallery]').on('click', function() {
+  var row = $(this).data('row');
+
+  html = '<tr data-row="gallery' + row + '">';
+  html += '  <td class="text-center">';
+  html += '    <div class="card">';
+  html += '    <img src="{{ placeholder }}" alt="" title="" id="custom_field-thumb{{ custom_field.custom_field_id }}_' + row + '" data-placeholder="{{ placeholder }}" class="card-img-top"/> <input type="hidden" name="custom_field[{{ custom_field.custom_field_id }}][-1][' + row + ']" value="" id="custom_field-input{{ custom_field.custom_field_id }}_' + row + '"/>';
+  html += '    <div class="card-body">';
+  html += '    <button type="button" data-toggle="image" data-target="#custom_field-input{{ custom_field.custom_field_id }}_' + row + '" data-thumb="#custom_field-thumb{{ custom_field.custom_field_id }}_' + row + '" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>';
+  html += '    <button type="button" data-toggle="clear" data-target="#custom_field-input{{ custom_field.custom_field_id }}_' + row + '" data-thumb="#custom_field-thumb{{ custom_field.custom_field_id }}_' + row + '" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>';
+  html += '    </div>';
+  html += '    </div>';
+  html += '  </td>';
+  html += '  <td class="text-right"><button type="button" onclick="$(this).parents(\'[data-row^=gallery]\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fas fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#gallery_row{{ custom_field.custom_field_id }} tbody').append(html);
+
+  $(this).data('row', row + 1);
+});
+</script>
+<hr>
+</fieldset>

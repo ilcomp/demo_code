@@ -1,0 +1,171 @@
+<div class="row">
+  <div id="filter-general" class="col-md-3 order-md-9 col-sm-12 d-none d-md-block mb-3">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-filter"></i> {{ text_filter }}</div>
+      <div class="card-body">
+        <form method="get" enctype="multipart/form-data" id="form-filter" data-form="product">
+          <input type="hidden" name="route" value="catalog/product">
+          <input type="hidden" name="user_token" value="{{ user_token }}">
+          <div class="form-group">
+            <label class="col-form-label" for="input-name"><strong>{{ entry_name }}</strong></label>
+            <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label class="col-form-label" for="input-category"><strong>{{ entry_category }}</strong></label>
+            <input type="text" value="{{ filter_category }}" placeholder="{{ entry_category }}" id="input-category" class="form-control"/>
+            <input type="hidden" name="filter_category_id" value="{{ filter_category_id }}"/>
+          </div>
+<!--           <div class="form-group">
+            <label class="col-form-label" for="input-price"><strong>{{ entry_price }}</strong></label> <input type="text" name="filter_price" value="{{ filter_price }}" placeholder="{{ entry_price }}" id="input-price" class="form-control"/>
+          </div> -->
+          <div class="form-group">
+            <label class="col-form-label" for="input-status"><strong>{{ entry_status }}</strong></label>
+            <select name="filter_status" id="input-status" class="form-control">
+              <option value="">{{ text_none }}</option>
+              {% if filter_status == '1' %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+              {% else %}
+                <option value="1">{{ text_enabled }}</option>
+              {% endif %}
+              {% if filter_status == '0' %}
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+              {% else %}
+                <option value="0">{{ text_disabled }}</option>
+              {% endif %}
+            </select>
+          </div>
+          <div class="form-group text-right">
+            <button type="submit" id="button-filter" class="btn btn-light"><i class="fas fa-filter"></i> {{ button_filter }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9 col-sm-12">
+    <div class="card">
+      <div class="card-header"><i class="fas fa-list"></i> {{ text_list }}</div>
+      <div class="card-body">
+        <form action="{{ actions.delete }}" method="post" enctype="multipart/form-data" id="form-general" data-form="product">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').trigger('click');"/></td>
+                  <td class="text-left">{% if sort == 'name' %}<a href="{{ sort_name }}" class="{{ order|lower }}">{{ column_name }}</a>{% else %}<a href="{{ sort_name }}">{{ column_name }}</a> {% endif %}</td>
+                  <td class="text-left">{% if sort == 'model' %}<a href="{{ sort_model }}" class="{{ order|lower }}">{{ column_model }}</a>{% else %}<a href="{{ sort_model }}">{{ column_model }}</a> {% endif %}</td>
+                  <td class="text-right">{% if sort == 'price' %}<a href="{{ sort_price }}" class="{{ order|lower }}">{{ column_price }}</a>{% else %}<a href="{{ sort_price }}">{{ column_price }}</a> {% endif %}</td>
+                  <td class="text-right">{{ column_category }}</td>
+                  <td class="text-left">{% if sort == 'status' %}<a href="{{ sort_status }}" class="{{ order|lower }}">{{ column_status }}</a>{% else %}<a href="{{ sort_status }}">{{ column_status }}</a> {% endif %}</td>
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if products %}
+                  {% for product in products %}
+                    <tr>
+                      <td class="text-center"><input type="checkbox" name="selected[]" value="{{ product.product_id }}"{{ product.product_id in selected ? ' checked' }}/></td>
+                      <td class="text-left">{{ product.name }}</td>
+                      <td class="text-left">{{ product.model }}</td>
+                      <td class="text-right">
+                        {% if product.special %}<span style="text-decoration: line-through;">{% for price in product.prices %}{{ price }}<br>{% endfor %}</span>
+                          <br/>
+                          <div class="text-danger">{{ product.special }}</div>
+                        {% else %}
+                          {% for price in product.prices %}{{ price }}<br>{% endfor %}
+                        {% endif %}
+                      </td>
+                      <td class="text-left">
+                      {% for category in product.categories %}
+                        {{ category }}{{ not loop.last ? '<br>'}}
+                      {% endfor %}
+                      </td>
+                      <td class="text-left">{{ product.status }}</td>
+                      <td class="text-right" style="white-space: nowrap;"><a href="{{ product.view }}" target="_blank" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-secondary"><i class="fas fa-eye"></i></a> <a href="{{ product.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a></td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td class="text-center" colspan="8">{{ text_no_results }}</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('input[name=\'filter_name\']').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      response($.map(json, function(item) {
+        return {
+          label: (item['model'] ? item['model'] + ' ' : '') + item['name'],
+          value: item['product_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('input[name=\'filter_name\']').val(item['label']);
+  }
+});
+</script>
+<script>
+$('#input-category').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){
+      json.unshift({
+        name: '{{ text_none }}',
+        category_id: 0,
+      });
+
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['category_id']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    $('#input-category').val(item['label']);
+    $('input[name=\'filter_category_id\']').val(item['value']);
+  }
+});
+</script>

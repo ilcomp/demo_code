@@ -1,0 +1,16 @@
+<div class="main-bg padding-wrap">
+  <div class="container">
+    <h1>{{ heading_title }}</h1>
+    <div class="content-block">
+      <p>{{ text_success }} {{ text_order }}</p>
+      <p><a href="{{ continue }}" class="other_btn">{{ button_continue }}</a></p>
+    </div>
+  </div>
+</div>
+{% if text_order %}
+<script type="text/javascript">
+$(function () {
+	ym(45332331,'reachGoal','order')
+});
+</script>
+{% endif %}

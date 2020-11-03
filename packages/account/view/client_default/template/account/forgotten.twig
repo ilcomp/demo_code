@@ -1,0 +1,31 @@
+<div class="lk_profile register_block">
+<div id="account-forgotten" class="container">
+  <form action="{{ action }}" method="post" enctype="multipart/form-data" id="{{ form_id }}">
+    <div class="callback_title">{{ heading_title }}</div>
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+    {% endif %}
+    {% if location %}
+    <script type="text/javascript">document.location = '{{ location }}';</script>
+    {% endif %}
+    {% if sms_action %}
+    <script type="text/javascript">
+      $('.code_phone').load('{{ sms_action }} .code_phone > *');
+      $('.code_phone').modal('show');
+    </script>
+    {% endif %}
+    <div class="callback_inputs">
+      <div class="callback_input">
+        <div>{{ entry_email }}</div>
+        <input type="email" name="email" value="{{ email }}">
+      </div>
+    </div>
+    <div class="clearfix"></div>
+    <button class="other_btn js_success">{{ button_continue }}</button>
+    <div class="clearfix"></div>
+  </form>
+</div>
+</div>

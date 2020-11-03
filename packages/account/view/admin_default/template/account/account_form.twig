@@ -1,0 +1,158 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="account">
+      <ul class="nav nav-tabs">
+        <li class="nav-item"><a href="#tab-general" data-toggle="tab" class="nav-link active">{{ text_general }}</a></li>
+      {% if custom_fields_contact or custom_fields_address or custom_fields_account_group %}
+        <li class="nav-item"><a href="#tab-custom_field" data-toggle="tab" class="nav-link">{{ text_custom_field }}</a></li>
+      {% endif %}
+      {% if additional_fields %}
+        <li class="nav-item"><a href="#tab-additional" data-toggle="tab" class="nav-link">{{ text_additional }}</a></li>
+      {% endif %}
+      {% if account_id %}
+        <li class="nav-item"><a href="#tab-auth" data-toggle="tab" class="nav-link">{{ text_auth }}</a></li>
+        <li class="nav-item"><a href="#tab-ip" data-toggle="tab" class="nav-link">{{ text_ip }}</a></li>
+      {% endif %}
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="tab-general">
+          <div class="form-group row required">
+            <label class="col-sm-2 col-form-label">{{ entry_name }}</label>
+            <div class="col-sm-10">
+                <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" class="form-control"/>
+              {% if error_name %}
+                <div class="invalid-tooltip">{{ error_name }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="input-account-group">{{ entry_account_group }}</label>
+            <div class="col-sm-10">
+              <select name="account_group_id" id="input-account-group" class="form-control">
+              {% for account_group in account_groups %}
+                {% if account_group.account_group_id == account_group_id %}
+                  <option value="{{ account_group.account_group_id }}" selected="selected">{{ account_group.name }}</option>
+                {% else %}
+                  <option value="{{ account_group.account_group_id }}">{{ account_group.name }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{ entry_language }}</label>
+            <div class="col-sm-10">
+              <select name="language_id" id="input-language" class="form-control">
+              {% for language in languages %}
+                {% if language.language_id == language_id %}
+                  <option value="{{ language.language_id }}" selected="selected">{{ language.name }}</option>
+                {% else %}
+                  <option value="{{ language.language_id }}">{{ language.name }}</option>
+                {% endif %}
+              {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+              {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+              {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+              {% endif %}
+              </select>
+            </div>
+          </div>
+        </div>
+      {% if custom_fields_contact or custom_fields_address or custom_fields_account_group %}
+        <div class="tab-pane" id="tab-custom_field">
+        {% if custom_fields_contact %}
+          <fieldset>
+            <legend>{{ text_contact }}</legend>
+            {{ custom_fields_contact }}
+          </fieldset>
+        {% endif %}
+        {% if custom_fields_address %}
+          <fieldset>
+            <legend>{{ text_address }}</legend>
+            {{ custom_fields_address }}
+          </fieldset>
+        {% endif %}
+        {% if custom_fields_account_group %}
+          <fieldset>
+            <legend>{{ text_account_group }}</legend>
+            {{ custom_fields_account_group }}
+          </fieldset>
+        {% endif %}
+        </div>
+      {% endif %}
+      {% if additional_fields %}
+        <div class="tab-pane" id="tab-additional">{{ additional_fields }}</div>
+      {% endif %}
+      {% if account_id %}
+        <div class="tab-pane" id="tab-auth">
+	    {% for account_auth in account_auths %}
+        	<div class="row">
+	        	<div class="col-sm-3">{{ account_auth.type }}</div>
+	        	<div class="col-sm-3">{{ account_auth.login }}</div>
+	        	<div class="col-sm-3">{{ account_auth.status }}</div>
+	        	<div class="col-sm-3">{{ account_auth.date_added }}</div>
+    		</div>
+	    {% endfor %}
+        </div>
+        <div class="tab-pane" id="tab-ip">
+          <fieldset>
+            <legend>{{ text_ip }}</legend>
+            <div id="ip"></div>
+          </fieldset>
+        </div>
+      {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if account_id %}
+<script type="text/javascript"><!--
+$(function(){
+  $('#ip').on('click', '.pagination a', function(e) {
+    e.preventDefault();
+
+    fetch(this.href, {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {'Accept': 'text/html'},
+    })
+    .then(function(r){
+      return r.text();
+    })
+    .then(function(html){
+      $('#ip').html(html);
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  });
+
+  fetch(getURLPath() + '?route=account/account/ip&user_token={{ user_token }}&account_id={{ account_id }}', {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'text/html'},
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html){
+    $('#ip').html(html);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+})
+//--></script>
+{% endif %}

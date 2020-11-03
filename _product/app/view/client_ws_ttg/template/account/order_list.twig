@@ -1,0 +1,27 @@
+{% if orders %}
+  {% for order in orders %}
+<div class="history-item">
+  <div class="h3">{{ text_order_id }}{{ order.order_id }}</div>
+  <div class="history-item__table">
+    <div>
+      <span>{{ text_date_added }}</span>
+      <div class="history-order-text">{{ order.date_added }}</div>
+    </div>
+    <div>
+      <span>{{ text_total }}</span>
+      <div class="history-order-text">{{ order.total_format }}</div>
+    </div>
+    <div>
+      <span>{{ text_status }}</span>
+      <div class="history-order-text">{{ order.order_status }}</div>
+    </div>
+    <a href="{{ order.view }}" class="main-btn-blue">{{ button_more }}</a>
+  </div>
+</div>
+  {% endfor %}
+  {% if pagination %}
+<div class="pagination_block">{{ pagination }}</div>
+  {% endif %}
+{% else %}
+<p>{{ text_empty }}</p>
+{% endif %}

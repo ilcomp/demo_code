@@ -1,0 +1,50 @@
+{% if products %}
+  {% for product in products %}
+<div class="basket-item d-md-flex">
+  {{ product.missing ? '<span style="color:red; font-size: 20px">*</span>' }}
+  <img src="{{ product.thumb }}" class="basket-item__img img-fluid">
+  <a href="{{ product.href }}" class="basket-item__name">{{ product.title }}
+  {% for composition_product in product.composition_products %}
+    <br><small>- {{ composition_product.title ? composition_product.title : composition_product.name }}</small>
+  {% endfor %}</a>
+  <div class="basket-item__price">
+    <div class="small-cart__price">{{ (product.special_format ?: product.price_format)|replace({'₽': '<span>₽</span>'}) }}</div>
+    {% if product.reward %}<div class="small-cart__point">+{{ product.reward }} баллов<span data-placement="bottom" data-toggle="tooltip" data-html="true" title="<p>Бонусные баллы начисляются с каждой покупки любого товара. Размер бонусных баллов составляет 3% от стоимости одного наименования.</p>">i</span></div>{% endif %}
+  </div>
+  <div class="quantity count-item">
+    <input type="hidden" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="2" class="form-control" data-unit="" data-point="" data-price="{{ product.special ?: product.price }}">
+  </div>
+  <div class="small-cart__price">{{ product.total_format|replace({'₽': '<span>₽</span>'}) }}</div>
+  <button type="submit" name="delete" value="{{ product.cart_id }}" class="basket-item__delete"><img src="/theme/client_ws_ttg/images/close-btn.svg" class="img-fluid"></button>
+</div>
+{% if product.error %}
+<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ product.error }}</div>
+{% endif %}
+  {% endfor %}
+
+<script>
+(function(){
+  var form = $('#form_order_cart'),
+      timeout;
+
+  form.find('input[name^=quantity]').change(function(){
+    clearTimeout(timeout);
+
+    timeout = setTimeout(function(){
+      form.submit();
+    }, 1000);
+  });
+
+  form.find('button[name="delete"]').click(function(e){
+    e.preventDefault();
+
+    form.append('<input type="hidden" name="delete" value="' + this.value + '">').submit();
+    $(this).parents('tr').remove();
+  });
+})();
+</script>
+{% else %}
+<script>
+location.reload();
+</script>
+{% endif %}

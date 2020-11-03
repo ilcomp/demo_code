@@ -1,0 +1,41 @@
+<div class="delivery-block">
+{% if error.warning %}
+  <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error.warning }}</div>
+{% endif %}
+  <div class="h3">{{ text_shipping_method }}</div>
+{% for method in shipping_methods %}
+  {% if method.code != 'pickup' %}
+    {% for quote in method.quote %}
+  <div class="delivery-block__item">
+    <input type="radio" name="shipping_method" value="{{ quote.code }}" id="shipping_method_{{ quote.code }}" {{ quote.code == shipping_method ? ' checked'}}>
+    <label for="shipping_method_{{ quote.code }}">
+      <div class="d-md-flex delivery-wrap">
+        <div class="text-delivery">{{ quote.title }}{{ quote.cost ? ' (' ~ quote.cost_format ~ ')' }}</div>
+        {{ method.view }}
+      </div>
+      {% if quote.description %}<p>{{ quote.description }}</p>{% endif %}
+    </label>
+  </div>
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+{% for method in shipping_methods %}
+  {% if method.code == 'pickup' %}
+  <div class="pickup-block">
+    <div class="pickup-block__title">{{ method.title }}</div>
+    <p>{{ method.description }}</p>
+  </div>
+    {% for quote in method.quote %}
+  <div class="delivery-block__item">
+    <input type="radio" name="shipping_method" value="{{ quote.code }}" id="send{{ loop.index }}" {{ quote.code == shipping_method ? ' checked'}}>
+    <label for="send{{ loop.index }}">
+      <div class="text-delivery">{{ quote.title }}</div>
+      <p>{{ text_pickup }}: {{ quote.address }}.{{ quote.open ? text_open ~ ' ' ~ quote.open }}</p>
+    </label>
+  </div>
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+</div>
+<p>{{ text_shipping_description }}</p>
+<hr>

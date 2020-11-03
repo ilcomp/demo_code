@@ -1,0 +1,36 @@
+<footer>
+	<div class="container-fluid">
+		<div class="row">
+    		<div class="col-4 col-sm-2">
+				<a class="navbar-brand" href="{{ home }}">
+					{% if logo %}
+					<img src="{{ logo }}" class="img-responsive" alt="{{ name|replace({'"':''}) }}">
+					{% endif %}
+					<div class="logo_text">{{ name }}</div>
+				</a>
+			</div>
+			<div class="col-12 col-sm-6">
+				<nav>{{ menu.general.view }}</nav>
+			</div>
+			<div class="col-12 col-sm-4">
+				<nav>{{ text_social }}{{ menu.social.view }}</nav>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		{{ menu.footer_catalog.view }}
+		<div class="row">
+			<div class="col-sm-6">
+			</div>
+			<div class="col-sm-6 text-right">
+				{{ telephone }}
+			</div>
+		</div>
+	</div>
+</footer>
+<div class="container-fluid">{{ powered }}</div>
+
+{{ panel_user }}
+
+</body>
+</html>

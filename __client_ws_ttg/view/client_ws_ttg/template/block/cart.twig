@@ -1,0 +1,35 @@
+<script type="text/javascript">
+var block_cart_refresh = function(){
+  var block_cart = $('[data-block=cart]');
+
+  fetch('{{ action_block }}', {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'application/json'}
+  })
+  .then(function(r){
+    return r.json(r);
+  })
+  .then(function(json) {
+    block_cart.find('.basket-count').text(json ? json['count_items'] : '0');
+    block_cart.find('.links-text').text(json && Number(json['total']) ? json['total_format'] : '');
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+};
+
+$(document).on('cart_add cart_update cart_remove', function(e, json) {
+  json = json || [];
+
+  if (json['success']) {
+    block_cart_refresh();
+  }
+});
+
+$(document).on('visibilitychange', function(e) {
+  if (!this.hidden) block_cart_refresh();
+});
+
+block_cart_refresh();
+</script>

@@ -1,0 +1,97 @@
+<div id="choose-city" class="modal fade modal-choose-city" tabindex="-1" role="dialog">
+  <div class="modal-dialog" >
+    <div class="modal_form">
+      <div class="callback">
+        <div class="h4">{{ text_city_change }}</div>
+        <div class="choose-city__center">
+          <input type="text" name="city" placeholder="{{ help_city }}">
+          <button type="button" id="location_auto" style="display: none;">Определить город</button>
+        </div>
+        <div class="modal-choose-city__list" id="block_location_cities" title="{{ text_city_popular }}"></div>
+      </div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+
+<script>
+$(function(){
+  $('#location_auto').click(function(e) {
+    fetch('{{ actions.location|replace({"&amp;": "&"}) }}', {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {'Accept': 'application/json'},
+    })
+    .then(function(r){
+      return r.json();
+    })
+    .then(function(json){console.log(json);
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  });
+});
+</script>
+<script>
+$(function(){
+  $('#choose-city input[name="city"]').autocomplete({
+      'source': function(request, response) {
+        fetch('{{ actions.location_autocomplete|replace({"&amp;": "&"}) }}&filter_name=' + encodeURIComponent(request), {
+          credentials: 'include',
+          cache: 'no-cache',
+          headers: {'Accept': 'application/json'},
+        })
+        .then(function(r){
+          return r.json();
+        })
+        .then(function(json){
+          var url = new URL(window.location.href);
+
+          response($.map(json, function(item) {
+            url.searchParams.set('city_id', item['city_id']);
+
+            return {
+              label: item['fullname'] ? item['fullname'] : item['name'],
+              value: url.toString()
+            }
+          }));
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+      },
+      'select': function(item) {
+        location = item['value'];
+      }
+  });
+});
+</script>
+<script>
+fetch('{{ actions.data|replace({"&amp;": "&"}) }}', {
+  credentials: 'include',
+  cache: 'no-cache',
+  headers: {'Accept': 'application/json'},
+})
+.then(function(r){
+  return r.json();
+})
+.then(function(json){
+  // $('#choose-city form').prepend('<button type="submit" name="link_city_id" value="' + json['city_id'] + '" class="location"><i class="geo_svg"><svg><use xlink:href="theme/client_ws_ttg/images/geo.svg#geo_svg"></use></svg></i>{{ text_city }}: <span class="js-active-city">' + json['name'] + '</span></button>');
+
+  var html = '';
+
+  json['cities'].forEach(function(city){
+    var url = new URL(window.location.href);
+
+    url.searchParams.set('city_id', city['city_id']);
+
+    html += '<a href="' + url.toString() + '">' + city['name'] + '</a>';
+  });
+
+  $('#block_location_cities').html(html);
+})
+.catch(function(error) {
+  console.error(error);
+});
+</script>

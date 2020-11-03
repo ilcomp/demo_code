@@ -1,0 +1,9 @@
+{% if heading_title %}<h2>{{ heading_title }}</h2>{% endif %}
+{% for article in articles %}
+<div class="card">
+  <div class="card-body">
+  	<h3 class="card-title">{{ article.name }}</h4>
+    <a href="{{ article.href }}" class="card-link">{{ button_more }}</a>
+  </div>
+</div>
+{% endfor %}

@@ -1,0 +1,60 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="total">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="total_coupon_status" id="input-status" class="form-control">
+            {% if total_coupon_status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sort-order">{{ entry_sort_order }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="total_coupon_sort_order" value="{{ total_coupon_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status_fraud_id">{{ entry_status_fraud_id }}</label>
+        <div class="col-sm-10">
+          <select name="total_coupon_status_fraud_id" id="input-status_fraud_id" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for listing_item in listing_items %}
+              {% if listing_item.listing_item_id == total_coupon_status_fraud_id %}
+                <option value="{{ listing_item.listing_item_id }}" selected="selected">{{ listing_item.name }}</option>
+              {% else %}
+                <option value="{{ listing_item.listing_item_id }}">{{ listing_item.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in total_coupon_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="total_coupon_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="total_coupon_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>

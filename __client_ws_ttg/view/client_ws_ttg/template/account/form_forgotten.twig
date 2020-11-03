@@ -1,0 +1,28 @@
+<form action="{{ action }}" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="method" value="{{ method }}">
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+  {% endif %}
+  {% if location %}
+  <script type="text/javascript">location = '{{ location }}';</script>
+  {% endif %}
+  {% if refresh %}
+  <script type="text/javascript">location.reload();</script>
+  {% endif %}
+  {% if sms_action %}
+  <script type="text/javascript">
+    $('.code_phone').load('{{ sms_action }} .code_phone > *');
+    $('.code_phone:not(.in)').modal('show');
+  </script>
+  {% endif %}
+  <div class="callback-input">
+    <div>{{ entry_email }}</div>
+    <input type="email" name="email" value="{{ email }}">
+    <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/mail.svg#form_svg"></use></svg></i>
+    {% if error.email %}<div class="error-input">{{ error.email }}</div>{% endif %}
+  </div>
+  {{ code_confirm }}
+  {{ captcha }}
+  <button type="submit" class="main-btn">{{ button_continue }}</button>
+  <div class="create-account-form"><a href="{{ actions.login }}" data-modal_form_toggle="login">Вход/регистрация</a></div>
+</form>

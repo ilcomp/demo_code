@@ -1,0 +1,67 @@
+<script type="text/javascript">
+var block_account_refresh = function(){
+  var block_account = $('[data-block=account]'),
+      modal = $('#modal_account');
+
+  fetch('{{ action_block }}', {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'application/json'}
+  })
+  .then(function(r){
+    return r.json();
+  })
+  .then(function(json) {
+    if (json) {
+      if (json['logged']) {
+        block_account.removeData('toggle');
+        block_account.removeData('target');
+
+        block_account.find('.discount-lk').remove();
+        block_account.find('.header_a').prepend('<span class="discount-lk d-none d-md-block">Скидка 15%</span>');
+
+        block_account.next('.login-link').removeClass('d-none');
+
+        if (modal.length > 0) {
+          modal.remove();
+        }
+      } else {
+        block_account.find('.discount-lk').remove();
+        block_account.next('.login-link').addClass('d-none');
+
+        if (modal.length > 0) {
+          block_account.attr('data-toggle', 'modal');
+          block_account.attr('data-target', '#modal_account');
+        } else {
+          fetch('{{ action_modal }}', {
+            credentials: 'include',
+            cache: 'no-cache',
+            headers: {'Accept': 'text/html'}
+          })
+          .then(function(r){
+            return r.text();
+          })
+          .then(function(html) {
+            $('body').append(html);
+
+            block_account.attr('data-toggle', 'modal');
+            block_account.attr('data-target', '#modal_account');
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
+        }
+      }
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+};
+
+$(document).on('visibilitychange', function(e) {
+  if (!this.hidden) block_account_refresh();
+});
+
+block_account_refresh();
+</script>

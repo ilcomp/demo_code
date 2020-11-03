@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<script>history.replaceState(null,null, decodeURI(location.href));</script>
+<script>function getURLPath() {return String(document.location.pathname);}</script>
+
+<title>{{ title }}</title>
+
+<base href="{{ base }}"/>
+
+{% for link in links %}
+<link href="{{ link.link }}" rel="{{ link.rel }}" />
+{% endfor %}
+
+<link type="text/css" href="assets/fontawesome-free-5.10.2-web/css/all.min.css" rel="stylesheet"/>
+<link type="text/css" href="assets/bootstrap-datetimepicker-4.17.47/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen"/>
+{% for style in styles %}
+<link rel="{{ style.rel }}" href="{{ style.link }}" media="{{ style.media }}" />
+{% endfor %}
+
+<script type="text/javascript" src="assets/jquery-3.3.1/dist/jquery.min.js"></script>
+<script type="text/javascript" src="assets/popper.min.js"></script>
+<script type="text/javascript" src="assets/bootstrap-4.3.1/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/moment-2.24.0/min/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="assets/bootstrap-datetimepicker-4.17.47/build/js/bootstrap-datetimepicker.min.js"></script>
+
+{% for script in scripts %}
+  <script type="text/javascript" src="{{ script.link }}" {{ script.type_load }}></script>
+{% endfor %}
+
+</head>
+<body>
+<div id="container">
+  <header id="header" class="navbar navbar-expand navbar-light bg-light">
+    <div class="container-fluid">
+      <a href="{{ home }}" class="navbar-brand d-none d-md-block border-right"><img src="{{ logo }}" alt="{{ heading_title }}" title="{{ heading_title }}"/></a>
+      {% if logged %}
+        <a href="#" id="button-menu" class="d-inline-block d-md-none border-right"><span class="fas fa-bars"></span></a>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown border-left">
+            <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle"><img src="{{ image }}" alt="{{ firstname }} {{ lastname }}" title="{{ username }}" id="user-profile" class="rounded-circle"/>&nbsp;&nbsp; {{ firstname }} {{ lastname }} <i class="fas fa-caret-down fa-fw"></i></a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a href="{{ profile }}" class="dropdown-item"><i class="fas fa-user-circle fa-fw"></i> {{ text_profile }}</a>
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header">{{ text_store }}</h6>
+              {% for store in stores %}
+                <a href="{{ store.href }}" target="_blank" class="dropdown-item">{{ store.name }}</a>
+              {% endfor %}
+              <!-- <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header">{{ text_help }}</h6>
+              <a href="http://www.opencart.com" target="_blank" class="dropdown-item"><i class="fab fa-opencart fa-fw"></i> {{ text_homepage }}</a> <a href="http://docs.opencart.com" target="_blank" class="dropdown-item"><i class="fas fa-file-alt fa-fw"></i> {{ text_documentation }}</a> <a href="http://forum.opencart.com" target="_blank" class="dropdown-item"><i class="fas fa-comments fa-fw"></i> {{ text_support }}</a> -->
+            </div>
+          </li>
+          <li class="nav-item border-left"><a href="{{ logout }}" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span class="d-none d-md-inline">{{ text_logout }}</span></a></li>
+        </ul>
+      {% endif %}
+    </div>
+  </header>

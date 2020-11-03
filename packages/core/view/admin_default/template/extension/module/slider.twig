@@ -1,0 +1,191 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="module">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          {% if error_name %}<div class="invalid-tooltip">{{ error_name }}</div>{% endif %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-width">{{ entry_width }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="width" value="{{ width }}" placeholder="{{ entry_height }}" id="input-width" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-height">{{ entry_height }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="height" value="{{ height }}" placeholder="{{ entry_height }}" id="input-height" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-width_desktop">{{ entry_width_desktop }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="width_desktop" value="{{ width_desktop }}" placeholder="{{ entry_width_desktop }}" id="input-width_desktop" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-height_desktop">{{ entry_height_desktop }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="height_desktop" value="{{ height_desktop }}" placeholder="{{ entry_height_desktop }}" id="input-height_desktop" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-class">{{ entry_class }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="class" value="{{ class }}" placeholder="{{ entry_class }}" id="input-class" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="status" id="input-status" class="form-control">
+            <option value="1"{{ status ? ' selected' }}>{{ text_enabled }}</option>
+            <option value="0"{{ not status ? ' selected' }}>{{ text_disabled }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table id="slide" class="table table-striped table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="text-left required">{{ entry_description }}</td>
+              <td class="text-right" width="300px">{{ entry_image }}</td>
+              <td class="text-right" width="300px">{{ entry_image_desktop }}</td>
+              <td width="50px"></td>
+            </tr>
+          </thead>
+          <tbody id="slide_items">
+          {% set slide_row = 0 %}
+          {% for slide in slides %}
+          <tr id="slide-row{{ slide_row }}">
+            <td class="text-left">
+              <div class="form-group">
+                <label class="control-label">{{ entry_title }}</label>
+                <input type="text" name="slides[{{ slide_row }}][title]" value="{{ slide.title }}" placeholder="{{ entry_title }}" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_description }}</label>
+                <input type="text" name="slides[{{ slide_row }}][description]" value="{{ slide.description }}" placeholder="{{ entry_description }}" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_link_name }}</label>
+                <input type="text" name="slides[{{ slide_row }}][link_name]" value="{{ slide.link_name }}" placeholder="{{ entry_link_name }}" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_link }}</label>
+                <input type="text" name="slides[{{ slide_row }}][link]" value="{{ slide.link }}" placeholder="{{ entry_link }}" class="form-control" />
+              </div>
+            </td>
+            <td class="text-left">
+              <div class="form-group">
+                <div class="card">
+                  <img src="{{ slide.thumb }}" alt="" title="" id="thumb-image{{ slide_row }}" data-placeholder="{{ placeholder }}" class="card-img-top"/> <input type="hidden" name="slides[{{ slide_row }}][image]" value="{{ slide.image }}" id="input-image{{ slide_row }}"/>
+                  <div class="card-body">
+                    <button type="button" data-toggle="image" data-target="#input-image{{ slide_row }}" data-thumb="#thumb-image{{ slide_row }}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>
+                    <button type="button" data-toggle="clear" data-target="#input-image{{ slide_row }}" data-thumb="#thumb-image{{ slide_row }}" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="text-left">
+              <div class="form-group">
+                <div class="card">
+                  <img src="{{ slide.thumb_desktop }}" alt="" title="" id="thumb-image_desktop{{ slide_row }}" data-placeholder="{{ placeholder }}" class="card-img-top"/> <input type="hidden" name="slides[{{ slide_row }}][image_desktop]" value="{{ slide.image_desktop }}" id="input-image_desktop{{ slide_row }}"/>
+                  <div class="card-body">
+                    <button type="button" data-toggle="image" data-target="#input-image_desktop{{ slide_row }}" data-thumb="#thumb-image_desktop{{ slide_row }}" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>
+                    <button type="button" data-toggle="clear" data-target="#input-image_desktop{{ slide_row }}" data-thumb="#thumb-image_desktop{{ slide_row }}" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="text-right"><button type="button" onclick="$('#slide-row{{ slide_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fa fa-minus-circle"></i></button></td>
+          </tr>
+          {% set slide_row = slide_row + 1 %}
+          {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"></td>
+              <td class="text-right" width="50px"><button type="button" onclick="addSlideRow();" data-toggle="tooltip" title="{{ button_slide_add }}" class="btn btn-primary btn-sm"><i class="fa fa-plus-circle"></i></button></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript" src="/assets/Sortable-1.10.2/Sortable.min.js"></script>
+<style type="text/css">#slide_items > tr{cursor: move;}</style>
+<script>
+$('#slide_items').each(function(){
+  var el = this;
+  new Sortable(el, {
+    multiDrag: true,
+    filter: 'input, label',
+    preventOnFilter: false,
+    selectedClass: 'selected',
+    animation: 150
+  });
+});
+</script>
+<script>
+var slide_row = {{ slide_row }};
+
+function addSlideRow() {
+  html  = '<tr id="slide-row' + slide_row + '">';
+  html += '  <td class="text-left">';
+  html += '    <div class="form-group">';
+  html += '      <label class="control-label">{{ entry_title }}</label>';
+  html += '      <input type="text" name="slides[' + slide_row + '][title]" value="" placeholder="{{ entry_title}}" class="form-control" />';
+  html += '    </div>';
+  html += '    <div class="form-group">';
+  html += '      <label class="control-label">{{ entry_description }}</label>';
+  html += '      <input type="text" name="slides[' + slide_row + '][description]" value="" placeholder="{{ entry_description }}" class="form-control" />';
+  html += '    </div>';
+  html += '    <div class="form-group">';
+  html += '      <label class="control-label">{{ entry_link }}</label>';
+  html += '      <input type="text" name="slides[' + slide_row + '][link]" value="" placeholder="{{ entry_link }}" class="form-control" />';
+  html += '    </div>';
+  html += '    <div class="form-group">';
+  html += '      <label class="control-label">{{ entry_link }}</label>';
+  html += '      <input type="text" name="slides[' + slide_row + '][link_name]" value="" placeholder="{{ entry_link_name }}" class="form-control" />';
+  html += '    </div>';
+  html += '  </td>';
+  html += '  <td class="text-left">';
+  html += '    <div class="form-group">';
+  html += '      <div class="card">';
+  html += '        <img src="{{ placeholder }}" alt="" title="" id="thumb-image' + slide_row + '" data-placeholder="{{ placeholder }}" class="card-img-top"/>';
+  html += '        <input type="hidden" name="slides[' + slide_row + '][image]" value="" id="input-image' + slide_row + '"/>';
+  html += '        <div class="card-body">';
+  html += '          <button type="button" data-toggle="image" data-target="#input-image' + slide_row + '" data-thumb="#thumb-image' + slide_row + '" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>';
+  html += '          <button type="button" data-toggle="clear" data-target="#input-image' + slide_row + '" data-thumb="#thumb-image' + slide_row + '" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>';
+  html += '        </div>';
+  html += '      </div>';
+  html += '    </div>';
+  html += '  </td>';
+  html += '  <td class="text-left">';
+  html += '    <div class="form-group">';
+  html += '      <div class="card">';
+  html += '        <img src="{{ placeholder }}" alt="" title="" id="thumb-image_desktop' + slide_row + '" data-placeholder="{{ placeholder }}" class="card-img-top"/>';
+  html += '        <input type="hidden" name="slides[' + slide_row + '][image_desktop]" value="" id="input-image_desktop' + slide_row + '"/>';
+  html += '        <div class="card-body">';
+  html += '          <button type="button" data-toggle="image" data-target="#input-image_desktop' + slide_row + '" data-thumb="#thumb-image_desktop' + slide_row + '" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>';
+  html += '          <button type="button" data-toggle="clear" data-target="#input-image_desktop' + slide_row + '" data-thumb="#thumb-image_desktop' + slide_row + '" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>';
+  html += '        </div>';
+  html += '      </div>';
+  html += '    </div>';
+  html += '  </td>';
+
+  html += '  <td class="text-right"><button type="button" onclick="$(\'#slide-row' + slide_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger btn-sm"><i class="fa fa-minus-circle"></i></button></td>';
+  html += '</tr>';
+
+  $('#slide tbody').append(html);
+
+  slide_row++;
+}
+</script>

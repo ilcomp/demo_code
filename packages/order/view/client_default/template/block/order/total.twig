@@ -1,0 +1,5 @@
+{% for total in totals %}
+  {% if total.code == 'total' %}
+    <span>{{ total.title|lower() }}: <strong>{{ total.text|replace({'₽':'<i>₽</i>'}) }}</strong></span>
+  {% endif %}
+{% endfor %}

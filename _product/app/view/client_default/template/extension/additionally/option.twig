@@ -1,0 +1,19 @@
+{% for row, item in additionally_option_methods%}
+	{% if item.code == 'courier' %}
+<script type="text/javascript">
+$('#courier').html('<label class="fitting"><input name="additionally[option][{{ row }}]" type="checkbox" value="{{ item.title }}"{{ row in additionally|keys ? " checked" }}><span class="checkbox">✓</span> {{ item.title }}</label> <span class="tooltip1" data-toggle="tooltip" data-placement="bottom" title="{{ item.description }}">?</span>');
+
+if ($('#cart_shipping_method [name=shipping_method]:checked').val().search(/courier$/) == -1)
+	$('#courier input').prop('checked', 0).prop('disabled', 1);
+</script>
+	{% else %}
+<div class="charging blue_charge">
+	<div class="charging_top">
+		<input type="checkbox" name="additionally[option][{{ row }}]" value="{{ item.title }}" id="wire{{ item.code }}_{{ row }}"{{ first_start or row in additionally|keys ? ' checked' }}>
+		<label class="choice_type_item" for="wire{{ item.code }}_{{ row }}">{{ item.title }}</label>	
+		<div class="ic_opt"><i class="key_opt"></i></div>
+	</div>
+</div>
+<p>{{ item.description }}</p>
+	{% endif %}
+{% endfor %}

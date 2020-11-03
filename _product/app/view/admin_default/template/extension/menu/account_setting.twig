@@ -1,0 +1,23 @@
+{% import "admin_default/template/macro/form_group.twig" as macro_form_group %}
+<div class="row">
+	<div class="col-12 col-sm-6">
+		{{ macro_form_group.select(
+			{'id': 'account_language' ~ language_id ~ '_' ~ menu_row, 'value' : language_id},
+			{'label' : entry_language},
+			{'options' : languages, 'key' : 'language_id', 'title' : 'name'}
+		, 4) }}
+	</div>
+	<div class="col-12 col-sm-6">
+		{{ macro_form_group.select(
+			{'id': 'account' ~ language_id ~ '_' ~ menu_row, 'value' : link},
+			{'label' : entry_route},
+			{'options' : routes, 'key' : 'route', 'title' : 'name'}
+		, 4) }}
+	</div>
+</div>
+<script type="text/javascript">
+$('#input-account{{ language_id }}_{{ menu_row }}').change(function() {
+	$('#input-title{{ language_id }}_{{ menu_row }}').val($(this).find(':selected').text());
+	$('#input-link{{ language_id }}_{{ menu_row }}').val(this.value);
+});
+</script>

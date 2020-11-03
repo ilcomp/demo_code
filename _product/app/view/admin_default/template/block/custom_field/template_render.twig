@@ -1,0 +1,24 @@
+<div class="form-group row custom-field" data-sort="{{ custom_field.sort_order }}">
+  <label class="col-sm-2 col-form-label">{{ custom_field.name }}</label>
+  <div class="col-sm-10">
+    <ul class="nav nav-tabs" id="custom_field{{ custom_field.custom_field_id }}">
+      {% for language in languages %}
+      <li class="nav-item"><a href="#custom_field{{ custom_field.custom_field_id }}_{{ language.language_id }}"" data-toggle="tab" class="nav-link"><img src="/image/language/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+      {% endfor %}
+    </ul>
+    <div class="tab-content">
+      {% for language in languages %}
+      <div class="tab-pane" id="custom_field{{ custom_field.custom_field_id }}_{{ language.language_id }}">
+        <div class="form-group">
+          <textarea name="custom_field[{{ custom_field.custom_field_id }}][{{ language.language_id }}]"  placeholder="{{ entry_description }}" rows="5" class="form-control">{{ custom_field.value[language.language_id] ? custom_field.value[language.language_id] : custom_field.setting.default }}</textarea>
+        </div>
+      </div>
+      {% endfor %}
+      <textarea hidden>{{ custom_field.setting.default }}</textarea>
+    </div>
+
+<script type="text/javascript"><!--
+$('#custom_field{{ custom_field.custom_field_id }} a:first').tab('show');
+//--></script>
+  </div>
+</div>

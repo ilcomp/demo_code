@@ -1,0 +1,204 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_edit }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="mail">
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+          <select name="catalog_status" id="input-status" class="form-control">
+            {% if catalog_status %}
+              <option value="1" selected="selected">{{ text_enabled }}</option>
+              <option value="0">{{ text_disabled }}</option>
+            {% else %}
+              <option value="1">{{ text_enabled }}</option>
+              <option value="0" selected="selected">{{ text_disabled }}</option>
+            {% endif %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-category_general">{{ entry_category_general }}</label>
+        <div class="col-sm-10">
+          <select name="catalog_category_general" id="input-category_general" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for category in categories %}
+              {% if category.category_id == catalog_category_general %}
+                <option value="{{ category.category_id }}" selected="selected">{{ category.name }}</option>
+              {% else %}
+                <option value="{{ category.category_id }}">{{ category.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-manufacturer">{{ entry_manufacturer }}</label>
+        <div class="col-sm-10">
+          <select name="catalog_category_manufacturer" id="input-manufacturer" class="form-control">
+            <option value="0">{{ text_none }}</option>
+            {% for category in categories %}
+              {% if category.category_id == catalog_category_manufacturer %}
+                <option value="{{ category.category_id }}" selected="selected">{{ category.name }}</option>
+              {% else %}
+                <option value="{{ category.category_id }}">{{ category.name }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">{{ help_manufacturer }}</small>
+        </div>
+      </div>
+      <fieldset>
+        <legend>{{ text_currency }}</legend>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-currency">{{ entry_currency }}</label>
+          <div class="col-sm-10">
+            <select name="catalog_currency" id="input-currency" class="form-control">
+              {% for currency in currencies %}
+                {% if currency.code == catalog_currency %}
+                <option value="{{ currency.code }}" selected="selected">{{ currency.name }}</option>
+                {% else %}
+                <option value="{{ currency.code }}">{{ currency.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <small class="form-text text-muted">{{ help_currency }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-currency-engine">{{ entry_currency_engine }}</label>
+          <div class="col-sm-10">
+            <select name="catalog_currency_engine" id="input-currency-engine" class="form-control">
+               <option value=""></option>
+              {% for currency_engine in currency_engines %}
+                {% if currency_engine.value == catalog_currency_engine %}
+                <option value="{{ currency_engine.value }}" selected="selected">{{ currency_engine.text }}</option>
+                {% else %}
+                <option value="{{ currency_engine.value }}">{{ currency_engine.text }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_currency_auto }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if catalog_currency_auto %}
+                <label class="btn btn-success active"><input type="radio" name="catalog_currency_auto" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-danger"><input type="radio" name="catalog_currency_auto" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-success"><input type="radio" name="catalog_currency_auto" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-danger active"><input type="radio" name="catalog_currency_auto" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+            <small class="form-text text-muted">{{ help_currency_auto }}</small>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label">{{ entry_product_sub_category }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if catalog_product_sub_category %}
+                <label class="btn btn-success active"><input type="radio" name="catalog_product_sub_category" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-danger"><input type="radio" name="catalog_product_sub_category" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-success"><input type="radio" name="catalog_product_sub_category" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-danger active"><input type="radio" name="catalog_product_sub_category" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-catalog-limit">{{ entry_product_limit }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="catalog_product_limit" value="{{ catalog_product_limit }}" placeholder="{{ entry_product_limit }}" id="input-catalog-limit" class="form-control"/>
+            <small class="form-text text-muted">{{ help_product_limit }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-description-limit">{{ entry_product_description_length }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="catalog_product_description_length" value="{{ catalog_product_description_length }}" placeholder="{{ entry_product_description_length }}" id="input-description-limit" class="form-control"/>
+            <small class="form-text text-muted">{{ help_product_description_length }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-catalog_product_default_image">{{ entry_product_default_image }}</label>
+          <div class="col-sm-10">
+            <div class="card image">
+              <img src="{{ thumb }}" alt="" title="" id="thumb-catalog_product_default_image" data-placeholder="{{ placeholder }}" class="card-img-top"/> <input type="hidden" name="catalog_product_default_image" value="{{ catalog_product_default_image }}" id="input-catalog_product_default_image"/>
+              <div class="card-body">
+                <button type="button" data-toggle="image" data-target="#input-catalog_product_default_image" data-thumb="#thumb-catalog_product_default_image" class="btn btn-primary btn-sm btn-block"><i class="fas fa-pencil-alt"></i> {{ button_edit }}</button>
+                <button type="button" data-toggle="clear" data-target="#input-catalog_product_default_image" data-thumb="#thumb-catalog_product_default_image" class="btn btn-warning btn-sm btn-block"><i class="fas fa-trash-alt"></i> {{ button_clear }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-path_status">{{ entry_path_status }}</label>
+          <div class="col-sm-10">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {% if catalog_path_status %}
+                <label class="btn btn-success active"><input type="radio" name="catalog_path_status" value="1" checked="checked"/> {{ text_yes }}</label>
+                <label class="btn btn-danger"><input type="radio" name="catalog_path_status" value="0"/> {{ text_no }}</label>
+              {% else %}
+                <label class="btn btn-success"><input type="radio" name="catalog_path_status" value="1"/> {{ text_yes }}</label>
+                <label class="btn btn-danger active"><input type="radio" name="catalog_path_status" value="0" checked="checked"/> {{ text_no }}</label>
+              {% endif %}
+            </div>
+            <small class="form-text text-muted">{{ help_path_status }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-route_product">{{ entry_route_product }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="catalog_route_product" value="{{ catalog_route_product }}" placeholder="{{ entry_route_product }}" id="input-route_product" class="form-control" readonly/>
+            <small class="form-text text-muted">{{ help_route_product }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-route_category">{{ entry_route_category }}</label>
+          <div class="col-sm-10">
+            <input type="text" name="catalog_route_category" value="{{ catalog_route_category }}" placeholder="{{ entry_route_category }}" id="input-route_category" class="form-control" readonly/>
+            <small class="form-text text-muted">{{ help_route_category }}</small>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-pay_information">{{ entry_pay_information }}</label>
+          <div class="col-sm-10">
+            <select name="catalog_pay_information_id" id="input-pay_information" class="form-control">
+              <option value="0">{{ text_none }}</option>
+              {% for information in informations %}
+                {% if information.information_id == catalog_pay_information_id %}
+                  <option value="{{ information.information_id }}" selected="selected">{{ information.name }}</option>
+                {% else %}
+                  <option value="{{ information.information_id }}">{{ information.name }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>{{ text_image }}</legend>
+        {% for image_name, image_size in catalog_image %}
+        <div class="form-group row">
+          <label class="col-sm-2 col-form-label" for="input-image-{{ image_name }}">{{ image_size.name }}</label>
+          <div class="col-sm-10">
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" name="catalog_image_{{ image_name }}_width" value="{{ image_size.width }}" placeholder="{{ entry_width }}" id="input-image-{{ image_name }}" class="form-control"/>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" name="catalog_image_{{ image_name }}_height" value="{{ image_size.height }}" placeholder="{{ entry_height }}" class="form-control"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </fieldset>
+    </form>
+  </div>
+</div>

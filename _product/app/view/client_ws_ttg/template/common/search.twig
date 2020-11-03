@@ -1,0 +1,13 @@
+<div class="main-bg">
+  <div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>
+  <div class="container">
+    <h1>{{ heading_title }}</h1>
+    {{ articles }}
+    {{ products }}
+  {% if articles or products %}
+    {{ pagination }}
+  {% else %}
+    <p>{{ text_empty }}</p>
+  {% endif %}
+  </div>
+</div>

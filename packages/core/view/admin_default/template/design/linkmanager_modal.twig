@@ -1,0 +1,75 @@
+<div id="modal-link" class="modal show">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ heading_title }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form action="{{ action }}" method="post" id="form-linkmanager">
+          <div class="input-group input-group-sm">
+            <select name="link[code]" class="form-control input-sm">
+            {% for extension in extensions %}
+              {% if extension.code == menu_item.code %}
+                <option value="{{ extension.code }}" selected="selected">{{ extension.name }}</option>
+              {% else %}
+                <option value="{{ extension.code }}">{{ extension.name }}</option>
+              {% endif %}
+            {% endfor %}
+            </select>
+          </div>
+          <div class="card-body" id="linkmanager">
+            {{ link.setting }}
+          </div>
+          <div class="text-right">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> {{ button_submit }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+var form_linkmanager = $('#form-linkmanager');
+
+form_linkmanager.on('change', 'select[name="link[code]"]', function() {
+  fetch(this.action, {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'text/html'},
+    method: 'post',
+    body: new FormData(this)
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html) {
+    form_linkmanager.html($(html).find('#form-linkmanager'));
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+
+form_linkmanager.submit(function() {
+  fetch(this.action, {
+    credentials: 'include',
+    cache: 'no-cache',
+    headers: {'Accept': 'application/json'},
+    method: 'post',
+    body: new FormData(this)
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(json) {
+    $('#modal-link').trigger('change', [json]);
+
+    $('#modal-link').modal('hide');
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>

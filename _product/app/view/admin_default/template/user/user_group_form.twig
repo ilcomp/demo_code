@@ -1,0 +1,76 @@
+<div class="card">
+  <div class="card-header"><i class="fas fa-pencil-alt"></i> {{ text_form }}</div>
+  <div class="card-body">
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-general" data-form="user-group">
+      <div class="form-group row required">
+        <label class="col-sm-2 col-form-label" for="input-name">{{ entry_name }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control"/>
+          {% if error_name %}
+            <div class="invalid-tooltip">{{ error_name }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="input-sort_order">{{ entry_sort_order }}</label>
+        <div class="col-sm-10">
+          <input type="text" name="sort_order" value="{{ sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort_order" class="form-control"/>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_access }}</label>
+        <div class="col-sm-10">
+          <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for permission in permissions %}
+              <label class="form-check">
+                {% if permission in access %}
+                  <input type="checkbox" name="permission[access][]" value="{{ permission }}" checked="checked" class="form-check-input"/>
+                  {{ permission }}
+                {% else %}
+                  <input type="checkbox" name="permission[access][]" value="{{ permission }}" class="form-check-input"/>
+                  {{ permission }}
+                {% endif %}
+              </label>
+            {% endfor %}
+          </div>
+          <button type="button" onclick="$(this).parent().find(':checkbox').prop('checked', true);" class="btn btn-link">{{ text_select_all }}</button> / <button type="button" onclick="$(this).parent().find(':checkbox').prop('checked', false);" class="btn btn-link">{{ text_unselect_all }}</button></div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_modify }}</label>
+        <div class="col-sm-10">
+          <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for permission in permissions %}
+              <label class="form-check">
+                {% if permission in modify %}
+                  <input type="checkbox" name="permission[modify][]" value="{{ permission }}" checked="checked" class="form-check-input"/>
+                  {{ permission }}
+                {% else %}
+                  <input type="checkbox" name="permission[modify][]" value="{{ permission }}" class="form-check-input"/>
+                  {{ permission }}
+                {% endif %}
+              </label>
+            {% endfor %}
+          </div>
+          <button type="button" onclick="$(this).parent().find(':checkbox').prop('checked', true);" class="btn btn-link">{{ text_select_all }}</button> / <button type="button" onclick="$(this).parent().find(':checkbox').prop('checked', false);" class="btn btn-link">{{ text_unselect_all }}</button></div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">{{ entry_additionally }}</label>
+        <div class="col-sm-10">
+          <div class="form-control" style="height: 150px; overflow: auto;">
+            {% for permission in additionallies %}
+              <label class="form-check">
+                {% if permission in additionally %}
+                  <input type="checkbox" name="permission[additionally][]" value="{{ permission }}" checked="checked" class="form-check-input"/>
+                  {{ permission }}
+                {% else %}
+                  <input type="checkbox" name="permission[additionally][]" value="{{ permission }}" class="form-check-input"/>
+                  {{ permission }}
+                {% endif %}
+              </label>
+            {% endfor %}
+          </div>
+          <button type="button" onclick="$(this).parent().find(':checkbox').prop('checked', true);" class="btn btn-link">{{ text_select_all }}</button> / <button type="button" onclick="$(this).parent().find(':checkbox').prop('checked', false);" class="btn btn-link">{{ text_unselect_all }}</button></div>
+      </div>
+    </form>
+  </div>
+</div>

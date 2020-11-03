@@ -1,0 +1,204 @@
+{% if is_logged %}
+<a href="#modal_review" data-toggle="modal" data-target="#modal_review" class="main-btn reverse-btn">{{ button_review }}</a>
+{% else %}
+<a href="{{ actions.account }}" data-toggle="modal" data-target="#modal_account" class="main-btn reverse-btn">{{ button_review }}</a>
+{% endif %}
+<div class="feed-back-list" id="review_list">
+{% for review in reviews %}
+  <div class="feed-back-list__item">
+    <h5>{{ review.author }}</h5>
+    <div class="row">
+      <div class="col-12 col-md-7">
+        <div class="feedback-content">
+          <div class="d-flex feedback-content__rating">
+          {% for i in 1..5 %}
+            <div class="star-check{{ i <= review.rating ? ' active' }}"></div>
+          {% endfor %}
+          {% for item in review.option %}
+            <div class="real-size"><img src="/theme/client_ws_ttg/images/size.svg">{{ item.value }}</div>
+          {% endfor %}
+          </div>
+          <p>{{ review.text }}</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-3">
+      {% for item in review.option %}
+        <div class="conformity-size">
+          <div class="conformity-size__title">{{ text_suit }}:</div>
+          <div class="size-indicator">
+          {% for i in 1..5 %}
+            <div class="indicator{{ i == item.suit ? ' active' }}"></div>
+          {% endfor %}
+          </div>
+          <div class="clearfix"></div>
+          <span>{{ item.suit < 2 ? text_suit_1 : item.suit < 4 ? text_suit_2 : text_suit_3 }}</span>
+        </div>
+      {% endfor %}
+      </div>
+      <div class="col-12 col-md-2">
+        <button type="button" data-toogle_like="{{ review.action_like }}" class="feedback-like{{ review.like ? ' active' }}"><img src="/theme/client_ws_ttg/images/like.svg"><span>{{ review.like_total ? review.like_total : '' }}</span></button>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+<div id="review_pagination">{{ pagination }}</div>
+<div id="modal_review" class="modal fade modal-reviews" tabindex="-1" role="dialog">
+  <div class="modal-dialog" >
+    <div class="modal_form">
+      <div class="callback">
+        <h4 class="d-block d-md-none">{{ text_form }}</h4>
+        <form method="post" id="form_review">
+          <input type="hidden" name="form_method" value="extension/module/review/write">
+          <input type="hidden" name="module_id" value="{{ module_id }}">
+
+          {% if success %}
+          <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+          {% endif %}
+          {% if error_warning %}
+          <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+          {% endif %}
+
+          <div class="d-block d-md-flex">
+            <div class="modal-reviews__path">
+              <div class="small-t d-none d-md-block">{{ entry_author }}<span></span></div>
+              <input type="text" name="author" value="{{ author }}" placeholder="{{ entry_author }}">
+              {% if error.author %}<div class="error-input">{{ error.author }}</div>{% endif %}
+              <div class="wrap-size-review">
+              {% for item in options %}
+                <div>
+                  <div class="small-t d-none d-md-block">{{ item.name }}<span></span></div>
+                  <select name="option[{{ item.option_id }}][value]">
+                    <option value="">{{ item.name }}</option>
+                  {% for list_item in item.list_items %}
+                    <option value="{{ list_item.name }}"{{ (option[item.option_id] and list_item.name == option[item.option_id].value) ? ' selected' }}>{{ list_item.name }}</option>
+                  {% endfor %}
+                  </select>
+                </div>
+              {% endfor %}
+                <div>
+                  <div class="small-t">{{ entry_rating }}</div>
+                  <div class="rating-block">
+                  {% for i in 5..1 %}
+                    <input type="radio" name="rating" value="{{ i }}" class="star star-{{ i }}" id="star-{{ i }}"{{ i == rating ? ' checked' }}/>
+                    <label class="star star-{{ i }}" for="star-{{ i }}"></label>
+                  {% endfor %}
+                  </div>
+                  {% if error.rating %}<div class="error-input">{{ error.rating }}</div>{% endif %}
+                </div>
+              </div>
+            {% for item in options %}
+              <div class="small-t">{{ text_suit }}</div>
+              <div class="size-review">
+              {% for i in 5..1 %}
+                <input type="radio" name="option[{{ item.option_id }}][suit]" value="{{ i }}" class="circle circle-{{ i }}" id="circle-{{ i }}"{{ (option[item.option_id] and i == option[item.option_id].suit) ? ' checked' }}/>
+                <label class="circle circle-{{ i }}" for="circle-{{ i }}"></label>
+              {% endfor %}
+              </div>
+            {% endfor %}
+              <div class="d-flex justify-content-between size-info">
+                <div class="small-t">{{ text_suit_1 }}</div>
+                <div class="small-t">{{ text_suit_2 }}</div>
+                <div class="small-t">{{ text_suit_3 }}</div>
+              </div>
+            </div>
+            <div class="modal-reviews__path">
+              <div class="small-t d-none d-md-block">{{ entry_text }}<span></span></div>
+              <textarea name="text" cols="30" rows="10" placeholder="{{ entry_text }}">{{ text }}</textarea>
+              {% if error.text %}<div class="error-input">{{ error.text }}</div>{% endif %}
+              <button type="submit" class="main-btn">{{ button_submit }}</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+
+<script>
+$('a[data-target="review"] span, a[href="#review"] span').html('{{ total }}');
+
+$('#review_pagination').on('click', 'a', function(e){
+  e.preventDefault();
+
+  fetch(this.href, {
+    credentials: 'include',
+    headers: {'Accept': 'text/html'}
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html) {
+    var html = $(html);
+    $('#review_list').html(html.find('#review_list').html());
+    $('#review_pagination').html(html.find('#review_pagination').html());
+
+    $('body,html').animate({scrollTop: $('#review_list').offset().top - 150}, 300);
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script type="text/javascript">
+$('#form_review').submit(function(e){
+  e.preventDefault();
+
+  var data = new FormData(this);
+
+  fetch(location, {
+    credentials: 'include',
+    headers: {'Accept': 'text/html'},
+    cache: 'no-cache',
+    method: 'post',
+    body: data
+  })
+  .then(function(r){
+    return r.text();
+  })
+  .then(function(html) {
+    var html = $(html);
+    $('#form_review').html(html.find('#form_review').html());
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>
+<script type="text/javascript">
+$('#review_list').on('click', '[data-toogle_like]', function(e) {
+  e.prevetnDefault();
+
+  var el = $(this);
+
+  fetch(this.dataset.toogle_like, {
+    credentials: 'include',
+    headers: {'Accept': 'application/json'},
+    cache: 'no-cache',
+  })
+  .then(function(r){
+    if (r.status == 401)
+      $('#modal_account').modal('show');
+    else
+      return r.json();
+  })
+  .then(function(json) {
+    if (json) {
+      if (json['error']) {
+        toast_modal(json['error']);
+      } else if (json['success']) {
+        if (json['like'] == 1)
+          el.addClass('active');
+        else
+          el.removeClass('active');
+
+        el.find('span').text(json['like_total'] ? json['like_total'] : '');
+      }
+    }
+  })
+  .catch(function(error) {
+    console.error(error);
+  });
+});
+</script>

@@ -1,0 +1,239 @@
+{{ header }}{{ menu.general.view }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="float-right">
+{% set action_data = {
+  'add' : {
+    'title' : button_add,
+    'class' : 'btn btn-primary',
+    'icon' : 'fas fa-plus',
+  },
+  'cancel' : {
+    'title' : button_cancel,
+    'class' : 'btn btn-light',
+    'icon' : 'fas fa-reply',
+  },
+  'clear' : {
+    'title' : button_clear,
+    'class' : 'btn btn-danger',
+    'icon' : 'fas fa-eraser',
+  },
+  'copy' : {
+    'title' : button_copy,
+    'class' : 'btn btn-light',
+    'icon' : 'fas fa-copy',
+  },
+  'delete' : {
+    'title' : button_delete,
+    'class' : 'btn btn-danger',
+    'icon' : 'fas fa-trash-alt',
+  },
+  'developer' : {
+    'title' : button_developer,
+    'class' : 'btn btn-info',
+    'icon' : 'fas fa-cog',
+  },
+  'download' : {
+    'title' : button_download,
+    'class' : 'btn btn-primary',
+    'icon' : 'fas fa-download',
+  },
+  'filter' : {
+    'title' : button_filter,
+    'class' : 'btn btn-light d-md-none',
+    'icon' : 'fas fa-filter',
+  },
+  'refresh' : {
+    'title' : button_refresh,
+    'class' : 'btn btn-light',
+    'icon' : 'fas fa-sync',
+  },
+  'save' : {
+    'title' : button_save,
+    'class' : 'btn btn-primary',
+    'icon' : 'fas fa-save',
+  },
+  'save_exit' : {
+    'title' : button_save_exit,
+    'class' : 'btn btn-primary',
+    'icon' : 'fas fa-save',
+  },
+  'search' : {
+    'title' : button_search,
+    'class' : 'btn btn-info',
+    'icon' : 'fas fa-search',
+  },
+  'setting' : {
+    'title' : button_setting,
+    'class' : 'btn btn-info',
+    'icon' : 'fas fa-cog',
+  },
+  'repair' : {
+    'title' : button_rebuild,
+    'class' : 'btn btn-light',
+    'icon' : 'fas fa-sync',
+  },
+  'view' : {
+    'title' : button_view,
+    'class' : 'btn btn-secondary',
+    'icon' : 'fas fa-eye',
+  },
+  'upload' : {
+    'title' : button_upload,
+    'class' : 'btn btn-primary',
+    'icon' : 'fas fa-upload',
+  }
+} %}
+    {% for code, action in actions %}
+      {% set data = action_data[code] %}
+      {% if action is same as('separator') %}
+        <span class="mr-3"></span>
+      {% elseif code == 'opencart' %}
+        {% if not error_signature %}
+          <button type="button" id="button-opencart" data-toggle="tooltip" title="{{ button_opencart }}" class="btn btn-info"><i class="fas fa-cog"></i></button>
+        {% else %}
+          <button type="button" id="button-opencart" data-toggle="tooltip" title="{{ error_signature }}" data-placement="left" class="btn btn-danger"><i class="fas fa-exclamation-triangle"></i></button>
+        {% endif %}
+      {% elseif code == 'filter' %}
+        <button type="button" data-toggle="tooltip" title="{{ data.title }}" onclick="$('#filter-general').toggleClass('d-none');" class="{{ data.class }}"><i class="{{ data.icon }}"></i></button>
+      {% elseif code == 'save' %}
+        <button type="submit" id="button-{{ code }}" form="form-general" name="method" value="save" data-toggle="tooltip" title="{{ data.title }}" class="{{ data.class }}"><i class="{{ data.icon }}"></i></button>
+      {% elseif code == 'save_exit' %}
+        <button type="submit" id="button-{{ code }}" form="form-general" name="method" value="save-exit" data-toggle="tooltip" title="{{ data.title }}" class="{{ data.class }}"><i class="{{ data.icon }}"></i><i class="fas fa-reply"></i></button>
+      {% elseif code == 'copy' %}
+        <button type="submit" form="form-general" name="method" value="copy" formaction="{{ action }}" data-toggle="tooltip" title="{{ data.title }}" class="{{ data.class }}"><i class="{{ data.icon }}"></i></button>
+      {% elseif code == 'delete' %}
+        <button type="button" data-toggle="tooltip" title="{{ data.title }}" class="{{ data.class }}" onclick="confirm('{{ text_confirm }}') ? $('#form-general').submit() : false;"><i class="{{ data.icon }}"></i></button>
+      {% elseif code == 'developer' or code == 'setting' or code == 'upload' %}
+        <button type="button" id="button-{{ code }}" data-toggle="tooltip" title="{{ data.title }}" data-loading-text="{{ text_loading }}" class="{{ data.class }}"><i class="{{ data.icon }}"></i></button>
+      {% elseif code == 'view' %}
+        <a href="{{ action }}" target="_blank" data-toggle="tooltip" title="{{ data.title }}" class="{{ data.class }}"><i class="{{ data.icon }}"></i></a>
+      {% elseif code == 'clear' %}
+        <a onclick="confirm('{{ text_confirm }}') ? location.href='{{ action }}' : false;" data-toggle="tooltip" title="{{ button_clear }}" class="btn btn-danger"><i class="fas fa-eraser"></i></a>
+      {% else %}
+        <a href="{{ action }}" data-toggle="tooltip" title="{{ data.title }}" class="{{ data.class }}"><i class="{{ data.icon }}"></i></a>
+      {% endif %}
+    {% endfor %}
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> {{ success }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    {% if attention is not empty %}
+      <div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> {{ attention }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    {{ content }}
+  </div>
+</div>
+
+<script type="text/javascript">
+// Toast - modal
+var toast_modal_el = $('<div class="toast-block toast-center" id="toast_modal"></div>');
+
+$('body').append(toast_modal_el);
+
+var toast_modal = function(content, action){
+  var toast = $('<div class="toast"><div class="toast-body"><button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="{{ button_continue }}"><span class="os-icon os-icon-close"></span></button>' + content + '</div></div>');
+
+  if (toast_modal_el.find('.toast-shadow').length == 0)
+    toast_modal_el.append('<div class="toast-shadow" data-dismiss="toast"></div>');
+
+  toast_modal_el.find('.toast').remove();
+  toast_modal_el.append(toast);
+
+  setTimeout(function(){
+    toast.addClass('showing');
+  },10);
+
+  toast_modal_el.find('[data-dismiss="toast"]').click(function(){
+    toast_modal_el.find('.toast, .toast-shadow').remove();
+  });
+
+  if (action)
+    action();
+};
+
+var toast_confirm = function(content, action){
+  var toast = $('<div class="toast"><div class="toast-body"><div class="mb-3">' + content + '</div><div class="d-flex justify-content-between"><button type="button" class="btn btn-danger" data-toast_submit data-dismiss="toast"><i class="os-icon os-icon-ui-21"></i><span>{{ button_confirm }}</span></button><button type="button" class="btn btn-primary" data-dismiss="toast"><i class="os-icon os-icon-x-circle"></i><span>{{ button_cancel }}</span></button></div></div></div>');
+
+  if (toast_modal_el.find('.toast-shadow').length == 0)
+    toast_modal_el.append('<div class="toast-shadow" data-dismiss="toast"></div>');
+
+  toast_modal_el.find('.toast').remove();
+  toast_modal_el.append(toast);
+
+  setTimeout(function(){
+    toast.addClass('showing');
+  },10);
+
+  toast_modal_el.find('[data-dismiss="toast"]').click(function(){
+    toast_modal_el.find('.toast, .toast-shadow').remove();
+  });
+
+  toast_modal_el.find('[data-toast_submit]').click(function(){
+    action();
+  });
+};
+
+$('body').on('click', '[data-confirm]', function(e){
+  e.preventDefault();
+
+  var href = this.href;
+
+  toast_confirm(this.dataset.confirm, function(){location = href});
+});
+</script>
+
+<script type="text/javascript">
+// Toast - message
+var toast_message_el = $('<div class="toast-block toast-bottom-right" id="toast_message"></div>');
+
+$('body').append(toast_message_el);
+
+var toast_message = function(title, message){
+  var message = message || '',
+      toast = $('<div class="toast"><div class="toast-header">' + title + '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="{{ button_continue }}"><span class="os-icon os-icon-close"></span></button></div><div class="toast-body">' + message + '</div></div>'),
+      timeout_toast;
+
+  toast_message_el.prepend(toast);
+
+  setTimeout(function(){
+    toast.addClass('showing');
+  },10);
+
+  toast.on("transitionend webkitTransitionEnd oTransitionEnd", function(){
+    if (!$(this).hasClass('showing')) {
+      clearTimeout(timeout_toast);
+
+      $(this).remove();
+    }
+  });
+
+  toast.find('[data-dismiss="toast"]').click(function(){
+    $(this).parents('.toast').removeClass('showing');
+  });
+
+  timeout = setTimeout(function(){
+   toast.removeClass('showing');
+  },5000);
+};
+</script>
+{{ footer }}

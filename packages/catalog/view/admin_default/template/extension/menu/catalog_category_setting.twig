@@ -1,0 +1,64 @@
+{% import "admin_default/template/macro/form_group.twig" as macros %}
+<div class="row">
+  <div class="col-12 col-sm-4">
+    {{ macros.select(
+      {'name': 'menu_item[' ~ language_id ~ '][' ~ menu_row ~ '][setting][language_id]', 'id': 'catalog_category_language' ~ language_id ~ '_' ~ menu_row, 'value' : setting['language_id']},
+      {'label' : entry_language},
+      {'options' : languages, 'key' : 'language_id', 'title' : 'name'}
+    , 4) }}
+  </div>
+  <div class="col-12 col-sm-4">
+    {{ macros.autocomplete(
+      {'name': 'menu_item[' ~ language_id ~ '][' ~ menu_row ~ '][setting][title]', 'id': 'catalog_category' ~ language_id ~ '_' ~ menu_row, 'value' : setting['title']},
+      {'label' : entry_category},
+      {}
+    , 4) }}
+  </div>
+  <div class="col-12 col-sm-4">
+    {{ macros.text(
+      {'name': 'menu_item[' ~ language_id ~ '][' ~ menu_row ~ '][setting][depth]', 'value' : setting['depth']},
+      {'label' : entry_depth},
+      {}
+    , 8) }}
+  </div>
+</div>
+<script type="text/javascript">
+$('#input-catalog_category{{ language_id }}_{{ menu_row }}').autocomplete({
+  'source': function(request, response) {
+    fetch(getURLPath() + '?route=catalog/category/autocomplete_link&user_token={{ user_token }}&language_id={{ language_id }}&filter_name=' + encodeURIComponent(request), {
+      credentials: 'include',
+      cache: 'no-cache',
+      headers: {'Accept': 'application/json'}
+    })
+    .then(function(r) {
+      return r.json(r);
+    })
+    .then(function(json) {
+      json.unshift({
+        name: '{{ text_none }}',
+        link: 0,
+      });
+
+      response($.map(json, function(item) {
+        return {
+          label: item['name'],
+          value: item['link']
+        }
+      }));
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+  },
+  'select': function(item) {
+    if (item['value'] == 0) {
+      $('#input-catalog_category{{ language_id }}_{{ menu_row }}').val('');
+      $('#input-link{{ language_id }}_{{ menu_row }}').val('');
+    } else {
+      $('#input-catalog_category{{ language_id }}_{{ menu_row }}').val(item['label']);
+      $('#input-title{{ language_id }}_{{ menu_row }}').val(item['label']);
+      $('#input-link{{ language_id }}_{{ menu_row }}').val(item['value']);
+    }
+  }
+});
+</script>

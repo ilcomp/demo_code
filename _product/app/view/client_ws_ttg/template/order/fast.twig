@@ -1,0 +1,66 @@
+<div class="modal fade" id="modal-fast_order" tabindex="-1" role="dialog">
+  <div class="modal-dialog" >
+    <div class="modal_form">
+      <div class="callback" style="position:relative">
+        <div class="h4">{{ heading_title }}</div>
+        <form action="{{ action }}" method="post">
+        {% for param in product|split('&') %}
+          {% set k_v = param|split('=') %}
+          <input type="hidden" name="{{ k_v[0] }}" value="{{ k_v[1] }}">
+        {% endfor %}
+
+        {% if success %}
+          <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+          <script>setTimeout(function(){$('#modal-fast_order').modal('hide');}, 3000);</script>
+        {% endif %}
+          {% if error.api %}<script>console.log({{error.api|json_encode()}});</script>{% endif %}
+
+        {% for custom_field in custom_fields %}
+          <div class="callback-input">
+            <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/user{{ custom_field.code == 'lastname' ? 's' }}.svg#form_svg"></use></svg></i>
+            <div>{{ custom_field.name }}</div>
+            <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+            {% if error['custom_field' ~ custom_field.custom_field_id] %}<div class="error-input">{{ error['custom_field' ~ custom_field.custom_field_id] }}</div>{% endif %}
+          </div>
+        {% endfor %}
+          <div class="callback-input">
+            <i class="form_svg"><svg><use xlink:href="theme/client_ws_ttg/images/phone.svg#form_svg"></use></svg></i>
+            <div>{{ entry_telephone }}</div>
+            <input type="tel" name="telephone" value="{{ telephone }}">
+            {% if error.telephone %}<div class="error-input">{{ error.telephone }}</div>{% endif %}
+          </div>
+          <button type="submit" class="main-btn">{{ button_submit }}</button>
+        </form>
+      </div>
+    </div>
+    <button data-dismiss="modal" class="close_button_popup"></button>
+  </div>
+</div>
+
+<script type="text/javascript">
+(function(){
+  var form = $('#modal-fast_order form');
+
+  form.submit(function(e) {
+    e.preventDefault();
+
+    form.append('<div class="preload-full"><div class="preload"><span class="preload-b1"></span><span class="preload-b2"></span></div></div>');
+
+    fetch(this.action, {
+      method: 'post',
+      body: new FormData(this),
+      credentials: 'include',
+      headers: {'Accept': 'text/html'}
+    })
+    .then(function(r){
+      return r.text();
+    })
+    .then(function(html){
+      form.html($(html).find('form').html());
+    })
+    .catch(function(e){
+      console.error(e);
+    });
+  });
+})();
+</script>

@@ -1,0 +1,72 @@
+<section class="registration">
+  <div class="container" id="account-register">
+    <h1>{{ heading_title }}</h1>
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="{{ form_id }}" class="form">
+      {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+      {% endif %}
+      {% if error_login %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_login }}</div>
+      {% endif %}
+      {% if error_captcha %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_captcha }}</div>
+      {% endif %}
+      {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+      {% endif %}
+      {% if location %}
+      <script type="text/javascript">document.location = '{{ location }}';</script>
+      {% endif %}
+      {% if sms_action %}
+      <script type="text/javascript">
+        $('.code_phone').load('{{ sms_action }} .code_phone > *');
+        $('.code_phone').modal('show');
+      </script>
+      {% endif %}
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <label>{{ entry_login }} <span class="form__required">*</span></label>
+          <input type="text" name="login" value="{{ login }}">
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <label>{{ entry_password }} <span class="form__required">*</span></label>
+          <input type="password" name="password" value="{{ password }}">
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <label>{{ entry_email }} <span class="form__required">*</span></label>
+          <input type="email" name="email" value="{{ email }}">
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <label>{{ entry_telephone }} <span class="form__required">*</span></label>
+          <input type="tel" name="telephone" value="{{ telephone }}">
+        </div>
+      {% for custom_field in custom_fields %}
+        {% if custom_field.code == 'hr_line' %}
+        <div class="col-12"><div class="mainLine mainLine_registration_top"></div></div>
+        {% elseif custom_field.code == 'u_address' %}
+        <div class="col-lg-12">
+          <label>{{ custom_field.name }} {% if custom_field.required %}<span class="form__required">*</span>{% endif %}</label>
+          <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+        </div>
+        {% elseif custom_field.code == 'f_address' %}
+        <div class="col-lg-12">
+          <label>{{ custom_field.name }} {% if custom_field.required %}<span class="form__required">*</span>{% endif %}</label>
+          <label class="form__label_checkbox"><input type="checkbox" class="form__input_checkbox">{{ custom_field.help }}</label>
+          <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+        </div>
+        {% else %}
+        <div class="col-lg-3 col-md-6">
+          <label>{{ custom_field.name }} {% if custom_field.required %}<span class="form__required">*</span>{% endif %}</label>
+          <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}">
+        </div>
+        {% endif %}
+      {% endfor %}
+        <div class="col-12"><div class="mainLine mainLine_registration_bottom"></div></div>
+        {{ captcha }}
+        <div class="col-lg-12">
+          <button type="submit" class="mainBtn mainBtn_registration">{{ button_continue }}</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+<input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" class="required"/>
+{% if error_firstname %}{{ error_firstname }}{% endif %}
+<input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" class="required"/>
+{% if error_lastname %}{{ error_lastname }}{% endif %}
+<input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" class="required"/>
+{% if error_telephone %}{{ error_telephone }}{% endif %}
+<input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" class="required"/>
+{% if error_email %}{{ error_email }}{% endif %}
+{% for custom_field in custom_fields %}
+  <input type="text" name="custom_field[{{ custom_field.custom_field_id }}][-1]" value="{{ custom_field.value[-1] }}" placeholder="{{ custom_field.name }}"{{custom_field.required ? ' class="required"'}}/>
+	{% if error['custom_field' ~ custom_field.custom_field_id] %}{{ error['custom_field' ~ custom_field.custom_field_id] }}{% endif %}
+{% endfor %}

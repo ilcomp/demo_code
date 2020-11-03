@@ -1,0 +1,21 @@
+<ul class="pagination pagination-bottom">
+  {% if false and first %}
+    <li class="previouspostslink"><a href="{{ first }}">|</a></li>
+  {% endif %}
+  {% if prev %}
+    <li class="previouspostslink"><a href="{{ prev }}"></a></li>
+  {% endif %}
+  {% for link in links %}
+    {% if  link.page == page %}
+      <li class="current"><a href="javascript:void(0)">{{ link.page }}</a></li>
+    {% else %}
+      <li><a href="{{ link.href }}">{{ link.page }}</a></li>
+    {% endif %}
+  {% endfor %}
+  {% if next %}
+    <li class="nextpostslink"><a href="{{ next }}"></a></li>
+  {% endif %}
+  {% if false and last %}
+    <li class="nextpostslink"><a href="{{ last }}">|</a></li>
+  {% endif %}
+</ul>

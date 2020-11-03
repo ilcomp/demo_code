@@ -1,0 +1,44 @@
+<section class="page-title">
+  <div class="container">
+    <h1>{{ heading_title }}</h1>
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}</div>
+    {% endif %}
+  </div>
+</section>
+<section class="lk-wrap">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-3 order-1 order-md-0">
+        {{ menu.account.view }}
+      </div>
+      <div class="col-12 col-md-9">
+        <div class="subs-block">
+      {% if wishlist %}
+        {% for item in wishlist %}
+          <div class="shadow-item subs-block__item">
+            <div class="name-subs">
+              <span>{{ item.name }}</span>
+            {% for option in item.option_data %}
+              <div class="order-data">{{ option.name }} <strong>{{ option.value }}</strong> {{ option.stock ? text_stock }}</div>
+            {% endfor %}
+            </div>
+            <div class="justify-content-between d-flex">
+              <a href="{{ item.href }}" target="_blank" class="main-btn reverse-btn">{{ text_product_view }}<i class="eye_svg"><svg><use xlink:href="/theme/client_ws_daniella/image/eye.svg#eye_svg"></use></svg></i></a>
+            {% if item.favorite %}
+              <a href="{{ item.delete }}" class="delete-subs favorit-product active"><i class="favorites_svg"><svg><use xlink:href="/theme/client_ws_daniella/image/favorites.svg#favorites_svg"></use></svg></i></a>
+            {% else %}
+              <a href="{{ item.delete }}" class="delete-subs"><i class="trash_svg"><svg><use xlink:href="/theme/client_ws_daniella/image/trash.svg#trash_svg"></use></svg></i></a>
+            {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+          {{ pagination }}
+      {% else %}
+          <p>{{ text_empty }}</p>
+      {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

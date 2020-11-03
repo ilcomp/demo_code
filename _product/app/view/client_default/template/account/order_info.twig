@@ -1,0 +1,59 @@
+<section class="profileDetailPage">
+  <div class="container">
+    <div class="d-md-flex justify-content-between profileDetailPage__heading">
+      <div class="d-md-flex justify-content-between">
+        <h1>{{ text_order_id }}{{ order_id }}</h1>
+        <span class="profileDetailPage__date">{{ date_added }}</span>
+      </div>
+      <span class="profileDetailPage__numberHeading">{{ products|length() }}</span>
+    </div>
+    {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fas fa-check-circle"></i> {{ success }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fas fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    <div class="row listHeader">
+      <div class="col-md-5">{{ column_name }}</div>
+      <div class="col-md-2">{{ column_price }}</div>
+      <div class="col-md-2">{{ column_quantity }}</div>
+      <div class="col-md-2">{{ column_total }}</div>
+      <div class="col-12"><div class="mainLine mainLine_profileDetailPage_top"></div></div>
+    </div>
+
+{% for product in products %}
+    <div class="row align-items-center item">
+      <div class="col-md-5 item__header">
+        <div class="row">
+          <div class="d-flex flex-column w-100 flex-md-row align-items-center justify-content-md-start">
+            {% if product.image %}<img src="{{ product.image }}" alt="basket1">{% endif %}
+            <span class="item__heading">{{ product.name }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-3 col-md-2">
+        <span class="item__text">{{ product.price }}</span>
+      </div>
+      <div class="col-4 col-md-2 boxesCounter">
+        <span class="counter d-flex align-items-center">
+          <button class="counter__change">-</button>
+          <span class="counter__numberWrapper">
+            <p class="counter__number">{{ product.quantity }}</p>
+          </span>
+          <button class="counter__change">+</button>
+        </span>
+      </div>
+      <div class="col-3 col-md-2">
+        <span class="item__text item__textPadding">{{ product.total }}</span>
+      </div>
+      <div class="col-2 col-md-1 delete">
+      </div>
+    </div>
+{% endfor %}
+
+  </div>
+</section>

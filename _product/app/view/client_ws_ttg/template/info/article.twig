@@ -1,0 +1,99 @@
+<div class="main-bg{{ custom_fields.menu ? ' padding-wrap' }}">
+{% if not custom_fields.menu %}<div class="container">{% include "client_ws_ttg/template/block/breadcrumb.twig" %}</div>{% endif %}
+  <div class="container">
+{% if custom_fields.menu %}
+    <div class="row">
+      <div class="col-12 col-lg-4 col-xl-3">
+        <div class="pos-sticky">
+          <div class="menu-sidebar">
+            <a href="#" class="d-lg-none js-spoiler-partners">{{ custom_fields.menu.name }}</a>
+            {{ custom_fields.menu.view }}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-8 col-xl-9">
+        {% include "client_ws_ttg/template/block/breadcrumb.twig" %}
+{% endif %}
+        <h1>{{ heading_title }}</h1>
+        {% if custom_fields.image.image %}<img src="{{ custom_fields.image.thumb }}" class="content-img img-fluid">{% endif %}
+{% if custom_fields.module_center or modules.column %}
+        <div class="row">
+          <div class="col-12 col-lg-8 col-xl-9">
+{% endif %}
+            {% if custom_fields.content %}<div class="content-block">{{ custom_fields.content }}</div>{% endif %}
+            {% if custom_fields.type_point %}
+            <div class="fake-tab change-map-block" id="type_point">
+              {% for type_point in custom_fields.type_point %}
+              <a href="#{{ type_point.value }}" class="fake-tab__link{{ loop.first ? ' active' }}" data-type="{{ type_point.value }}">{{ type_point.name }}</a>
+              {% endfor %}
+            </div>
+            <div>{% for type_point in custom_fields.type_point %}<div class="content-block{{ not loop.first ? ' d-none' }}" id="{{ type_point.value }}">{{ custom_fields[type_point.value] }}</div>{% endfor %}</div>
+<script>
+var els = document.getElementById('type_point').querySelectorAll('a[data-type]'),
+    content;
+for (var i = els.length-1; i >= 0; i--) {
+  var el = els[i];
+
+  if (location.hash) {
+    content = document.getElementById(el.getAttribute('href').slice(1));
+    if (el.getAttribute('href') == location.hash) {
+      el.classList.add('active');
+      if (content) content.classList.remove('d-none');
+    } else {
+      el.classList.remove('active');
+      if (content) content.classList.add('d-none');
+    }
+  }
+
+  el.addEventListener('click', function(e){
+    e.preventDefault();
+    var id = this.getAttribute('href').slice(1),
+        tabs = document.getElementById(id).parentNode.children;
+
+    for (var i = tabs.length-1; i >= 0; i--) {
+      var tab = tabs[i];
+
+      if (tab.getAttribute('id') == id)
+        tab.classList.remove('d-none');
+      else
+        tab.classList.add('d-none');
+    }
+  });
+}
+</script>
+            {% endif %}
+            {{ info_content }}
+{% if custom_fields.module_center or modules.column %}
+          </div>
+          <div class="col-12 col-lg-4 col-xl-3 d-none d-lg-block">
+            {% for module in custom_fields.module_center %}
+              {{ module }}
+            {% endfor %}
+            {{ modules.column }}
+          </div>
+        </div>
+{% endif %}
+{% if category_id and not secret %}
+        <div class="h3">Поделиться в соц. сетях:</div>
+        <div class="soc-block soc-block-bg soc-block-repost">
+          <a href="//vk.com/share.php?url={{ share|url_encode }}" target="_blank" class="vk"><i class="soc_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/vk.svg#soc_svg"></use></svg></i></a>
+          <a href="//www.facebook.com/sharer/sharer.php?u={{ share|url_encode }}" target="_blank" class="fb"><i class="soc_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/fb.svg#soc_svg"></use></svg></i></a>
+          <a href="//twitter.com/share?url={{ share|url_encode }}" target="_blank" class="twit"><i class="soc_svg"><svg><use xlink:href="/theme/client_ws_ttg/images/twit.svg#soc_svg"></use></svg></i></a>
+        </div>
+{% endif %}
+
+        {% if info_filter %}
+        <div class="wrap-tegs-block">
+          <div class="h3">Теги</div>
+          {{ info_filter }} 
+        </div>
+        {% endif %}
+{% if custom_fields.menu %}
+      </div>
+    </div>
+{% endif %}
+  </div>
+</div>
+{% for module in custom_fields.module_bottom %}
+<hr>{{ module }}
+{% endfor %}
